@@ -1,0 +1,34 @@
+{
+  "name": "lantastic",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.html",
+  "scripts": {
+    "test": "mocha lib/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/searene/lantastic.git"
+  },
+  "author": "Searene <mycityofsky@gmail.com> (https://searene.github.io)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/searene/lantastic/issues"
+  },
+  "homepage": "https://github.com/searene/lantastic#readme",
+  "dependencies": {
+    "react": "^15.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.31",
+    "@types/react": "^15.0.29",
+    "@types/react-dom": "^15.5.0",
+    "awesome-typescript-loader": "^3.1.3",
+    "clean-webpack-plugin": "^0.1.16",
+    "copy-webpack-plugin": "^4.0.1",
+    "react-dom": "^15.6.1",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.3.4",
+    "webpack": "^2.6.1"
+  }
+}
