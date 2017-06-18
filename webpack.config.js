@@ -3,11 +3,12 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-    entry: "./src/index.tsx",
+    entry: "./src/main.ts",
     output: {
-        filename: "bundle.js",
+        filename: "main.js",
         path: __dirname + "/lib"
     },
+    target: 'electron-main',
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -33,7 +34,8 @@ module.exports = {
     // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
         "react": "React",
-        "react-dom": "ReactDOM"
+        "react-dom": "ReactDOM",
+        'request': 'request'
     },
 
     plugins: [
@@ -43,7 +45,8 @@ module.exports = {
         }),
         new CopyWebpackPlugin([{
             from: path.join(__dirname, 'src'),
-            to: path.join(__dirname, 'lib')
+            to: path.join(__dirname, 'lib'),
+            ignore: ['*.tsx', '*.ts']
         }])
     ]
 };

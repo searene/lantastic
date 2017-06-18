@@ -2,7 +2,7 @@
   "name": "lantastic",
   "version": "0.0.1",
   "description": "",
-  "main": "lib/index.html",
+  "main": "lib/main.js",
   "scripts": {
     "test": "mocha lib/test"
   },
@@ -20,6 +20,8 @@
     "react": "^15.6.1"
   },
   "devDependencies": {
+    "electron": "^1.6.11",
+    "@types/electron": "^1.6.10",
     "@types/node": "^7.0.31",
     "@types/react": "^15.0.29",
     "@types/react-dom": "^15.5.0",

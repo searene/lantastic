@@ -5,6 +5,9 @@
         <title>Hello React!</title>
     </head>
     <body>
+        We are using node <script>document.write(process.versions.node)</script>,
+        Chrome <script>document.write(process.versions.chrome)</script>,
+        and Electron <script>document.write(process.versions.electron)</script>.
         <div id="example"></div>
 
         <!-- Dependencies -->
@@ -12,6 +15,6 @@
         <script src="../node_modules/react-dom/dist/react-dom.js"></script>
 
         <!-- Main -->
-        <script src="./bundle.js"></script>
+        <script src="./main.js"></script>
     </body>
 </html>
