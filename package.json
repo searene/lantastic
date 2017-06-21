@@ -5,6 +5,8 @@
   "main": "lib/main.js",
   "scripts": {
     "start": "electron .",
+    "webpack": "webpack --progress --colors",
+    "dev": "webpack-dev-server --devtool eval --progress --colors --inline",
     "test": "mocha lib/test"
   },
   "repository": {
