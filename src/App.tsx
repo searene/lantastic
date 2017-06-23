@@ -1,21 +1,15 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-// Needed for onTouchTap
-// http://stackoverflow.com/a/34015469/988941
-import * as injectTapEventPlugin from 'react-tap-event-plugin';
-injectTapEventPlugin();
-
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import MyAwesomeReactComponent from './components/MyAwesomeReactComponent';
+import { Button } from 'semantic-ui-react';
 
 const App = () => (
-  <MuiThemeProvider>
-    <MyAwesomeReactComponent />
-  </MuiThemeProvider>
+    <Button>
+        Click Here
+    </Button>
 );
 
 ReactDOM.render(
-  <App />,
-  document.getElementById('app')
+    <App />,
+    document.getElementById('app')
 );
