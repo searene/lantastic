@@ -9,31 +9,49 @@ export interface FieldProps {
 
 export class Field extends React.Component<FieldProps, undefined> {
     render() {
-        const style = {
+        const style: React.CSSProperties = {
             form: {
                 marginBottom: "5px",
+                height: "100px",
+                overflow: "auto",
+                flex: "1",
             },
             container: {
-                width: "50%",
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                marginTop: "10px",
+                marginRight: "10px",
             },
             addButton: {
-                marginLeft: "auto",
                 marginRight: 0,
+                borderRadius: 0,
+                float: "right",
             },
             textarea: {
+                borderRadius: 0,
+                marginBottom: "5px",
+                overflow: "hidden",
             },
+            buttonContainer: {
+                paddingTop: "10px",
+                marginBottom: "10px",
+                borderTop: "1px solid #BEBEBE",
+            }
         }
         const fields: JSX.Element[] = this.props.descriptions.map((description) => {
             return (
-                <Form key={description} style={style.form}>
-                    <TextArea placeholder={description} rows={1} autoHeight />
-                </Form>
+                <TextArea key={description} placeholder={description} rows={1} autoHeight style={style.textarea} />
             )
         });
         return (
             <div style={style.container}>
-                {fields}
-                <Button content='Add' icon='add' labelPosition='left' style={style.addButton} />
+                <Form style={style.form}>
+                    {fields}
+                </Form>
+                <div style={style.buttonContainer}>
+                    <Button content='Add' icon='add' labelPosition='left' style={style.addButton} />
+                </div>
             </div>
         );
     }

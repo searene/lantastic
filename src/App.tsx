@@ -14,7 +14,7 @@ export interface AppProps {
 
 export class App extends React.Component<AppProps, undefined> {
   render() {
-    const style = {
+    const style: React.CSSProperties = {
       typeButton: {
         width: "40%",
       }, 
@@ -41,8 +41,8 @@ export class App extends React.Component<AppProps, undefined> {
     };
     let descriptions: string[] = ['front', 'back'];
     return (
-      <div style={style.container as any}>
-        <div style={style.row1 as any}>
+      <div style={style.container}>
+        <div style={style.row1}>
           <Navbar />
           <Field descriptions={descriptions}/>
         </div>

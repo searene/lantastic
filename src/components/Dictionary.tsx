@@ -5,7 +5,7 @@ import { Grid, Input, Form, TextArea } from 'semantic-ui-react';
 
 export class Dictionary extends React.Component<undefined, undefined> {
     render() {
-        const style = {
+        const style: React.CSSProperties = {
             searchRow: {
                 paddingBottom: "5px",
                 flexShrink: 1,
@@ -28,12 +28,12 @@ export class Dictionary extends React.Component<undefined, undefined> {
             },
         }
         return (
-            <div style={style.container as any}>
+            <div style={style.container}>
                 <div className="ui icon input" style={style.searchRow}>
                     <input type="text" placeholder="Search..."></input>
                     <i className="circular search link icon"></i>
                 </div>
-                <div className="ui segment" style={style.definitionRow as any}>
+                <div className="ui segment" style={style.definitionRow}>
                 </div>
             </div>
         )

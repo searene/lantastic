@@ -6,7 +6,7 @@ interface FooterProps {
 }
 export class Footer extends React.Component<FooterProps, undefined> {
     render() {
-        const styles = {
+        const styles: React.CSSProperties = {
             container: {
                 display: "flex",
                 backgroundColor: "#F1F1F1",
@@ -21,7 +21,7 @@ export class Footer extends React.Component<FooterProps, undefined> {
             },
         }
         return (
-            <footer style={styles.container as any}>
+            <footer style={styles.container}>
                 <div style={styles.iconContainer}><i className="book icon"></i>Deck: <b>{this.props.deck}</b></div>
                 <div style={styles.iconContainer}><i className="tasks icon"></i>Type: <b>{this.props.type}</b></div>
             </footer>
