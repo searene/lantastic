@@ -59,3 +59,5 @@ typings/
 
 # target directory
 lib/
+
+.vscode/

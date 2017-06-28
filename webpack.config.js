@@ -3,37 +3,12 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
-const electronConfig = {
-    entry: './src/Main.ts',
-    output: {
-        path: __dirname + '/lib',
-        filename: 'main.js',
-    },
-    target: 'electron-main',
-    node: {
-        __dirname: false,
-        __filename: false,
-    },
-    devtool: 'source-map',
-    resolve: {
-        extensions: ['.ts', '.js'],
-    },
-    module: {
-        rules: [
-            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
-
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
-        ]
-    }
-};
-
 const appConfig = {
     entry: ['./src/App.tsx', './src/sass/style.scss'],
     output: {
         path: __dirname + '/lib',
         filename: 'bundle.js',
+        devtoolModuleFilenameTemplate: '../[resource-path]',
     },
     node: {
         __dirname: false,
@@ -78,7 +53,44 @@ const appConfig = {
             ignore: ['*.tsx', '*.ts', '*.scss', '*.ttf']
         }]),
         new ExtractTextPlugin('css/style.css'),
-    ]
+    ],
+
+    // When importing a module whose path matches one of the following, just
+    // assume a corresponding global variable exists and use that instead.
+    // This is important because it allows us to avoid bundling all of our
+    // dependencies, which allows browsers to cache those libraries between builds.
+    externals: {
+        "react": "React",
+        "react-dom": "ReactDOM"
+    },
 };
+
+const electronConfig = {
+    entry: './src/Main.ts',
+    output: {
+        path: __dirname + '/lib',
+        filename: 'main.js',
+        devtoolModuleFilenameTemplate: '../[resource-path]',
+    },
+    target: 'electron-main',
+    node: {
+        __dirname: false,
+        __filename: false,
+    },
+    devtool: 'source-map',
+    resolve: {
+        extensions: ['.ts', '.js', 'tsx'],
+    },
+    module: {
+        rules: [
+            // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+            { test: /\.tsx?$/, loader: "awesome-typescript-loader" },
+
+            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+            { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+        ]
+    }
+};
+
 
 module.exports = [appConfig, electronConfig];
