@@ -3,37 +3,54 @@ import * as ReactDOM from 'react-dom';
 
 import { Grid, Input, Form, TextArea } from 'semantic-ui-react';
 
-export class Dictionary extends React.Component<undefined, undefined> {
+export interface DictionaryProps {
+    // width: string;
+}
+
+export class Dictionary extends React.Component<DictionaryProps, undefined> {
     render() {
-        const style: React.CSSProperties = {
+        const styles: React.CSSProperties = {
             searchRow: {
-                paddingBottom: "5px",
-                flexShrink: 1,
+                paddingBottom: "0.5em",
+                flexGrow: 1,
+                width: "100%",
+                height: "3.5em",
+                marginTop: "5px",
+                marginLeft: "auto",
+                marginRight: "auto",
             },
             definitionRow: {
                 marginTop: "0",
-                marginBottom: "5px",
+                marginBottom: "10px",
                 paddingTop: "0",
                 paddingBottom: "5px",
-                flex: 2,
+                flexGrow: 2,
                 height: "100%",
                 overflow: "auto",
+                borderRadius: 0,
+                width: "100%",
+                marginLeft: "auto",
+                marginRight: "auto",
+            },
+            input: {
+                borderRadius: 0,
             },
             container: {
-                paddingRight: "5px",
-                width: "50%",
-                height: "100%",
                 display: "flex",
                 flexDirection: "column",
+                height: "100%",
             },
+            searchIcon: {
+
+            }
         }
         return (
-            <div style={style.container}>
-                <div className="ui icon input" style={style.searchRow}>
-                    <input type="text" placeholder="Search..."></input>
-                    <i className="circular search link icon"></i>
+            <div style={styles.container}>
+                <div className="ui icon input" style={styles.searchRow}>
+                    <input type="text" placeholder="Search in dictionaries..." style={styles.input}></input>
+                    <i className="circular search link icon" style={styles.searchIcon}></i>
                 </div>
-                <div className="ui segment" style={style.definitionRow}>
+                <div className="ui segment" style={styles.definitionRow}>
                 </div>
             </div>
         )

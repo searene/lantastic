@@ -7,7 +7,8 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "outDir": "lib",
-    "jsx": "react"
+    "jsx": "react",
+    "experimentalDecorators": true
   },
   "include": [
     "src/**/*"

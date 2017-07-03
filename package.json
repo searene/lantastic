@@ -20,8 +20,11 @@
   },
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
+    "@types/react-split-pane": "^0.1.8",
     "components-font-awesome": "^4.6.3",
+    "radium": "^0.19.1",
     "react": "^15.6.1",
+    "react-split-pane": "^0.1.63",
     "react-tap-event-plugin": "^2.0.1",
     "semantic-ui-css": "^2.2.10",
     "semantic-ui-react": "^0.69.0",
@@ -30,6 +33,7 @@
   "devDependencies": {
     "@types/electron": "^1.6.10",
     "@types/node": "^7.0.31",
+    "@types/radium": "^0.18.22",
     "@types/react": "^15.0.29",
     "@types/react-dom": "^15.5.0",
     "@types/react-tap-event-plugin": "^0.0.30",

@@ -20,8 +20,7 @@ export class Field extends React.Component<FieldProps, undefined> {
                 display: "flex",
                 flexDirection: "column",
                 width: "100%",
-                marginTop: "10px",
-                marginRight: "10px",
+                margin: "10px",
             },
             addButton: {
                 marginRight: 0,
@@ -45,7 +44,7 @@ export class Field extends React.Component<FieldProps, undefined> {
             )
         });
         return (
-            <div style={style.container}>
+            <div style={style.container} id="field">
                 <Form style={style.form}>
                     {fields}
                 </Form>
