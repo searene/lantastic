@@ -7,6 +7,7 @@ import { Dictionary } from './components/Dictionary';
 import { Field } from './components/Field';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
+import { Preference } from './components/Preference';
 import Split = require('split.js');
 
 export interface AppProps {
@@ -62,6 +63,7 @@ export class App extends React.Component<AppProps, undefined> {
 }
 
 ReactDOM.render(
-  <App deck="Default" type="Basic" />,
+  // <App deck="Default" type="Basic" />,
+  <Preference />,
   document.getElementById('app')
 );
