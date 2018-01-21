@@ -59,8 +59,6 @@ export class Scan extends React.Component<ScanProps, undefined> {
           </Button>
         </div>
       </div>
-
-
     )
   }
 }
