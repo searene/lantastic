@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as Radium from 'radium';
 import * as SplitPane from 'react-split-pane';
 import { Grid, Input, Button, Container } from 'semantic-ui-react';
 import { Dictionary } from './components/Dictionary';
@@ -15,7 +14,6 @@ export interface AppProps {
   type: string;
 }
 
-@Radium
 export class App extends React.Component<AppProps, undefined> {
   componentDidMount() { 
     Split(['#navbar', '#field'], {
@@ -63,7 +61,7 @@ export class App extends React.Component<AppProps, undefined> {
 }
 
 ReactDOM.render(
-  // <App deck="Default" type="Basic" />,
-  <Preference />,
+  <App deck="Default" type="Basic" />,
+  // <Preference />,
   document.getElementById('app')
 );

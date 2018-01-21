@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Radium from 'radium';
 import { Dictionary } from './Dictionary';
 
 export interface NavbarState {
@@ -7,10 +6,9 @@ export interface NavbarState {
   width: string;
 }
 
-@Radium
-export class Navbar extends React.Component<undefined, NavbarState> {
-  constructor() {
-    super();
+export class Navbar extends React.Component<{}, NavbarState> {
+  constructor(props: {}) {
+    super(props);
     this.state = {
       activatedItem: "dictionary",
       width: "50%",
