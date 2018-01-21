@@ -6,7 +6,7 @@ const path = require('path');
 const appConfig = {
     entry: ['./src/App.tsx', './src/sass/style.scss'],
     output: {
-        path: __dirname + '/dist',
+        path: __dirname + '/lib',
         filename: 'bundle.js',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
@@ -43,23 +43,32 @@ const appConfig = {
     },
 
     plugins: [
-        new CleanWebpackPlugin(['dist'], {
+        new CleanWebpackPlugin(['lib'], {
             root: __dirname,
             verbose: true
         }),
         new CopyWebpackPlugin([{
             from: path.join(__dirname, 'src'),
-            to: path.join(__dirname, 'dist'),
+            to: path.join(__dirname, 'lib'),
             ignore: ['*.tsx', '*.ts', '*.scss', '*.ttf']
         }]),
         new ExtractTextPlugin('css/style.css'),
     ],
+
+    // When importing a module whose path matches one of the following, just
+    // assume a corresponding global variable exists and use that instead.
+    // This is important because it allows us to avoid bundling all of our
+    // dependencies, which allows browsers to cache those libraries between builds.
+    externals: {
+        "react": "React",
+        "react-dom": "ReactDOM"
+    },
 };
 
 const electronConfig = {
     entry: './src/Main.ts',
     output: {
-        path: __dirname + '/dist',
+        path: __dirname + '/lib',
         filename: 'main.js',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
