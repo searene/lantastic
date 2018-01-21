@@ -58,7 +58,7 @@ typings/
 .env
 
 # target directory
-dist/
+lib/
 
 .vscode/
 .idea/

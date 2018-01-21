@@ -2,7 +2,7 @@
   "name": "lantastic",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/main.js",
+  "main": "lib/main.js",
   "scripts": {
     "start": "electron .",
     "webpack": "webpack --progress --colors",
