@@ -1,9 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import Button from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
-import Icon from 'semantic-ui-react/dist/commonjs/elements/Icon/Icon';
-import Checkbox from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
-import Menu from 'semantic-ui-react/dist/commonjs/collections/Menu/Menu';
+import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
 
 import '../stylesheets/components/Scan.scss';
 
@@ -44,7 +41,7 @@ export class Scan extends React.Component<ScanProps, undefined> {
         <div className="scan-path">
           <div className="scan-path-label">Scan Path:</div>
           <Menu vertical>
-            {this.props.paths.map(path => <Menu.Item><Checkbox label={path} /></Menu.Item>)}
+            {this.props.paths.map(path => <Menu.Item className='path' key={path}>{path}<Checkbox /></Menu.Item>)}
           </Menu>
         </div>
         <div className="bottom-div">
