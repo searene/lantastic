@@ -4,7 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
 const appConfig = {
-    entry: ['./src/App.tsx', './src/sass/style.scss'],
+    entry: ['./src/App.tsx'],
     output: {
         path: __dirname + '/lib',
         filename: 'bundle.js',
@@ -33,11 +33,16 @@ const appConfig = {
 
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader', 'postcss-loader', 'sass-loader']
-                })
+                loaders: ["style-loader", "css-loader", "sass-loader"]
             },
+
+            // {
+            //     test: /\.scss$/,
+            //     use: ExtractTextPlugin.extract({
+            //         fallback: 'style-loader',
+            //         use: ['css-loader', 'postcss-loader', 'sass-loader']
+            //     })
+            // },
             { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'file-loader?publicPath=../&outputPath=font/' }
         ]
     },

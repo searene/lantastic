@@ -8,6 +8,10 @@ import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { Preference } from './components/Preference';
 import Split = require('split.js');
+import { Provider } from 'react-redux';
+import { store } from './store/index';
+
+import './stylesheets/App.scss';
 
 export interface AppProps {
   deck: string;
@@ -61,7 +65,9 @@ export class App extends React.Component<AppProps, undefined> {
 }
 
 ReactDOM.render(
-  <App deck="Default" type="Basic" />,
-  // <Preference />,
+  <Provider store={store}>
+    {/* <App deck="Default" type="Basic" /> */}
+    <Preference />
+  </Provider>,
   document.getElementById('app')
 );

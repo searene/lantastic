@@ -1,5 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import Button from 'semantic-ui-react/dist/commonjs/elements/Button/Button';
+import Icon from 'semantic-ui-react/dist/commonjs/elements/Icon/Icon';
+import Checkbox from 'semantic-ui-react/dist/commonjs/modules/Checkbox/Checkbox';
+import Menu from 'semantic-ui-react/dist/commonjs/collections/Menu/Menu';
+
+import '../stylesheets/components/Scan.scss';
 
 export interface ScanProps {
   paths: string[]
@@ -33,71 +39,27 @@ export class Scan extends React.Component<ScanProps, undefined> {
   }
 
   render() {
-
-    const styles: React.CSSProperties = {
-      container: {
-        height: "100%",
-      },
-      pathContainer: {
-        display: "flex",
-        justifyContent: 'space-between',
-      },
-      scanPaths: {
-        height: "100%",
-      },
-      bottom: {
-        marginTop: "20px",
-        paddingTop: "10px",
-      },
-      span: {
-         marginBottom: "10px",
-      },
-      paths: {
-      },
-      add: {
-        float: "left",
-      },
-      remove: {
-        float: "left",
-      },
-      scan: {
-        float: "right",
-      },
-    }
-
-    const paths = this.props.paths.map((path, i) => {
-      return (
-          <a className="item path" key={path} style={styles.pathContainer}>
-            {path}
-            <div className="ui fitted checkbox">
-              <input type="checkbox" />
-              <label></label>
-            </div>
-          </a>
-      )
-    });
-
     return (
-      <div style={styles.container}>
-        <div style={styles.scanPaths}>
-          <div style={styles.span}>Scan Path:</div>
-          <div className="ui fluid vertical menu" style={styles.paths}>
-            {paths}
-          </div>
+      <div className="scan-container">
+        <div className="scan-path">
+          <div className="scan-path-label">Scan Path:</div>
+          <Menu vertical>
+            {this.props.paths.map(path => <Menu.Item><Checkbox label={path} /></Menu.Item>)}
+          </Menu>
         </div>
-        <div style={styles.bottom}>
-          <button className="ui right labeled icon button" style={styles.add}>
-            <i className="add icon"></i>
+        <div className="bottom-div">
+          <Button icon labelPosition='left'>
+            <Icon name='add' />
             Add
-          </button>
-          <button className="ui right labeled icon button" style={styles.remove}>
-            <i className="minus icon"></i>
+          </Button>
+          <Button icon labelPosition='left'>
+            <Icon name='minus' />
             Remove
-          </button>
-          <button className="ui teal right labeled icon button" style={styles.scan}>
-            <i className="search icon"></i>
+          </Button>
+          <Button icon labelPosition='left' color="teal" className="scan-button">
+            <Icon name='search' />
             Scan
-          </button>
+          </Button>
         </div>
       </div>
 
