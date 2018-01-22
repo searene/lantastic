@@ -2,6 +2,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
 
+// uncomment to make electron work
+// import * as electron from 'electron';
+
 import '../stylesheets/components/Scan.scss';
 
 export interface ScanProps {
@@ -45,7 +48,7 @@ export class Scan extends React.Component<ScanProps, undefined> {
           </Menu>
         </div>
         <div className="bottom-div">
-          <Button icon labelPosition='left'>
+          <Button icon labelPosition='left' onClick={this.handleClickOnAdd}>
             <Icon name='add' />
             Add
           </Button>
@@ -60,5 +63,15 @@ export class Scan extends React.Component<ScanProps, undefined> {
         </div>
       </div>
     )
+  }
+  private handleClickOnAdd = () => {
+    // uncomment to make electron work
+    // TODO add random string to this.props.paths using redux as a test
+
+    // electron.remote.dialog.showOpenDialog({
+    //   properties: ['openDirectory']
+    // }, filePaths => {
+    //   // TODO add filePaths to this.props.paths
+    // });
   }
 }

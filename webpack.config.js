@@ -3,13 +3,18 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
+if(process.env['APP_TSX_TARGET'] === 'web') {
+    plugins.push(new webpack.IgnorePlugin(/electron/));
+}
+
 const appConfig = {
     entry: ['./src/App.tsx'],
     output: {
-        path: __dirname + '/lib',
+        path: __dirname + '/dist',
         filename: 'bundle.js',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
+    target: process.env.IS_WEB === 'true' ? 'web' : 'electron',
     node: {
         __dirname: false,
         __filename: false,
@@ -48,13 +53,13 @@ const appConfig = {
     },
 
     plugins: [
-        new CleanWebpackPlugin(['lib'], {
+        new CleanWebpackPlugin(['dist'], {
             root: __dirname,
             verbose: true
         }),
         new CopyWebpackPlugin([{
             from: path.join(__dirname, 'src'),
-            to: path.join(__dirname, 'lib'),
+            to: path.join(__dirname, 'dist'),
             ignore: ['*.tsx', '*.ts', '*.scss', '*.ttf']
         }]),
         new ExtractTextPlugin('css/style.css'),
@@ -63,7 +68,7 @@ const appConfig = {
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
     // This is important because it allows us to avoid bundling all of our
-    // dependencies, which allows browsers to cache those libraries between builds.
+    // dependencies, which allows browsers to cache those distraries between builds.
     // externals: {
     //     "react": "React",
     //     "react-dom": "ReactDOM"
@@ -73,11 +78,11 @@ const appConfig = {
 const electronConfig = {
     entry: './src/Main.ts',
     output: {
-        path: __dirname + '/lib',
+        path: __dirname + '/dist',
         filename: 'main.js',
         devtoolModuleFilenameTemplate: '../[resource-path]',
     },
-    target: 'electron-main',
+    target: 'electron',
     node: {
         __dirname: false,
         __filename: false,
