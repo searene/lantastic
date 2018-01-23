@@ -2,8 +2,24 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
+const webpack = require('webpack');
 
-if(process.env['APP_TSX_TARGET'] === 'web') {
+plugins = [
+    new CleanWebpackPlugin(['dist'], {
+        root: __dirname,
+        verbose: true
+    }),
+    new CopyWebpackPlugin([{
+        from: path.join(__dirname, 'src'),
+        to: path.join(__dirname, 'dist'),
+        ignore: ['*.tsx', '*.ts', '*.scss', '*.ttf']
+    }]),
+    new ExtractTextPlugin('css/style.css'),
+    new webpack.DefinePlugin({
+        __IS_WEB__: JSON.stringify(process.env.IS_WEB === 'true')
+    }),
+];
+if(process.env.IS_WEB === 'true') {
     plugins.push(new webpack.IgnorePlugin(/electron/));
 }
 
@@ -52,18 +68,8 @@ const appConfig = {
         ]
     },
 
-    plugins: [
-        new CleanWebpackPlugin(['dist'], {
-            root: __dirname,
-            verbose: true
-        }),
-        new CopyWebpackPlugin([{
-            from: path.join(__dirname, 'src'),
-            to: path.join(__dirname, 'dist'),
-            ignore: ['*.tsx', '*.ts', '*.scss', '*.ttf']
-        }]),
-        new ExtractTextPlugin('css/style.css'),
-    ],
+    plugins: plugins,
+
 
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.

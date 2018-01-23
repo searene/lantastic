@@ -1,11 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
-
-// uncomment to make electron work
-// import * as electron from 'electron';
-
 import '../stylesheets/components/Scan.scss';
+
+declare var __IS_WEB__: boolean;
+
+/** prevent from importing electron when we are building a web app
+ *  http://ideasintosoftware.com/typescript-conditional-imports/ */
+import * as Electron from 'electron';
+let electron: typeof Electron;
+if(!__IS_WEB__) {
+  electron = require('electron');
+}
 
 export interface ScanProps {
   paths: string[]
@@ -65,13 +71,14 @@ export class Scan extends React.Component<ScanProps, undefined> {
     )
   }
   private handleClickOnAdd = () => {
-    // uncomment to make electron work
     // TODO add random string to this.props.paths using redux as a test
 
-    // electron.remote.dialog.showOpenDialog({
-    //   properties: ['openDirectory']
-    // }, filePaths => {
-    //   // TODO add filePaths to this.props.paths
-    // });
+    if(!__IS_WEB__) {
+      electron.remote.dialog.showOpenDialog({
+        properties: ['openDirectory']
+      }, filePaths => {
+        // TODO add filePaths to this.props.paths
+      });
+    }
   }
 }
