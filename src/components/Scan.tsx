@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import { actions } from '../actions/index'
 import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
-import { addPath, AddPathAction } from '../actions/index';
 import { AnyAction, Dispatch } from 'redux';
-import { ADD_PATH } from '../Constants';
 import { getType } from 'typesafe-actions';
 import '../stylesheets/components/Scan.scss';
 
@@ -20,13 +19,13 @@ if(!__IS_WEB__) {
 
 export interface ScanProps {
   paths: string[],
-  addPath: (path: string) => AddPathAction
+  addPath: (path: string) => any
 }
 const mapStateToProps = (state: ScanProps) => {
   return { paths: state.paths }
 };
-const mapDispatchToProps = (dispatch: Dispatch<AddPathAction>) => ({
-  addPath: (path: string) => dispatch(addPath(path))
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  addPath: (path: string) => dispatch(actions.addPath(path))
 });
 
 class ConnectedScan extends React.Component<ScanProps, {}> {

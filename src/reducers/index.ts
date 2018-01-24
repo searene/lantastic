@@ -1,22 +1,21 @@
+import { RootAction } from './../actions/index';
+import { getType } from 'typesafe-actions';
 import { AnyAction, Reducer, combineReducers } from "redux";
-import { ADD_PATH } from "../Constants";
+import { actions } from '../actions/index';
 
-interface ReduxState {
-  paths: string[]
+export type RootState = {
+  readonly paths: string[]
 }
-const initialState: ReduxState = {
+
+const initialState = {
   paths: ['a', 'b', 'c']
 };
 
-export const rootReducer: (state: ReduxState, action: AnyAction) => ReduxState = (state = initialState, action) => {
-  let nextState: ReduxState;
+export const rootReducer = (state: RootState, action: RootAction) => {
   switch(action.type) {
-    case(ADD_PATH):
-      nextState = { ...state, paths: state.paths.concat(action.payload) };
-      break;
+    case getType(actions.addPath):
+      return state + action.payload;
     default:
-      nextState = state;
-      break;
+      return state;
   }
-  return nextState;
 }
