@@ -28,7 +28,7 @@ export class Preference extends React.Component<PreferenceProps, undefined> {
             </Grid.Column>
             <Grid.Column width={12}>
               <Segment>
-                <Scan paths={['Run', 'Walk', 'Bike']}/>
+                <Scan />
               </Segment>
             </Grid.Column>
           </Grid.Row>

@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
+import { addPath, AddPathAction } from '../actions/index';
+import { AnyAction, Dispatch } from 'redux';
+import { ADD_PATH } from '../Constants';
+import { getType } from 'typesafe-actions';
 import '../stylesheets/components/Scan.scss';
 
 declare var __IS_WEB__: boolean;
@@ -14,10 +19,17 @@ if(!__IS_WEB__) {
 }
 
 export interface ScanProps {
-  paths: string[]
+  paths: string[],
+  addPath: (path: string) => AddPathAction
 }
+const mapStateToProps = (state: ScanProps) => {
+  return { paths: state.paths }
+};
+const mapDispatchToProps = (dispatch: Dispatch<AddPathAction>) => ({
+  addPath: (path: string) => dispatch(addPath(path))
+});
 
-export class Scan extends React.Component<ScanProps, undefined> {
+class ConnectedScan extends React.Component<ScanProps, {}> {
 
   componentDidMount() {
     const paths = document.getElementsByClassName('path');
@@ -71,7 +83,7 @@ export class Scan extends React.Component<ScanProps, undefined> {
     )
   }
   private handleClickOnAdd = () => {
-    // TODO add random string to this.props.paths using redux as a test
+    this.props.addPath('d');
 
     if(!__IS_WEB__) {
       electron.remote.dialog.showOpenDialog({
@@ -82,3 +94,4 @@ export class Scan extends React.Component<ScanProps, undefined> {
     }
   }
 }
+export const Scan = connect(mapStateToProps, mapDispatchToProps)(ConnectedScan);
