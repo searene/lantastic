@@ -1,10 +1,10 @@
 import { $call } from 'utility-types';
 import { createAction } from 'typesafe-actions';
 
-const ADD_PATH = 'ADD_PATH';
+const ADD_PATHS = 'ADD_PATHS';
 
 export const actions = {
-  addPath: createAction(ADD_PATH, (path: string) => ({ type: ADD_PATH, payload: path }))
+  addPaths: createAction(ADD_PATHS, (paths: string[]) => ({ type: ADD_PATHS, payload: paths }))
 }
 
 const returnsOfActions = Object.values(actions).map($call);

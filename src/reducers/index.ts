@@ -7,14 +7,14 @@ export type RootState = {
   readonly paths: string[]
 }
 
-const initialState = {
-  paths: ['a', 'b', 'c']
+const initialState: RootState = {
+  paths: ['a', 'b']
 };
 
-export const rootReducer = (state: RootState, action: RootAction) => {
+export const rootReducer = (state: RootState = initialState, action: RootAction) => {
   switch(action.type) {
-    case getType(actions.addPath):
-      return state + action.payload;
+    case getType(actions.addPaths):
+      return {...state, paths: state.paths.concat(action.payload)}
     default:
       return state;
   }

@@ -19,40 +19,24 @@ if(!__IS_WEB__) {
 
 export interface ScanProps {
   paths: string[],
-  addPath: (path: string) => any
+  addPaths: (paths: string[]) => any
 }
 const mapStateToProps = (state: ScanProps) => {
+  console.log(state);
   return { paths: state.paths }
 };
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  addPath: (path: string) => dispatch(actions.addPath(path))
+  addPaths: (paths: string[]) => dispatch(actions.addPaths(paths))
 });
 
 class ConnectedScan extends React.Component<ScanProps, {}> {
 
   componentDidMount() {
-    const paths = document.getElementsByClassName('path');
-    const onclick: EventListener = function(this: HTMLElement) {
-
-    }
-    for(let i = 0; i < paths.length; i++) {
-      paths[i].addEventListener('click', function(this: HTMLElement) {
-        this.classList.toggle('active');
-        for(let j = 0; j < this.children.length; j++) {
-          if(this.children[j].classList.contains('checkbox')) {
-            const child = this.children[j];
-            child.classList.toggle('checked');
-            for(let k = 0; k < child.children.length; k++) {
-              if(child.children[k].getAttribute('type') == 'checkbox') {
-                (child.children[k] as HTMLInputElement).checked = !(child.children[k] as HTMLInputElement).checked
-                break;
-              }
-            }
-            break;
-          }
-        }
-      });
-    }
+    const onclick: EventListener = function(this: HTMLElement) {}
+    this.setUpCheckbox();
+  }
+  componentDidUpdate() {
+    this.setUpCheckbox();
   }
 
   render() {
@@ -82,13 +66,35 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
     )
   }
   private handleClickOnAdd = () => {
-    this.props.addPath('d');
-
     if(!__IS_WEB__) {
       electron.remote.dialog.showOpenDialog({
         properties: ['openDirectory']
       }, filePaths => {
-        // TODO add filePaths to this.props.paths
+        this.props.addPaths(filePaths);
+      });
+    } else {
+      // just for testing
+      this.props.addPaths(['test folder']);
+    }
+  }
+  private setUpCheckbox() {
+    const paths = document.getElementsByClassName('path');
+    for(let i = 0; i < paths.length; i++) {
+      paths[i].addEventListener('click', function(this: HTMLElement) {
+        this.classList.toggle('active');
+        for(let j = 0; j < this.children.length; j++) {
+          if(this.children[j].classList.contains('checkbox')) {
+            const child = this.children[j];
+            child.classList.toggle('checked');
+            for(let k = 0; k < child.children.length; k++) {
+              if(child.children[k].getAttribute('type') == 'checkbox') {
+                (child.children[k] as HTMLInputElement).checked = !(child.children[k] as HTMLInputElement).checked
+                break;
+              }
+            }
+            break;
+          }
+        }
       });
     }
   }
