@@ -2,6 +2,7 @@ import { RootAction } from './../actions/index';
 import { getType } from 'typesafe-actions';
 import { AnyAction, Reducer, combineReducers } from "redux";
 import { actions } from '../actions/index';
+import { removeFromArray } from '../Utils';
 
 export type RootState = {
   readonly paths: string[]
@@ -35,7 +36,7 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
     case getType(actions.removeFromSelectedPaths):
       return {
         ...state,
-        selectedPaths: state.selectedPaths.filter(path => path != action.payload)
+        selectedPaths: removeFromArray(state.selectedPaths, action.payload)
       }
 
     default:
