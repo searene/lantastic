@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { actions } from '../actions/index'
-import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
+import { Button, Icon, Checkbox, Menu, CheckboxProps } from 'semantic-ui-react';
 import { AnyAction, Dispatch } from 'redux';
 import { getType } from 'typesafe-actions';
 import * as path from 'path';
@@ -19,19 +19,26 @@ if(!__IS_WEB__) {
 }
 
 export interface ScanProps {
-  paths: string[],
+  paths: string[]
+  selectedPaths: string[]
   addPaths: (paths: string[]) => any
+  removeSelectedPaths: () => any
+  addToSelectedPaths: (path: string) => any
+  removeFromSelectedPaths: (path: string) => any
 }
 export interface ScanStates {
-  message: string,
+  selectedPaths: string[]
+  message: string
 }
-const mapStateToProps = (state: ScanProps) => {
-  return {
-    paths: state.paths,
-  }
-};
+const mapStateToProps = (state: ScanProps) => ({
+  paths: state.paths,
+  selectedPaths: state.selectedPaths
+});
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  addPaths: (paths: string[]) => dispatch(actions.addPaths(paths))
+  addPaths: (paths: string[]) => dispatch(actions.addPaths(paths)),
+  removeSelectedPaths: () => dispatch(actions.removeSelectedPaths()),
+  addToSelectedPaths: (path: string) => dispatch(actions.addToSelectedPaths(path)),
+  removeFromSelectedPaths: (path: string) => dispatch(actions.removeFromSelectedPaths(path)),
 });
 
 class ConnectedScan extends React.Component<ScanProps, ScanStates> {
@@ -39,6 +46,7 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
   constructor(props: ScanProps) {
     super(props);
     this.state = {
+      selectedPaths: [],
       message: ''
     }
   }
@@ -47,6 +55,8 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
     // const onclick: EventListener = function(this: HTMLElement) {}
   }
 
+  private selectedPaths: string[] = [];
+
   render() {
     return (
       <div className="scan-container">
@@ -54,7 +64,14 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
           <div className="scan-path-label">Scan Path: {this.state.message}</div>
           <Menu vertical>
             {this.props.paths.map(path =>
-              <label key={path}><Menu.Item className="path">{path}<Checkbox /></Menu.Item></label>
+              <label key={path}>
+                <Menu.Item className="path">
+                  {path}
+                  <Checkbox
+                    checked={this.props.selectedPaths.indexOf(path) > -1}
+                    onChange={(event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {this.changeSelectedPath(path, data.checked)}} />
+                </Menu.Item>
+              </label>
             )}
           </Menu>
         </div>
@@ -63,7 +80,7 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
             <Icon name='add' />
             Add
           </Button>
-          <Button icon labelPosition='left'>
+          <Button icon labelPosition='left' onClick={this.handleClickOnRemove}>
             <Icon name='minus' />
             Remove
           </Button>
@@ -107,6 +124,16 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
       }
     }
     return finalAddedPaths;
+  }
+  private handleClickOnRemove = () => {
+    this.props.removeSelectedPaths();
+  }
+  private changeSelectedPath = (path: string, isAdded: boolean) => {
+    if(isAdded) {
+      this.props.addToSelectedPaths(path);
+    } else {
+      this.props.removeFromSelectedPaths(path);
+    }
   }
 }
 export const Scan = connect(mapStateToProps, mapDispatchToProps)(ConnectedScan);
