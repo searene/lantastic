@@ -5,6 +5,7 @@ import { actions } from '../actions/index'
 import { Button, Icon, Checkbox, Menu } from 'semantic-ui-react';
 import { AnyAction, Dispatch } from 'redux';
 import { getType } from 'typesafe-actions';
+import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 
 declare var __IS_WEB__: boolean;
@@ -21,31 +22,40 @@ export interface ScanProps {
   paths: string[],
   addPaths: (paths: string[]) => any
 }
+export interface ScanStates {
+  message: string,
+}
 const mapStateToProps = (state: ScanProps) => {
-  console.log(state);
-  return { paths: state.paths }
+  return {
+    paths: state.paths,
+  }
 };
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   addPaths: (paths: string[]) => dispatch(actions.addPaths(paths))
 });
 
-class ConnectedScan extends React.Component<ScanProps, {}> {
+class ConnectedScan extends React.Component<ScanProps, ScanStates> {
+
+  constructor(props: ScanProps) {
+    super(props);
+    this.state = {
+      message: ''
+    }
+  }
 
   componentDidMount() {
-    const onclick: EventListener = function(this: HTMLElement) {}
-    this.setUpCheckbox();
-  }
-  componentDidUpdate() {
-    this.setUpCheckbox();
+    // const onclick: EventListener = function(this: HTMLElement) {}
   }
 
   render() {
     return (
       <div className="scan-container">
         <div className="scan-path">
-          <div className="scan-path-label">Scan Path:</div>
+          <div className="scan-path-label">Scan Path: {this.state.message}</div>
           <Menu vertical>
-            {this.props.paths.map(path => <Menu.Item className='path' key={path}>{path}<Checkbox /></Menu.Item>)}
+            {this.props.paths.map(path =>
+              <label key={path}><Menu.Item className="path">{path}<Checkbox /></Menu.Item></label>
+            )}
           </Menu>
         </div>
         <div className="bottom-div">
@@ -66,37 +76,37 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
     )
   }
   private handleClickOnAdd = () => {
+    let addedPaths: string[];
     if(!__IS_WEB__) {
       electron.remote.dialog.showOpenDialog({
         properties: ['openDirectory']
       }, filePaths => {
-        this.props.addPaths(filePaths);
+        addedPaths = filePaths;
       });
     } else {
       // just for testing
-      this.props.addPaths(['test folder']);
+      addedPaths = ['/home/searene'];
     }
+    let addedPathsAfterRemovingDuplicates = this.removeDuplicates(addedPaths, this.props.paths);
+    this.props.addPaths(addedPathsAfterRemovingDuplicates);
   }
-  private setUpCheckbox() {
-    const paths = document.getElementsByClassName('path');
-    for(let i = 0; i < paths.length; i++) {
-      paths[i].addEventListener('click', function(this: HTMLElement) {
-        this.classList.toggle('active');
-        for(let j = 0; j < this.children.length; j++) {
-          if(this.children[j].classList.contains('checkbox')) {
-            const child = this.children[j];
-            child.classList.toggle('checked');
-            for(let k = 0; k < child.children.length; k++) {
-              if(child.children[k].getAttribute('type') == 'checkbox') {
-                (child.children[k] as HTMLInputElement).checked = !(child.children[k] as HTMLInputElement).checked
-                break;
-              }
-            }
-            break;
-          }
+  private removeDuplicates = (addedPaths: string[], previousPaths: string[]) => {
+    let duplicateIndex: number[] = [];
+    for(let i = 0; i < addedPaths.length; i++) {
+      for(let previousPath of previousPaths) {
+        if(path.normalize(addedPaths[i]) === path.normalize(previousPath)) {
+          // found a duplicate
+          duplicateIndex.push(i);
         }
-      });
+      }
     }
+    let finalAddedPaths: string[] = [];
+    for(let i = 0; i < addedPaths.length; i++) {
+      if(duplicateIndex.indexOf(i) === -1) {
+        finalAddedPaths.push(addedPaths[i]);
+      }
+    }
+    return finalAddedPaths;
   }
 }
 export const Scan = connect(mapStateToProps, mapDispatchToProps)(ConnectedScan);
