@@ -20,7 +20,7 @@ plugins = [
     }),
 ];
 if(process.env.IS_WEB === 'true') {
-    plugins.push(new webpack.IgnorePlugin(/electron/));
+    plugins.push(new webpack.IgnorePlugin(/(electron|dict-parser)/));
 }
 
 const appConfig = {
@@ -105,7 +105,7 @@ const electronConfig = {
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
         ]
-    }
+    },
 };
 
 

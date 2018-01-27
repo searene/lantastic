@@ -63,6 +63,7 @@
     "typesafe-actions": "^1.1.2",
     "typescript": "2.6.2",
     "utility-types": "^1.0.0",
-    "webpack": "3.10.0"
+    "webpack": "3.10.0",
+    "dict-parser": "file:../DictParser"
   }
 }

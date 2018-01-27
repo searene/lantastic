@@ -7,11 +7,13 @@ import { removeFromArray } from '../Utils';
 export type RootState = {
   readonly paths: string[]
   readonly selectedPaths: string[]
+  readonly scanMessage: string
 }
 
 const initialState: RootState = {
-  paths: ['a', 'b'],
-  selectedPaths: []
+  paths: ['/mnt/HDD/dictionaries/longman5'],
+  selectedPaths: [],
+  scanMessage: '',
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -37,6 +39,12 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         selectedPaths: removeFromArray(state.selectedPaths, action.payload)
+      }
+
+    case getType(actions.setScanMessage):
+      return {
+        ...state,
+        scanMessage: action.message
       }
 
     default:
