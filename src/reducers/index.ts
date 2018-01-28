@@ -10,6 +10,7 @@ export type RootState = {
   readonly scanMessage: string
   readonly definitions: string
   readonly word: string
+  readonly isPreferencesOpen: boolean
 }
 
 const initialState: RootState = {
@@ -18,6 +19,7 @@ const initialState: RootState = {
   scanMessage: '',
   definitions: '',
   word: '',
+  isPreferencesOpen: false
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -61,6 +63,12 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         word: action.word
+      }
+
+    case getType(actions.setPreferencesVisibility):
+      return {
+        ...state,
+        isPreferencesOpen: action.visibility
       }
 
     default:

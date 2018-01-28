@@ -54,31 +54,31 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-const template = [{
-  label: 'File',
-  submenu: [
-    {
-      label: 'Preferences',
-      click: () => {
+// const template = [{
+//   label: 'File',
+//   submenu: [
+//     {
+//       label: 'Preferences',
+//       click: () => {
 
-      }
-    }, {
-      type: 'separator' as 'separator'
-    }, {
-      role: 'quit'
-    }
-  ]
-}, {
-  label: 'View',
-  submenu: [
-    {
-      label: 'Toggle Developer Tools',
-      accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-      click: (menuItem: MenuItem, browserWindow: BrowserWindow, event: Event) => {
-        browserWindow.webContents.toggleDevTools();
-      }
-    }
-  ]
-}];
-const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+//       }
+//     }, {
+//       type: 'separator' as 'separator'
+//     }, {
+//       role: 'quit'
+//     }
+//   ]
+// }, {
+//   label: 'View',
+//   submenu: [
+//     {
+//       label: 'Toggle Developer Tools',
+//       accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+//       click: (menuItem: MenuItem, browserWindow: BrowserWindow, event: Event) => {
+//         browserWindow.webContents.toggleDevTools();
+//       }
+//     }
+//   ]
+// }];
+// const menu = Menu.buildFromTemplate(template);
+// Menu.setApplicationMenu(menu);

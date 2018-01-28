@@ -8,6 +8,7 @@ const REMOVE_FROM_SELECTED_PATHS = 'REMOVE_FROM_SELECTED_PATHS';
 const SCAN_MESSAGE = 'SCAN_MESSAGE';
 const DEFINITIONS = 'DEFINITIONS';
 const WORD = 'WORD';
+const PREFERENCES_VISIBILITY = 'PREFERENCES_VISIBILITY';
 
 export const actions = {
   addPaths: createAction(ADD_PATHS, (paths: string[]) => ({ type: ADD_PATHS, payload: paths })),
@@ -17,6 +18,7 @@ export const actions = {
   setScanMessage: createAction(SCAN_MESSAGE, (message: string) => ({ type: SCAN_MESSAGE, message: message })),
   setWord: createAction(WORD, (word: string) => ({ type: WORD, word: word })),
   setDefinitions: createAction(DEFINITIONS, (definitions: string) => ({ type: DEFINITIONS, definitions: definitions })),
+  setPreferencesVisibility: createAction(PREFERENCES_VISIBILITY, (visibility: boolean) => ({ type: PREFERENCES_VISIBILITY, visibility: visibility })),
 }
 
 const returnsOfActions = Object.values(actions).map($call);

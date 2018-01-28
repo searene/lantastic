@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SplitPane from 'react-split-pane';
-import { Grid, Input, Button, Container } from 'semantic-ui-react';
+import { Grid, Input, Button, Container, Modal } from 'semantic-ui-react';
 import { Field } from './components/Field';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
-import { Preference } from './components/Preference';
+import { Preferences } from './components/Preferences';
 import Split = require('split.js');
 import { Provider } from 'react-redux';
 import { store } from './store/index';
@@ -59,6 +59,9 @@ export class App extends React.Component<AppProps, undefined> {
         <div style={styles.row2} id="row2">
           <Footer deck="Default" type="Basic" />
         </div>
+
+        <Preferences />
+
       </div>
     );
   }
@@ -67,7 +70,8 @@ export class App extends React.Component<AppProps, undefined> {
 ReactDOM.render(
   <Provider store={store}>
     <App deck="Default" type="Basic" />
-    {/* <Preference /> */}
+
+
   </Provider>,
   document.getElementById('app')
 );

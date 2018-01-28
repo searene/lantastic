@@ -9,10 +9,9 @@ import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 import { getPathToLantastic, createDirIfNotExists } from '../Utils';
 
-declare var __IS_WEB__: boolean;
-
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
+declare var __IS_WEB__: boolean;
 import * as Electron from 'electron';
 import { dictParser as DictParser } from '../Parser';
 let electron: typeof Electron;
@@ -102,19 +101,19 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
     )
   }
   private handleClickOnAdd = () => {
-    let addedPaths: string[];
     if(!__IS_WEB__) {
       electron.remote.dialog.showOpenDialog({
         properties: ['openDirectory']
       }, filePaths => {
-        addedPaths = filePaths;
+        let addedPathsAfterRemovingDuplicates = this.removeDuplicates(filePaths, this.props.paths);
+        this.props.addPaths(addedPathsAfterRemovingDuplicates);
       });
     } else {
       // just for testing
-      addedPaths = ['/home/searene'];
+      const filePaths = ['/home/searene'];
+      let addedPathsAfterRemovingDuplicates = this.removeDuplicates(filePaths, this.props.paths);
+      this.props.addPaths(addedPathsAfterRemovingDuplicates);
     }
-    let addedPathsAfterRemovingDuplicates = this.removeDuplicates(addedPaths, this.props.paths);
-    this.props.addPaths(addedPathsAfterRemovingDuplicates);
   }
   private removeDuplicates = (addedPaths: string[], previousPaths: string[]) => {
     let duplicateIndex: number[] = [];
