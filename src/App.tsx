@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as SplitPane from 'react-split-pane';
 import { Grid, Input, Button, Container } from 'semantic-ui-react';
-import { Dictionary } from './components/Dictionary';
 import { Field } from './components/Field';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
@@ -67,8 +66,8 @@ export class App extends React.Component<AppProps, undefined> {
 
 ReactDOM.render(
   <Provider store={store}>
-    {/* <App deck="Default" type="Basic" /> */}
-    <Preference />
+    <App deck="Default" type="Basic" />
+    {/* <Preference /> */}
   </Provider>,
   document.getElementById('app')
 );

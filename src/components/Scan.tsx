@@ -3,18 +3,18 @@ import * as ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { actions } from '../actions/index'
 import { Button, Icon, Checkbox, Menu, CheckboxProps } from 'semantic-ui-react';
-import { AnyAction, Dispatch } from 'redux';
+import { Dispatch } from 'redux';
 import { getType } from 'typesafe-actions';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
-import { dictParser as DictParser } from '../Parser';
+import { getPathToLantastic, createDirIfNotExists } from '../Utils';
 
 declare var __IS_WEB__: boolean;
 
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 import * as Electron from 'electron';
-import { getPathToLantastic, createDirIfNotExists } from '../Utils';
+import { dictParser as DictParser } from '../Parser';
 let electron: typeof Electron;
 let dictParser: typeof DictParser;
 if(!__IS_WEB__) {
@@ -154,7 +154,7 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
         this.props.setScanMessage(`Scanning ${dictionaryName}...`);
       });
       await createDirIfNotExists(getPathToLantastic());
-      let dictMap = await dictParser.scan(this.props.paths[0]);
+      let dictMap = await dictParser.scan(this.props.paths);
       this.props.setScanMessage('Scan is completed');
     }
   }

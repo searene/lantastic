@@ -8,12 +8,16 @@ export type RootState = {
   readonly paths: string[]
   readonly selectedPaths: string[]
   readonly scanMessage: string
+  readonly definitions: string
+  readonly word: string
 }
 
 const initialState: RootState = {
   paths: ['/home/searene/Public/dz'],
   selectedPaths: [],
   scanMessage: '',
+  definitions: '',
+  word: '',
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -45,6 +49,18 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         scanMessage: action.message
+      }
+
+    case getType(actions.setDefinitions):
+      return {
+        ...state,
+        definitions: action.definitions
+      }
+      
+    case getType(actions.setWord):
+      return {
+        ...state,
+        word: action.word
       }
 
     default:
