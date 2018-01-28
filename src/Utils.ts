@@ -25,6 +25,9 @@ export function getPathToDbFile() {
 export function getPathToWordFormsFolder() {
   return path.join(__dirname, '../node_modules/dict-parser/lib/resources/wordforms');
 }
+export function getPathToCssFile() {
+  return path.join(__dirname, '../node_modules/dict-parser/lib/resources/style.css');
+}
 export async function createDirIfNotExists(dir: string) {
   if(!await fse.pathExists(dir)) {
     await fse.mkdir(dir);

@@ -4,6 +4,7 @@ import { actions } from '../actions/index'
 import { Dispatch } from 'redux';
 
 import { Grid, Input, Form, TextArea } from 'semantic-ui-react';
+import '../stylesheets/components/Dictionary.scss'
 
 
 declare var __IS_WEB__: boolean;
@@ -12,6 +13,7 @@ declare var __IS_WEB__: boolean;
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 import { dictParser as DictParser } from '../Parser';
 import { connect } from 'react-redux';
+import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
 let dictParser: typeof DictParser;
 if(!__IS_WEB__) {
   dictParser = require('../Parser').dictParser;
@@ -41,6 +43,17 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
             inputValue: ''
         };
     }
+
+    private definitionRowElement: HTMLDivElement;
+
+    componentDidMount() {
+      document.getElementsByClassName('definition-row')[0].innerHTML = this.props.definitions;
+    }
+
+    componentDidUpdate() {
+      document.getElementsByClassName('definition-row')[0].innerHTML = this.props.definitions;
+    }
+
     render() {
         const styles: React.CSSProperties = {
             searchRow: {
@@ -49,19 +62,6 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
                 width: "100%",
                 height: "3.5em",
                 marginTop: "5px",
-                marginLeft: "auto",
-                marginRight: "auto",
-            },
-            definitionRow: {
-                marginTop: "0",
-                marginBottom: "10px",
-                paddingTop: "0",
-                paddingBottom: "5px",
-                flexGrow: 2,
-                height: "100%",
-                overflow: "auto",
-                borderRadius: 0,
-                width: "100%",
                 marginLeft: "auto",
                 marginRight: "auto",
             },
@@ -89,17 +89,19 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
                     ></input>
                     <i className="circular search link icon" style={styles.searchIcon} onClick={this.search}></i>
                 </div>
-                <div className="ui segment" style={styles.definitionRow}>
-                </div>
+                <Segment
+                  className="definition-row" />
             </div>
         )
     }
     private search = async () => {
         const wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
+        let html = '';
         for(const wordDefinition of wordDefinitions) {
-
+          html += wordDefinition.html;
         }
+        this.props.setDefinitions(html);
     }
 }
 
-export const Dictionary = connect(mapStateToProps, mapDispatchToProps)(ConnectedDictionary);
+export const Dictionary = connect(mapStateToProps, mapDispatchToProps, null, {withRef: true})(ConnectedDictionary);
