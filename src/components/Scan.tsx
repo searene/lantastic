@@ -14,6 +14,7 @@ declare var __IS_WEB__: boolean;
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 import * as Electron from 'electron';
+import { getPathToLantastic, createDirIfNotExists } from '../Utils';
 let electron: typeof Electron;
 let dictParser: typeof DictParser;
 if(!__IS_WEB__) {
@@ -152,6 +153,7 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
       dictParser.on('name', (dictionaryName: string) => {
         this.props.setScanMessage(`Scanning ${dictionaryName}...`);
       });
+      await createDirIfNotExists(getPathToLantastic());
       let dictMap = await dictParser.scan(this.props.paths[0]);
       this.props.setScanMessage('Scan is completed');
     }

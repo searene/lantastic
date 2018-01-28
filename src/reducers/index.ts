@@ -11,7 +11,7 @@ export type RootState = {
 }
 
 const initialState: RootState = {
-  paths: ['/mnt/HDD/dictionaries/longman5'],
+  paths: ['/home/searene/Public/dz'],
   selectedPaths: [],
   scanMessage: '',
 };

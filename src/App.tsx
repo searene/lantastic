@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/index';
 
 import './stylesheets/App.scss';
+import { getPathToLantastic, createDirIfNotExists } from './Utils';
 
 export interface AppProps {
   deck: string;

@@ -20,7 +20,7 @@ plugins = [
     }),
 ];
 if(process.env.IS_WEB === 'true') {
-    plugins.push(new webpack.IgnorePlugin(/(electron|dict-parser)/));
+    plugins.push(new webpack.IgnorePlugin(/(electron|dict-parser|fs-extra)/));
 }
 
 const appConfig = {

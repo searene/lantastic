@@ -20,9 +20,11 @@
   },
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
+    "@types/fs-extra": "^5.0.0",
     "@types/react-split-pane": "0.1.10",
     "@types/redux": "^3.6.0",
     "components-font-awesome": "4.6.3",
+    "fs-extra": "^5.0.0",
     "react": "16.2.0",
     "react-split-pane": "0.1.74",
     "react-tap-event-plugin": "3.0.2",
