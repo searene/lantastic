@@ -6,7 +6,6 @@ declare var __IS_WEB__: boolean;
 if(!__IS_WEB__) {
   fse = require('fs-extra');
 }
-
 export function removeFromArray<T>(array: Array<T>, element: T): Array<T> {
   return array.filter(a => a != element);
 }
@@ -25,11 +24,11 @@ export function getPathToDbFile() {
 export function getPathToWordFormsFolder() {
   return path.join(__dirname, '../node_modules/dict-parser/lib/resources/wordforms');
 }
-export function getPathToCssFile() {
-  return path.join(__dirname, '../node_modules/dict-parser/lib/resources/style.css');
-}
 export async function createDirIfNotExists(dir: string) {
   if(!await fse.pathExists(dir)) {
     await fse.mkdir(dir);
   }
+}
+export function getPathToDictionaryResources() {
+  return './resources/dictionaries';
 }

@@ -4,7 +4,11 @@ import { actions } from '../actions/index'
 import { Dispatch } from 'redux';
 
 import { Grid, Input, Form, TextArea } from 'semantic-ui-react';
-import '../stylesheets/components/Dictionary.scss'
+import '../stylesheets/components/Dictionary.scss';
+
+// definition related styles
+import '../stylesheets/dictionaries/common.scss';
+import '../stylesheets/dictionaries/dsl.scss';
 
 
 declare var __IS_WEB__: boolean;
