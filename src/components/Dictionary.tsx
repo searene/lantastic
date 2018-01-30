@@ -51,11 +51,11 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
     private definitionRowElement: HTMLDivElement;
 
     componentDidMount() {
-      document.getElementsByClassName('definition-row')[0].innerHTML = this.props.definitions;
+      document.getElementsByClassName('definition')[0].innerHTML = this.props.definitions;
     }
 
     componentDidUpdate() {
-      document.getElementsByClassName('definition-row')[0].innerHTML = this.props.definitions;
+      document.getElementsByClassName('definition')[0].innerHTML = this.props.definitions;
     }
 
     render() {
@@ -83,18 +83,15 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
         }
         return (
             <div style={styles.container}>
-                <div className="ui icon input" style={styles.searchRow}>
-                    <input
-                        type="text"
-                        placeholder="Search in dictionaries..."
-                        style={styles.input}
-                        onChange={(evt) => this.props.setWord(evt.target.value)}
-                        value={this.props.word}
-                    ></input>
-                    <i className="circular search link icon" style={styles.searchIcon} onClick={this.search}></i>
-                </div>
-                <Segment
-                  className="definition-row" />
+              <Input
+                icon="search"
+                placeholder="Search in dictionaries..."
+                style={styles.input}
+                value={this.props.word}
+                className="search-input"
+                onChange={(evt) => this.props.setWord((evt.target as HTMLInputElement).value)} />
+              <Segment
+                className="definition" />
             </div>
         )
     }
