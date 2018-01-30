@@ -18,16 +18,17 @@ declare var __IS_WEB__: boolean;
 import { dictParser as DictParser } from '../Parser';
 import { connect } from 'react-redux';
 import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
+import { ReactEventHandler } from 'react';
 let dictParser: typeof DictParser;
-if(!__IS_WEB__) {
+if (!__IS_WEB__) {
   dictParser = require('../Parser').dictParser;
 }
 
 interface DictionaryProps {
-    word: string
-    definitions: string
-    setWord: (word: string) => any
-    setDefinitions: (definitions: string) => any
+  word: string
+  definitions: string
+  setWord: (word: string) => any
+  setDefinitions: (definitions: string) => any
 }
 
 const mapStateToProps = (state: DictionaryProps) => ({
@@ -41,68 +42,77 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 
 class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
 
-    constructor(props: DictionaryProps) {
-        super(props);
-        this.state = {
-            inputValue: ''
-        };
-    }
+  constructor(props: DictionaryProps) {
+    super(props);
+    this.state = {
+      inputValue: ''
+    };
+  }
 
-    private definitionRowElement: HTMLDivElement;
+  private definitionRowElement: HTMLDivElement;
 
-    componentDidMount() {
-      document.getElementsByClassName('definition')[0].innerHTML = this.props.definitions;
-    }
+  componentDidMount() {
+    this.populateDefinition();
+  }
 
-    componentDidUpdate() {
-      document.getElementsByClassName('definition')[0].innerHTML = this.props.definitions;
-    }
+  componentDidUpdate() {
+    this.populateDefinition();
+  }
 
-    render() {
-        const styles: React.CSSProperties = {
-            searchRow: {
-                paddingBottom: "0.5em",
-                flexGrow: 1,
-                width: "100%",
-                height: "3.5em",
-                marginTop: "5px",
-                marginLeft: "auto",
-                marginRight: "auto",
-            },
-            input: {
-                borderRadius: 0,
-            },
-            container: {
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-            },
-            searchIcon: {
+  render() {
+    const styles: React.CSSProperties = {
+      searchRow: {
+        paddingBottom: "0.5em",
+        flexGrow: 1,
+        width: "100%",
+        height: "3.5em",
+        marginTop: "5px",
+        marginLeft: "auto",
+        marginRight: "auto",
+      },
+      input: {
+        borderRadius: 0,
+      },
+      container: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      },
+      searchIcon: {
 
-            }
-        }
-        return (
-            <div style={styles.container}>
-              <Input
-                icon="search"
-                placeholder="Search in dictionaries..."
-                style={styles.input}
-                value={this.props.word}
-                className="search-input"
-                onChange={(evt) => this.props.setWord((evt.target as HTMLInputElement).value)} />
-              <Segment
-                className="definition" />
-            </div>
-        )
+      }
     }
-    private search = async () => {
-        const wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
-        let html = '';
-        for(const wordDefinition of wordDefinitions) {
-          html += wordDefinition.html;
-        }
-        this.props.setDefinitions(html);
+    return (
+      <div style={styles.container}>
+        <Input
+          icon="search"
+          placeholder="Search in dictionaries..."
+          style={styles.input}
+          value={this.props.word}
+          className="search-input"
+          onKeyDown={this.handleOnKeyDown}
+          onChange={(evt) => this.props.setWord((evt.target as HTMLInputElement).value)} />
+        <Segment
+          className="definition" />
+      </div>
+    )
+  }
+  private search = async () => {
+    const wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
+    let html = '';
+    for (const wordDefinition of wordDefinitions) {
+      html += wordDefinition.html;
     }
+    this.props.setDefinitions(html);
+  }
+  private handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if(event.key === 'Enter') {
+      this.search();
+    }
+  }
+  private populateDefinition = () => {
+    document.getElementsByClassName('definition')[0].innerHTML = this.props.definitions;
+  }
 }
 
-export const Dictionary = connect(mapStateToProps, mapDispatchToProps, null, {withRef: true})(ConnectedDictionary);
+export const Dictionary = connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(ConnectedDictionary);
