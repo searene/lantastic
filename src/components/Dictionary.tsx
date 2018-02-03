@@ -1,24 +1,20 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { actions } from '../actions/index'
+import { actions } from '../actions'
 import { Dispatch } from 'redux';
-
-import { Grid, Input, Form, TextArea } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import { Input, Segment } from 'semantic-ui-react';
 import '../stylesheets/components/Dictionary.scss';
 
 // definition related styles
 import '../stylesheets/dictionaries/common.scss';
 import '../stylesheets/dictionaries/dsl.scss';
 
-
 declare var __IS_WEB__: boolean;
 
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 import { dictParser as DictParser } from '../Parser';
-import { connect } from 'react-redux';
-import Segment from 'semantic-ui-react/dist/commonjs/elements/Segment/Segment';
-import { ReactEventHandler } from 'react';
+import {WordDefinition} from "dict-parser";
 let dictParser: typeof DictParser;
 if (!__IS_WEB__) {
   dictParser = require('../Parser').dictParser;
@@ -26,18 +22,18 @@ if (!__IS_WEB__) {
 
 interface DictionaryProps {
   word: string
-  definitions: string
+  wordDefinitions: WordDefinition[]
   setWord: (word: string) => any
-  setDefinitions: (definitions: string) => any
+  setWordDefinitions: (wordDefinitions: WordDefinition[]) => any
 }
 
 const mapStateToProps = (state: DictionaryProps) => ({
   word: state.word,
-  definitions: state.definitions,
+  wordDefinitions: state.wordDefinitions,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   setWord: (word: string) => dispatch(actions.setWord(word)),
-  setDefinitions: (definitions: string) => dispatch(actions.setDefinitions(definitions)),
+  setWordDefinitions: (wordDefinitions: WordDefinition[]) => dispatch(actions.setWordDefinitions(wordDefinitions)),
 });
 
 class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
@@ -49,14 +45,19 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
     };
   }
 
-  private definitionRowElement: HTMLDivElement;
-
   componentDidMount() {
     this.populateDefinition();
   }
 
   componentDidUpdate() {
     this.populateDefinition();
+    const audios = document.getElementsByClassName("audio");
+    for(let i = 0; i < audios.length; i++) {
+      const audio = audios[i] as HTMLLinkElement;
+      const resourceName = audio.dataset['resource-name'];
+      audio.addEventListener('click', (event) => {
+      });
+    }
   }
 
   render() {
@@ -81,7 +82,7 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
       searchIcon: {
 
       }
-    }
+    };
     return (
       <div style={styles.container}>
         <Input
@@ -99,19 +100,22 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
   }
   private search = async () => {
     const wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
-    let html = '';
-    for (const wordDefinition of wordDefinitions) {
-      html += wordDefinition.html;
-    }
-    this.props.setDefinitions(html);
-  }
+    this.props.setWordDefinitions(wordDefinitions);
+  };
   private handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if(event.key === 'Enter') {
       this.search();
     }
-  }
+  };
   private populateDefinition = () => {
-    document.getElementsByClassName('definition')[0].innerHTML = this.props.definitions;
+    document.getElementsByClassName('definition')[0].innerHTML = this.getDefinitionHTMLs();
+  };
+  private getDefinitionHTMLs(): string {
+    let html = '';
+    for (const wordDefinition of this.props.wordDefinitions) {
+      html += wordDefinition.html;
+    }
+    return html;
   }
 }
 

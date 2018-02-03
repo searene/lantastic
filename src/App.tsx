@@ -1,17 +1,14 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as SplitPane from 'react-split-pane';
-import { Grid, Input, Button, Container, Modal } from 'semantic-ui-react';
 import { Field } from './components/Field';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { Preferences } from './components/Preferences';
 import Split = require('split.js');
 import { Provider } from 'react-redux';
-import { store } from './store/index';
+import { store } from './store';
 
 import './stylesheets/App.scss';
-import { getPathToLantastic, createDirIfNotExists } from './Utils';
 
 export interface AppProps {
   deck: string;
@@ -70,8 +67,6 @@ export class App extends React.Component<AppProps, undefined> {
 ReactDOM.render(
   <Provider store={store}>
     <App deck="Default" type="Basic" />
-
-
   </Provider>,
   document.getElementById('app')
 );
