@@ -12,6 +12,8 @@ export type RootState = {
   readonly wordDefinitions: WordDefinition[]
   readonly word: string
   readonly isPreferencesOpen: boolean
+  readonly frontCardContents: string;
+  readonly backCardContents: string;
 }
 
 const initialState: RootState = {
@@ -20,7 +22,9 @@ const initialState: RootState = {
   scanMessage: '',
   wordDefinitions: [],
   word: '',
-  isPreferencesOpen: false
+  isPreferencesOpen: false,
+  frontCardContents: '',
+  backCardContents: '',
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -70,6 +74,18 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         isPreferencesOpen: action.visibility
+      };
+
+    case getType(actions.setFrontCardContents):
+      return {
+        ...state,
+        frontCardContents: action.contents
+      };
+
+    case getType(actions.setBackCardContents):
+      return {
+        ...state,
+        backCardContents: action.contents
       };
 
     default:

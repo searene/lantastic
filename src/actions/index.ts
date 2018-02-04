@@ -10,6 +10,8 @@ const SCAN_MESSAGE = 'SCAN_MESSAGE';
 const WORD_DEFINITIONS = 'WORD_DEFINITIONS';
 const WORD = 'WORD';
 const PREFERENCES_VISIBILITY = 'PREFERENCES_VISIBILITY';
+const FRONT_CARD_CONTENTS = 'FRONT_CARD_CONTENTS';
+const BACK_CARD_CONTENTS = 'BACK_CARD_CONTENTS';
 
 export const actions = {
   addPaths: createAction(ADD_PATHS, (paths: string[]) => ({ type: ADD_PATHS, payload: paths })),
@@ -20,6 +22,8 @@ export const actions = {
   setWord: createAction(WORD, (word: string) => ({ type: WORD, word: word })),
   setWordDefinitions: createAction(WORD_DEFINITIONS, (wordDefinitions: WordDefinition[]) => ({ type: WORD_DEFINITIONS, wordDefinitions: wordDefinitions })),
   setPreferencesVisibility: createAction(PREFERENCES_VISIBILITY, (visibility: boolean) => ({ type: PREFERENCES_VISIBILITY, visibility: visibility })),
+  setFrontCardContents: createAction(FRONT_CARD_CONTENTS, (contents: string) => ({ type: FRONT_CARD_CONTENTS, contents: contents })),
+  setBackCardContents: createAction(BACK_CARD_CONTENTS, (contents: string) => ({ type: BACK_CARD_CONTENTS, contents: contents })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);

@@ -46,12 +46,11 @@ export class App extends React.Component<AppProps, undefined> {
         overflow: "auto",
       },
     };
-    let descriptions: string[] = ['front', 'back'];
     return (
       <div style={styles.container}>
         <div style={styles.row1} id="row1">
             <Navbar />
-            <Field descriptions={descriptions}/>
+            <Field />
         </div>
         <div style={styles.row2} id="row2">
           <Footer deck="Default" type="Basic" />
