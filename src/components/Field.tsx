@@ -3,6 +3,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {Button, Form, TextArea} from 'semantic-ui-react';
 import {actions} from "../actions";
+import {cardDb} from "../CardDb";
 
 export interface FieldProps {
   frontCardContents: string
@@ -80,8 +81,14 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
     );
   }
   private add = () => {
-    console.log(this.props.frontCardContents);
-    console.log(this.props.backCardContents);
+    cardDb.get('cards')
+      .push({
+        front: this.props.frontCardContents,
+        back: this.props.backCardContents,
+      })
+      .write();
+    this.props.setFrontCardContents('');
+    this.props.setBackCardContents('');
   }
 }
 export const Field = connect(mapStateToProps, mapDispatchToProps)(ConnectedField);
