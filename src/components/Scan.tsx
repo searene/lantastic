@@ -1,14 +1,3 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { connect } from 'react-redux';
-import { actions } from '../actions/index'
-import { Button, Icon, Checkbox, Menu, CheckboxProps } from 'semantic-ui-react';
-import { Dispatch } from 'redux';
-import { getType } from 'typesafe-actions';
-import * as path from 'path';
-import '../stylesheets/components/Scan.scss';
-import { getPathToLantastic, createDirIfNotExists } from '../Utils';
-
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 declare var __IS_WEB__: boolean;
@@ -20,6 +9,16 @@ if(!__IS_WEB__) {
   electron = require('electron');
   dictParser = require('../Parser').dictParser;
 }
+
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { actions } from '../actions';
+import { Button, Icon, Checkbox, Menu, CheckboxProps } from 'semantic-ui-react';
+import { Dispatch } from 'redux';
+import * as path from 'path';
+import '../stylesheets/components/Scan.scss';
+import { getPathToLantastic, createDirIfNotExists } from '../Utils';
+
 
 export interface ScanProps {
   paths: string[]

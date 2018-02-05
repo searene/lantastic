@@ -1,9 +1,15 @@
+declare var __IS_WEB__: boolean;
+import {cardDb as CardDb} from '../CardDb';
+let cardDb: typeof CardDb;
+if(!__IS_WEB__) {
+  cardDb = require('../CardDb');
+}
+
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {Button, Form, TextArea} from 'semantic-ui-react';
 import {actions} from "../actions";
-import {cardDb} from "../CardDb";
 
 export interface FieldProps {
   frontCardContents: string
@@ -75,7 +81,7 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
             icon='add'
             labelPosition='left'
             onClick={this.add}
-            style={style.addButton}/>
+            style={style.addButton} />
         </div>
       </div>
     );
