@@ -2,6 +2,13 @@ import * as low from 'lowdb';
 import * as FileSync from 'lowdb/adapters/FileSync';
 import {getPathToCardDbFile} from "./Utils";
 
+export interface Card {
+  front: string,
+  back: string,
+  creationDate: string,
+  nextReviewDate: string,
+}
+
 class CardDb {
   private static _instance: low.Lowdb<{} & { readonly "@@reference"?: { readonly "@@reference": {}; }; }, low.AdapterSync<any>>;
 
@@ -11,7 +18,7 @@ class CardDb {
 
   private static createCardDbInstance() {
     const cardDb = low(new FileSync(getPathToCardDbFile()));
-    cardDb.defaults({ cards: [] }).write();
+    cardDb.defaults<{cards: Card[]}>({ cards: [] }).write();
     return cardDb;
   }
 }

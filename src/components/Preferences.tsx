@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 declare var __IS_WEB__: boolean;
 import * as Electron from 'electron';
+import {BaseButton} from "./BaseButton";
 let electron: typeof Electron;
 if(!__IS_WEB__) {
   electron = require('electron');
@@ -68,9 +69,9 @@ class ConnectPreferences extends React.Component<PreferencesProps> {
           </Grid>
         </Modal.Content>
         <Modal.Actions>
-          <Button basic color='green' onClick={() => this.props.setPreferencesVisibility(false)}>
+          <BaseButton basic color='green' onClick={() => this.props.setPreferencesVisibility(false)}>
             <Icon name='checkmark' /> OK
-          </Button>
+          </BaseButton>
         </Modal.Actions>
       </Modal>
     )

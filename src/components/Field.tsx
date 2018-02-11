@@ -1,15 +1,18 @@
+import {getStrFromDate} from "../Utils";
+
 declare var __IS_WEB__: boolean;
-import {cardDb as CardDb} from '../CardDb';
+import {Card, cardDb as CardDb} from '../CardDb';
 let cardDb: typeof CardDb;
 if(!__IS_WEB__) {
-  cardDb = require('../CardDb');
+  cardDb = require('../CardDb').cardDb;
 }
 
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import {Button, Form, TextArea} from 'semantic-ui-react';
+import {Form, TextArea} from 'semantic-ui-react';
 import {actions} from "../actions";
+import {BaseButton} from "./BaseButton";
 
 export interface FieldProps {
   frontCardContents: string
@@ -27,6 +30,13 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 });
 
 class ConnectedField extends React.Component<FieldProps, undefined> {
+  get add(): () => void {
+    return this._add;
+  }
+
+  set add(value: () => void) {
+    this._add = value;
+  }
   render() {
     const style: React.CSSProperties = {
       form: {
@@ -76,25 +86,33 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
             style={style.textarea}/>
         </Form>
         <div style={style.buttonContainer}>
-          <Button
+          <BaseButton
             content='Add'
             icon='add'
             labelPosition='left'
-            onClick={this.add}
+            onClick={this._add}
             style={style.addButton} />
         </div>
       </div>
     );
   }
-  private add = () => {
+  private _add = () => {
+    const now = new Date();
     cardDb.get('cards')
-      .push({
+      .push<Card>({
         front: this.props.frontCardContents,
         back: this.props.backCardContents,
+        creationDate: getStrFromDate(now),
+        nextReviewDate: getStrFromDate(this.getNextReviewDate([now]))
       })
       .write();
     this.props.setFrontCardContents('');
     this.props.setBackCardContents('');
-  }
+  };
+  private getNextReviewDate = (previousReviewDates: Date[]) => {
+    const lastReviewDateCopy = new Date(previousReviewDates[previousReviewDates.length - 1]);
+    lastReviewDateCopy.setDate(lastReviewDateCopy.getDate() + 0);
+    return lastReviewDateCopy;
+  };
 }
 export const Field = connect(mapStateToProps, mapDispatchToProps)(ConnectedField);

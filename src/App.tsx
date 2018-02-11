@@ -4,18 +4,19 @@ import { Field } from './components/Field';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { Preferences } from './components/Preferences';
-import Split = require('split.js');
+import * as Split from 'split.js';
 import { Provider } from 'react-redux';
 import { store } from './store';
 
 import './stylesheets/App.scss';
+import {Review} from "./components/Review";
 
 export interface AppProps {
   deck: string;
   type: string;
 }
 
-export class App extends React.Component<AppProps, undefined> {
+export class App extends React.Component<AppProps, {}> {
   componentDidMount() { 
     Split(['#navbar', '#field'], {
       direction: 'horizontal',
@@ -65,7 +66,8 @@ export class App extends React.Component<AppProps, undefined> {
 
 ReactDOM.render(
   <Provider store={store}>
-    <App deck="Default" type="Basic" />
+    {/*<App deck="Default" type="Basic" />*/}
+    <Review />
   </Provider>,
   document.getElementById('app')
 );
