@@ -3,10 +3,12 @@ import * as FileSync from 'lowdb/adapters/FileSync';
 import {getPathToCardDbFile} from "./Utils";
 
 export interface Card {
-  front: string,
-  back: string,
-  creationDate: string,
-  nextReviewDate: string,
+  id: number;
+  front: string;
+  back: string;
+  creationTime: string;
+  nextReviewTime: string;
+  previousReviewTimeList: string[];
 }
 
 class CardDb {

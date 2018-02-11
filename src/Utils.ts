@@ -28,14 +28,11 @@ export function getPathToWordFormsFolder() {
   return path.join(__dirname, '../node_modules/dict-parser/lib/resources/wordforms');
 }
 export const getDateFromStr = (str: string) => {
-  // assuming str is in UTC
-  if(str.length != 10) {
-    throw new Error(`The format of str should be YYYY-MM-DD, but found ${str} instead`);
-  }
+  // assuming str is in utc
   return new Date(str);
 };
 export const getStrFromDate = (date: Date) => {
-  return date.toISOString().slice(0, 10); // YYYY-MM-DD, in UTC
+  return date.toISOString(); // YYYY-MM-DD, in UTC
 };
 export async function createDirIfNotExists(dir: string) {
   if(!await fse.pathExists(dir)) {

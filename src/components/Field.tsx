@@ -100,10 +100,12 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
     const now = new Date();
     cardDb.get('cards')
       .push<Card>({
+        id: this.getNextId(),
         front: this.props.frontCardContents,
         back: this.props.backCardContents,
-        creationDate: getStrFromDate(now),
-        nextReviewDate: getStrFromDate(this.getNextReviewDate([now]))
+        creationTime: getStrFromDate(now),
+        nextReviewTime: getStrFromDate(this.getNextReviewDate([now])),
+        previousReviewTimeList: [],
       })
       .write();
     this.props.setFrontCardContents('');
@@ -112,7 +114,16 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
   private getNextReviewDate = (previousReviewDates: Date[]) => {
     const lastReviewDateCopy = new Date(previousReviewDates[previousReviewDates.length - 1]);
     lastReviewDateCopy.setDate(lastReviewDateCopy.getDate() + 0);
+    lastReviewDateCopy.setHours(0, 0, 0, 0);
     return lastReviewDateCopy;
   };
+  private getNextId = (): number => {
+    const cards = cardDb.get('cards').value();
+    let maxId = 0;
+    for(const card of cards) {
+      maxId = card.id > maxId ? card.id : maxId;
+    }
+    return maxId;
+  }
 }
 export const Field = connect(mapStateToProps, mapDispatchToProps)(ConnectedField);

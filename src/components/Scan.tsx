@@ -113,7 +113,7 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
       let addedPathsAfterRemovingDuplicates = this.removeDuplicates(filePaths, this.props.paths);
       this.props.addPaths(addedPathsAfterRemovingDuplicates);
     }
-  }
+  };
   private removeDuplicates = (addedPaths: string[], previousPaths: string[]) => {
     let duplicateIndex: number[] = [];
     for(let i = 0; i < addedPaths.length; i++) {
@@ -131,17 +131,17 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
       }
     }
     return finalAddedPaths;
-  }
+  };
   private handleClickOnRemove = () => {
     this.props.removeSelectedPaths();
-  }
+  };
   private changeSelectedPath = (path: string, isAdded: boolean) => {
     if(isAdded) {
       this.props.addToSelectedPaths(path);
     } else {
       this.props.removeFromSelectedPaths(path);
     }
-  }
+  };
   private async handleClickOnScan() {
     if(__IS_WEB__) {
       // fake scanning

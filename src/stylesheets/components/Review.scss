@@ -1,11 +1,13 @@
-$container-padding: 10px;
-
-div.ui.container {
-  padding: $container-padding;
+.ui.container {
+  height: 100%;
+}
+.review-div {
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  width: 100%;
 }
 .review-card {
   flex: 1;
