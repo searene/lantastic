@@ -45,14 +45,18 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     super(props);
     this.state = {
       isAnswerShown: false,
-      card: this.getReviewCard(),
+      // card: this.getReviewCard(),
+      card: undefined,
     };
   }
   render() {
     return (
       <Container>
         {this.state.card === undefined ?
-          <div>Congragulations! You have finished reviewing cards.</div>
+          <div className="congrat-div">
+            <h1>Congragulations!</h1>
+            <div>You have finished reviewing cards in this deck.</div>
+          </div>
         :
           <div className="review-div">
             <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}} />
