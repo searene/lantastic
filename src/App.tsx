@@ -66,8 +66,8 @@ export class App extends React.Component<AppProps, {}> {
 
 ReactDOM.render(
   <Provider store={store}>
-    {/*<App deck="Default" type="Basic" />*/}
-    <Review />
+    <App deck="Default" type="Basic" />
+    {/*<Review />*/}
   </Provider>,
   document.getElementById('app')
 );

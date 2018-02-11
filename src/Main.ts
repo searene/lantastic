@@ -1,12 +1,14 @@
-import { app, BrowserWindow, Menu, MenuItem, session } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, session, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as fse from 'fs-extra';
+const StreamZip = require('node-stream-zip');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: Electron.BrowserWindow;
 
-function createWindow () {
+async function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({width: 800, height: 600});
 
@@ -26,6 +28,23 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     win = null;
+  });
+
+  let buffer = await fse.readFile("/home/searene/Public/test.wav");
+  protocol.registerBufferProtocol('dictp',async (request, callback) => {
+    const urlContents = request.url.substr(8).split(':');
+    const resourceType = urlContents[0]; // image or audio
+    const resourceHolderType = urlContents[1]; // zip
+    const resourceHolderPath = urlContents[2];
+    const resourceFileName = urlContents[3];
+    if(resourceHolderType !== 'zip') {
+      throw new Error(`${resourceHolderType} is not supported`);
+    }
+    const buffer = await extractFileFromZip(resourceHolderPath, resourceFileName);
+    callback({
+      mimeType: 'audio',
+      data: buffer
+    });
   });
 }
 
@@ -50,6 +69,27 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+async function extractFileFromZip(zipFile: string, fileName: string): Promise<Buffer> {
+  return new Promise<Buffer>((resolve, reject) => {
+    const zip = new StreamZip({
+      file: zipFile,
+      storeEntries: true
+    });
+    const bufs: Buffer[] = [];
+    zip.on('ready', () => {
+      zip.stream(fileName, (err: any, stm: any) => {
+        stm.on('data', (data: Buffer) => {
+          bufs.push(data);
+        });
+        stm.on('end', () => {
+          zip.close();
+          resolve(Buffer.concat(bufs));
+        });
+      });
+    });
+  });
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

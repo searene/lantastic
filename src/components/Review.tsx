@@ -54,7 +54,7 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
       <Container>
         {this.state.card === undefined ?
           <div className="congrat-div">
-            <h1>Congragulations!</h1>
+            <h1>Congratulations!</h1>
             <div>You have finished reviewing cards in this deck.</div>
           </div>
         :
