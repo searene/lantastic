@@ -45,8 +45,8 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     super(props);
     this.state = {
       isAnswerShown: false,
-      // card: this.getReviewCard(),
-      card: undefined,
+      card: this.getReviewCard(),
+      // card: undefined,
     };
   }
   render() {
@@ -61,7 +61,10 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
           <div className="review-div">
             <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}} />
             {this.state.isAnswerShown ?
-              <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}} />
+              <div className="review-answer">
+                <hr className="hr"/>
+                <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}} />
+              </div>
               : ''
             }
             <div className="review-bottom">
