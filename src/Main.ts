@@ -2,6 +2,7 @@ import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import {ZipReader} from './ZipReader';
+import {Sqlite} from "./Sqlite";
 
 const zipReader = new ZipReader();
 
@@ -46,9 +47,12 @@ async function createWindow () {
       data: buffer
     });
   });
+
+  // init db
+  await Sqlite.init();
 }
 
-zipReader.extractFileFromZip('/home/searene/Public/complete/En-En-Longman_DOCE5.dsl.dz.files.zip', 'exa_p008-001109504.wav');
+// zipReader.extractFileFromZip('/home/searene/Public/complete/En-En-Longman_DOCE5.dsl.dz.files.zip', 'exa_p008-001109504.wav');
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

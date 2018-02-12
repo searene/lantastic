@@ -42,3 +42,6 @@ export async function createDirIfNotExists(dir: string) {
 export function getPathToDictionaryResources() {
   return './resources/dictionaries';
 }
+export const getPathToSqliteDbFile = () => {
+  return path.join(getPathToLantastic(), 'sqlite.db');
+};
