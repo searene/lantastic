@@ -1,20 +1,16 @@
-///<reference path="node-stream-zip.d.ts"/>
-import StreamZip = require('node-stream-zip');
-import {ZipEntry} from "./node-stream-zip";
+import { StreamZip, ZipEntry } from './js/node-stream-zip';
 
 export class ZipReader {
 
   private cache = new Map<string, ZipEntry[]>();
 
   async extractFileFromZip(zipFile: string, fileName: string): Promise<Buffer> {
-
-    // const entries = this.cache.has(zipFile) ? this.cache.get(zipFile) : await this.buildCache(zipFile);
-    const entries: ZipEntry[] = [];
+    const entries = this.cache.has(zipFile) ? this.cache.get(zipFile) : await this.buildCache(zipFile);
     const zip = new StreamZip({
       file: zipFile,
-      storeEntries: false
+      buildEntries: false
     });
-    zip.entries(entries);
+    zip.setEntries(entries);
 
     return new Promise<Buffer>((resolve) => {
       const bufs: Buffer[] = [];
@@ -34,7 +30,7 @@ export class ZipReader {
     return new Promise<ZipEntry[]>(resolve => {
       const zip = new StreamZip({
         file: zipFile,
-        storeEntries: false,
+        buildEntries: true,
       });
       zip.on('entry', entry => {
         entries.push(entry);
