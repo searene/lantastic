@@ -48,6 +48,8 @@ async function createWindow () {
   });
 }
 
+zipReader.extractFileFromZip('/home/searene/Public/complete/En-En-Longman_DOCE5.dsl.dz.files.zip', 'exa_p008-001109504.wav');
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
