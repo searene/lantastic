@@ -4,8 +4,6 @@ import * as url from 'url';
 import {ZipReader} from './ZipReader';
 import {Sqlite} from "./Sqlite";
 
-const zipReader = new ZipReader();
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: Electron.BrowserWindow;
@@ -41,7 +39,7 @@ async function createWindow () {
     if(resourceHolderType !== 'zip') {
       throw new Error(`${resourceHolderType} is not supported`);
     }
-    const buffer = await zipReader.extractFileFromZip(resourceHolderPath, resourceFileName);
+    const buffer = await ZipReader.extractFileFromZip(resourceHolderPath, resourceFileName);
     callback({
       mimeType: resourceType,
       data: buffer

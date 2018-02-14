@@ -1,5 +1,8 @@
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
+import {DictMap} from "dict-parser/lib/DictionaryFinder";
+import * as fse from 'fs-extra';
+
 declare var __IS_WEB__: boolean;
 import * as Electron from 'electron';
 import { dictParser as DictParser } from '../Parser';
@@ -18,6 +21,7 @@ import { Dispatch } from 'redux';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 import { getPathToLantastic, createDirIfNotExists } from '../Utils';
+import {ZipReader} from "../ZipReader";
 
 
 export interface ScanProps {
@@ -152,9 +156,21 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
         this.props.setScanMessage(`Scanning ${dictionaryName}...`);
       });
       await createDirIfNotExists(getPathToLantastic());
-      let dictMap = await dictParser.scan(this.props.paths);
+      const dictMapList = await dictParser.scan(this.props.paths);
+
+      // build zip entries for each zip file
+      console.log('Building zip entries...');
+      dictMapList.map(dictMap => dictMap.dict.resourceHolder)
+        .filter(async resourceHolder => (await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith('.zip'))
+        .map(async resourceHolder => this.buildZipEntries(resourceHolder));
+
       this.props.setScanMessage('Scan is completed');
     }
+  }
+  private buildZipEntries = async (resourceHolder: string): Promise<void> => {
+    console.log(`Building zip entries for ${resourceHolder}`);
+    const entries = await ZipReader.getZipEntries(resourceHolder);
+    await ZipReader.saveEntriesToDb(resourceHolder, entries);
   }
 }
 export const Scan = connect(mapStateToProps, mapDispatchToProps)(ConnectedScan);
