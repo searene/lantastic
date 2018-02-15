@@ -159,18 +159,30 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
       const dictMapList = await dictParser.scan(this.props.paths);
 
       // build zip entries for each zip file
-      console.log('Building zip entries...');
-      dictMapList.map(dictMap => dictMap.dict.resourceHolder)
-        .filter(async resourceHolder => (await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith('.zip'))
-        .map(async resourceHolder => this.buildZipEntries(resourceHolder));
+      const resourceHolderList = await this.getZippedResourceHolders(dictMapList);
+      for(const resourceHolder of resourceHolderList) {
+        this.props.setScanMessage(`Building entries for ${path.basename(resourceHolder)}...`);
+        await this.buildZipEntries(resourceHolder);
+        console.log(`entries are built successfully`);
+      }
 
+      console.log(`scan is completed`);
       this.props.setScanMessage('Scan is completed');
     }
   }
   private buildZipEntries = async (resourceHolder: string): Promise<void> => {
-    console.log(`Building zip entries for ${resourceHolder}`);
     const entries = await ZipReader.getZipEntries(resourceHolder);
     await ZipReader.saveEntriesToDb(resourceHolder, entries);
+  };
+  private getZippedResourceHolders = async (dictMapList: DictMap[]): Promise<string[]> => {
+    const resourceHolderList = [];
+    for(const dictMap of dictMapList) {
+      const resourceHolder = dictMap.dict.resourceHolder;
+      if((await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith('.zip')) {
+        resourceHolderList.push(resourceHolder);
+      }
+    }
+    return resourceHolderList;
   }
 }
 export const Scan = connect(mapStateToProps, mapDispatchToProps)(ConnectedScan);

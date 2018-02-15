@@ -3,14 +3,14 @@ declare class StreamZip {
   constructor(options: StreamZipOptions);
   on: on;
   stream: (entry: ZipEntry | string, cb: (err: Error, stm: Stream) => void) => void;
-  setEntries: (entries?: ZipEntry[]) => ZipEntry[];
+  setEntries: (entries: ZipEntry[]) => ZipEntry[];
 }
 interface StreamZipOptions {
   file: string;
   storeEntries?: boolean;
   buildEntries: boolean;
 }
-interface ZipEntry {
+declare class ZipEntry {
   // version made by
   verMade: number;
   // version needed to extract
@@ -43,7 +43,7 @@ interface ZipEntry {
   offset: number;
   headerOffset: number;
   name: string;
-  isDirectory: boolean,
+  isDirectory: boolean;
   comment: string;
 }
 interface on {

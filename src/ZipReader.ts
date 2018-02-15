@@ -1,6 +1,5 @@
 import { StreamZip, ZipEntry } from './js/node-stream-zip';
 import { Sqlite } from './Sqlite';
-import * as fse from 'fs-extra';
 
 export class ZipReader {
 
@@ -11,7 +10,13 @@ export class ZipReader {
       buildEntries: false
     });
     const entry = await this.getEntry(zipFile, fileName);
-    zip.setEntries([entry]);
+
+    // entry was not found
+    if(entry === null) {
+      return Buffer.alloc(0);
+    }
+
+    await zip.setEntries([entry]);
 
     return new Promise<Buffer>((resolve) => {
       const bufs: Buffer[] = [];
@@ -37,7 +42,6 @@ export class ZipReader {
         entries.push(entry);
       });
       zip.on('ready', () => {
-        console.log(`Saving entries of ${zipFile} to DB...`);
         resolve(entries);
       });
     });
@@ -45,9 +49,9 @@ export class ZipReader {
   static saveEntriesToDb = async (zipFile: string, entries: ZipEntry[]): Promise<void> => {
     let insertStatement = `
               INSERT INTO zip_entry (
-                resource_holder, ver_made, version, flags, method, time, crc, compressedSize, size,
-                fnameLen, extraLen, comLen, diskStart, inattr, attr, offset, headerOffset,
-                name, isDirectory, comment
+                resource_holder, ver_made, version, flags, method, time, crc, compressed_size, size,
+                fname_len, extra_len, com_len, disk_start, inattr, attr, offset, header_offset,
+                name, is_directory, comment
               ) VALUES `;
     let parameters = [];
     for(let i = 0; i < entries.length; i++) {
@@ -74,31 +78,38 @@ export class ZipReader {
                        ${Sqlite.getInsertParam(entry.comment)})`);
     }
     insertStatement = insertStatement + parameters.join(',\n');
-    await Sqlite.db.exec(insertStatement);
+    await (await Sqlite.getDb()).exec(insertStatement);
   };
   static getEntry = async (zipFile: string, fileName: string): Promise<ZipEntry> => {
-    const result = await Sqlite.db.get(`
+    const result = await (await Sqlite.getDb()).get(`
               SELECT * FROM zip_entry WHERE resource_holder = ? AND name = ?`, [zipFile, fileName]);
-    return <ZipEntry> {
-      verMade: result.ver_made,
-      version: result.version,
-      flags: result.flags,
-      method: result.method,
-      time: result.time,
-      crc: result.crc,
-      compressedSize: result.compressed_size,
-      size: result.size,
-      fnameLen: result.fname_len,
-      extraLen: result.extra_len,
-      comLen: result.com_len,
-      diskStart: result.disk_start,
-      inattr: result.inattr,
-      attr: result.attr,
-      offset: result.offset,
-      headerOffset: result.header_offset,
-      name: result.name,
-      isDirectory: result.is_directory,
-      comment: result.comment
-    };
+
+    // no result
+    if(result === undefined) {
+      return null;
+    }
+
+    let entry = new ZipEntry();
+    entry.verMade = result.ver_made;
+    entry.version = result.version;
+    entry.flags = result.flags;
+    entry.method = result.method;
+    entry.time = result.time;
+    entry.crc = result.crc;
+    entry.compressedSize = result.compressed_size;
+    entry.size = result.size;
+    entry.fnameLen = result.fname_len;
+    entry.extraLen = result.extra_len;
+    entry.comLen = result.com_len;
+    entry.diskStart = result.disk_start;
+    entry.inattr = result.inattr;
+    entry.attr = result.attr;
+    entry.offset = result.offset;
+    entry.headerOffset = result.header_offset;
+    entry.name = result.name;
+    entry.isDirectory = result.is_directory === 1;
+    entry.comment = result.commen;
+
+    return entry;
   }
 }

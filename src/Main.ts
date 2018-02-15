@@ -46,9 +46,9 @@ async function createWindow () {
     });
   });
 
-  // init db
   await Sqlite.init();
 }
+
 
 // zipReader.extractFileFromZip('/home/searene/Public/complete/En-En-Longman_DOCE5.dsl.dz.files.zip', 'exa_p008-001109504.wav');
 

@@ -121,24 +121,17 @@ const testConfig = {
 
   resolve: {
     // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json']
+    extensions: ['.ts', '.js', '.json']
   },
 
   module: {
     rules: [
 
       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      {test: /\.tsx?$/, loader: "awesome-typescript-loader"},
+      {test: /\.ts$/, loader: "awesome-typescript-loader"},
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {enforce: "pre", test: /\.js$/, loader: "source-map-loader"},
-
-      {
-        test: /\.scss$/,
-        loaders: ["style-loader", "css-loader", "sass-loader"]
-      },
-
-      {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'file-loader?publicPath=../&outputPath=font/'}
     ]
   },
   plugins: plugins,
@@ -147,5 +140,5 @@ const testConfig = {
   }
 };
 
-// module.exports = [appConfig, electronConfig, testConfig];
-module.exports = testConfig;
+module.exports = [appConfig, electronConfig];
+// module.exports = testConfig;
