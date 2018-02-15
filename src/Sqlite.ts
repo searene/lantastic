@@ -29,7 +29,10 @@ export class Sqlite {
                     )`);
   };
 
-  static getInsertParam = <T> (v: T): any => {
+  /**
+   * Used in INSERT and DELETE
+   */
+  static getSQLParam = <T> (v: T): any => {
     if(v === null || v === undefined) {
       return null;
     }

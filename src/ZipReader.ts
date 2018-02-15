@@ -47,38 +47,31 @@ export class ZipReader {
     });
   }
   static saveEntriesToDb = async (zipFile: string, entries: ZipEntry[]): Promise<void> => {
+    const db = await Sqlite.getDb();
+    await db.exec(`DELETE FROM zip_entry WHERE resource_holder = ${Sqlite.getSQLParam(zipFile)}`);
     let insertStatement = `
               INSERT INTO zip_entry (
-                resource_holder, ver_made, version, flags, method, time, crc, compressed_size, size,
-                fname_len, extra_len, com_len, disk_start, inattr, attr, offset, header_offset,
-                name, is_directory, comment
+                resource_holder, flags, method, compressed_size, size,
+                fname_len, extra_len, com_len, offset,
+                name, is_directory
               ) VALUES `;
     let parameters = [];
     for(let i = 0; i < entries.length; i++) {
       const entry = entries[i];
-      parameters.push(`(${Sqlite.getInsertParam(zipFile)},
-                       ${Sqlite.getInsertParam(entry.verMade)},
-                       ${Sqlite.getInsertParam(entry.version)},
-                       ${Sqlite.getInsertParam(entry.flags)},
-                       ${Sqlite.getInsertParam(entry.method)},
-                       ${Sqlite.getInsertParam(entry.time)},
-                       ${Sqlite.getInsertParam(entry.crc)},
-                       ${Sqlite.getInsertParam(entry.compressedSize)},
-                       ${Sqlite.getInsertParam(entry.size)},
-                       ${Sqlite.getInsertParam(entry.fnameLen)},
-                       ${Sqlite.getInsertParam(entry.extraLen)},
-                       ${Sqlite.getInsertParam(entry.comLen)},
-                       ${Sqlite.getInsertParam(entry.diskStart)},
-                       ${Sqlite.getInsertParam(entry.inattr)},
-                       ${Sqlite.getInsertParam(entry.attr)},
-                       ${Sqlite.getInsertParam(entry.offset)},
-                       ${Sqlite.getInsertParam(entry.headerOffset)},
-                       ${Sqlite.getInsertParam(entry.name)},
-                       ${Sqlite.getInsertParam(entry.isDirectory)},
-                       ${Sqlite.getInsertParam(entry.comment)})`);
+      parameters.push(`(${Sqlite.getSQLParam(zipFile)},
+                       ${Sqlite.getSQLParam(entry.flags)},
+                       ${Sqlite.getSQLParam(entry.method)},
+                       ${Sqlite.getSQLParam(entry.compressedSize)},
+                       ${Sqlite.getSQLParam(entry.size)},
+                       ${Sqlite.getSQLParam(entry.fnameLen)},
+                       ${Sqlite.getSQLParam(entry.extraLen)},
+                       ${Sqlite.getSQLParam(entry.comLen)},
+                       ${Sqlite.getSQLParam(entry.offset)},
+                       ${Sqlite.getSQLParam(entry.name)},
+                       ${Sqlite.getSQLParam(entry.isDirectory)})`);
     }
     insertStatement = insertStatement + parameters.join(',\n');
-    await (await Sqlite.getDb()).exec(insertStatement);
+    await db.exec(insertStatement);
   };
   static getEntry = async (zipFile: string, fileName: string): Promise<ZipEntry> => {
     const result = await (await Sqlite.getDb()).get(`
@@ -90,25 +83,15 @@ export class ZipReader {
     }
 
     let entry = new ZipEntry();
-    entry.verMade = result.ver_made;
-    entry.version = result.version;
     entry.flags = result.flags;
     entry.method = result.method;
-    entry.time = result.time;
-    entry.crc = result.crc;
     entry.compressedSize = result.compressed_size;
-    entry.size = result.size;
     entry.fnameLen = result.fname_len;
     entry.extraLen = result.extra_len;
     entry.comLen = result.com_len;
-    entry.diskStart = result.disk_start;
-    entry.inattr = result.inattr;
-    entry.attr = result.attr;
     entry.offset = result.offset;
-    entry.headerOffset = result.header_offset;
     entry.name = result.name;
     entry.isDirectory = result.is_directory === 1;
-    entry.comment = result.commen;
 
     return entry;
   }
