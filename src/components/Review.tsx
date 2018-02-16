@@ -1,23 +1,28 @@
-import {getStrFromDate} from "../Utils";
-
 declare var __IS_WEB__: boolean;
-import {Card, cardDb as CardDb} from '../CardDb';
-let cardDb: typeof CardDb;
+import {Sqlite as SqliteType} from "../Sqlite";
+let Sqlite: typeof SqliteType;
 if(!__IS_WEB__) {
-  cardDb = require('../CardDb').cardDb;
+  Sqlite = require('../Sqlite');
 }
+import {
+  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_ID, CARD_COLUMN_NEXT_REVIEW_TIME,
+  CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST, CARD_TABLE,
+  DATE_FORMAT
+} from "../Constants";
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import {Segment, Container} from "semantic-ui-react";
 import '../stylesheets/components/Review.scss';
 import {BaseButton} from "./BaseButton";
+import moment = require("moment");
 
 interface ReviewProps {
 }
 interface ReviewStates {
   isAnswerShown: boolean;
-  card: Card;
+  card: any;
 }
 const mapStateToProps = (state: ReviewProps) => ({
 });
@@ -26,6 +31,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export enum Level {
   AGAIN, HARD, GOOD, EASY
 }
+const INITIAL_CARD = 'initial_card';
 class Interval {
   minutes: number;
   hours: number;
@@ -45,9 +51,16 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     super(props);
     this.state = {
       isAnswerShown: false,
-      card: this.getReviewCard(),
-      // card: undefined,
+      card: INITIAL_CARD
     };
+  }
+  async componentWillMount() {
+    if(this.state.card === INITIAL_CARD) {
+      const card = await this.getReviewCard();
+      this.setState({
+        card: card
+      });
+    }
   }
   render() {
     return (
@@ -85,17 +98,23 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
       </Container>
     )
   }
-  private getReviewCard = (): Card => {
-    return __IS_WEB__ ? {
-      id: 0,
-      front: '<b>test front</b>',
-      back: 'test back',
-      creationTime: getStrFromDate(new Date()),
-      nextReviewTime: getStrFromDate(new Date()),
-      previousReviewTimeList: [],
-    } : cardDb.get('cards')
-      .find<Card>(card => new Date(card.nextReviewTime) <= new Date())
-      .value();
+  private getReviewCard = async (): Promise<any> => {
+    const db = await Sqlite.getDb();
+    const sql = `
+            SELECT
+              ${CARD_COLUMN_ID},
+              ${CARD_COLUMN_FRONT},
+              ${CARD_COLUMN_BACK},
+              ${CARD_COLUMN_CREATION_TIME},
+              ${CARD_COLUMN_NEXT_REVIEW_TIME},
+              ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}
+            FROM ${CARD_TABLE}
+            WHERE ${CARD_COLUMN_NEXT_REVIEW_TIME} <= ?
+            `;
+    const param = moment().format(DATE_FORMAT);
+    console.log(`Going to get the next review card, sql: ${sql}, param: ${param}`);
+    const reviewCard = await db.get(sql, param);
+    return reviewCard;
   };
   private getInterval = (level: Level): Interval => {
     if(level === Level.AGAIN) {
@@ -121,37 +140,37 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
       return `${interval.minutes}min`;
     }
   };
-  private review = (level: Level): void => {
-    const interval = this.getInterval(level);
-    const nextReviewTime = this.getNextReviewTime(interval);
-    this.addReviewTimeToCard(this.state.card, nextReviewTime);
+  private review = async (level: Level): Promise<void> => {
+    const nextReviewTime = this.getNextReviewTime(this.getInterval(level));
+    await this.adjustReviewTime(this.state.card[`${CARD_COLUMN_ID}`], nextReviewTime);
     this.setState({
       isAnswerShown: false,
       card: this.getReviewCard(),
     });
   };
-  private addReviewTimeToCard = (card: Card, nextReviewTime: Date): Card[] => {
-    const cards = cardDb.get('cards').value();
-    const previousReviewList = card.previousReviewTimeList;
-    for(const c of cards) {
-      if(c.id === card.id) {
-        c.previousReviewTimeList.push(getStrFromDate(new Date()));
-        c.nextReviewTime = getStrFromDate(nextReviewTime);
-      }
-    }
-    cardDb.set('cards', cards).write();
-    return cards;
+  private adjustReviewTime = async (cardId: number, nextReviewTime: moment.Moment): Promise<void> => {
+    const db = await Sqlite.getDb();
+    await db.exec(`
+            UPDATE
+              ${CARD_TABLE}
+            SET
+              ${CARD_COLUMN_NEXT_REVIEW_TIME} = ${nextReviewTime.format(DATE_FORMAT)},
+              ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} = ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} + ',${moment().format(DATE_FORMAT)}'`
+    );
   };
-  private getNextReviewTime = (interval: Interval): Date => {
-    const nextReviewTime = new Date();
-    nextReviewTime.setUTCMinutes(nextReviewTime.getUTCMinutes() + interval.minutes);
-    nextReviewTime.setUTCHours(nextReviewTime.getUTCHours() + interval.hours);
-    nextReviewTime.setUTCDate(nextReviewTime.getUTCDate() + interval.days);
-    nextReviewTime.setUTCMonth(nextReviewTime.getUTCMonth() + interval.months);
-    nextReviewTime.setUTCFullYear(nextReviewTime.getUTCFullYear() + interval.years);
-
-    if(interval.days !== 0 || interval.months !== 0 || interval.years !== 0) {
-      nextReviewTime.setHours(0, 0, 0, 0);
+  private getNextReviewTime = (interval: Interval): moment.Moment => {
+    let nextReviewTime = moment();
+    if(interval.minutes !== 0 || interval.hours !== 0) {
+      nextReviewTime.add(interval.minutes, 'minutes');
+      nextReviewTime.add(interval.hours, 'hours');
+    } else {
+      nextReviewTime.add(interval.years, 'years');
+      nextReviewTime.add(interval.months, 'months');
+      nextReviewTime.add(interval.days, 'days');
+      nextReviewTime.set({
+        'hours': 0,
+        'minutes': 0
+      });
     }
     return nextReviewTime;
   };

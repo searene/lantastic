@@ -21,7 +21,7 @@ plugins = [
   }),
 ];
 if (process.env.IS_WEB === 'true') {
-  plugins.push(new webpack.IgnorePlugin(/(electron|dict-parser|fs-extra|CardDb)/));
+  plugins.push(new webpack.IgnorePlugin(/(electron|dict-parser|fs-extra|node-stream-zip)/));
 }
 
 const appConfig = {

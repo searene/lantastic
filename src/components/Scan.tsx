@@ -1,27 +1,30 @@
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
-import {DictMap} from "dict-parser/lib/DictionaryFinder";
-import * as fse from 'fs-extra';
-
 declare var __IS_WEB__: boolean;
 import * as Electron from 'electron';
 import { dictParser as DictParser } from '../Parser';
+import {ZipReader as ZipReaderType} from "../ZipReader";
+import * as Fse from 'fs-extra';
 let electron: typeof Electron;
 let dictParser: typeof DictParser;
+let fse: typeof Fse;
+let ZipReader: typeof ZipReaderType;
 if(!__IS_WEB__) {
   electron = require('electron');
   dictParser = require('../Parser').dictParser;
+  fse = require('fs-extra');
+  ZipReader = require('../ZipReader');
 }
 
 import * as React from 'react';
 import { connect } from 'react-redux';
+import {DictMap} from "dict-parser/lib/DictionaryFinder";
 import { actions } from '../actions';
 import { Button, Icon, Checkbox, Menu, CheckboxProps } from 'semantic-ui-react';
 import { Dispatch } from 'redux';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 import { getPathToLantastic, createDirIfNotExists } from '../Utils';
-import {ZipReader} from "../ZipReader";
 
 
 export interface ScanProps {
@@ -67,37 +70,39 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
     return (
       <div className="scan-container">
         <div className="scan-path">
-          <div className="scan-path-label">Scan Path:</div>
-          <Menu vertical>
-            {this.props.paths.map(path =>
-              <label key={path}>
-                <Menu.Item className="path">
-                  {path}
-                  <Checkbox
-                    checked={this.props.selectedPaths.indexOf(path) > -1}
-                    onChange={(event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {this.changeSelectedPath(path, data.checked)}} />
-                </Menu.Item>
-              </label>
-            )}
-          </Menu>
-        </div>
-        <div style={{marginTop: '20px', paddingTop: '10px'}}>
-          <div style={{display: 'inline-block'}}>
-            <Button icon labelPosition='left' onClick={this.handleClickOnAdd}>
-              <Icon name='add' />
-              Add
-            </Button>
-            <Button icon labelPosition='left' onClick={this.handleClickOnRemove}>
-              <Icon name='minus' />
-              Remove
-            </Button>
+          <div className="scan-top">
+            <div className="scan-path-label">Scan Path:</div>
+            <Menu vertical className="scan-item">
+              {this.props.paths.map(path =>
+                <label key={path}>
+                  <Menu.Item className="path">
+                    {path}
+                    <Checkbox
+                      checked={this.props.selectedPaths.indexOf(path) > -1}
+                      onChange={(event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {this.changeSelectedPath(path, data.checked)}} />
+                  </Menu.Item>
+                </label>
+              )}
+            </Menu>
           </div>
-          <div style={{float: 'right'}}>
-            <span style={{marginRight: '10px'}}>{this.props.scanMessage}</span>
-            <Button icon labelPosition='left' color="teal" onClick={this.handleClickOnScan.bind(this)}>
-              <Icon name='search' />
-              Scan
-            </Button>
+          <div style={{marginTop: '20px', paddingTop: '10px', width: '100%'}}>
+            <div style={{display: 'inline-block'}}>
+              <Button icon labelPosition='left' onClick={this.handleClickOnAdd}>
+                <Icon name='add' />
+                Add
+              </Button>
+              <Button icon labelPosition='left' onClick={this.handleClickOnRemove}>
+                <Icon name='minus' />
+                Remove
+              </Button>
+            </div>
+            <div style={{float: 'right'}}>
+              <span style={{marginRight: '10px'}}>{this.props.scanMessage}</span>
+              <Button icon labelPosition='left' color="teal" onClick={this.handleClickOnScan.bind(this)}>
+                <Icon name='search' />
+                Scan
+              </Button>
+            </div>
           </div>
         </div>
       </div>

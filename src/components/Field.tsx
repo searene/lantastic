@@ -1,18 +1,21 @@
-import {getStrFromDate} from "../Utils";
-
-declare var __IS_WEB__: boolean;
-import {Card, cardDb as CardDb} from '../CardDb';
-let cardDb: typeof CardDb;
+declare const __IS_WEB__: boolean;
+import {Sqlite as SqliteType} from "../Sqlite";
+let Sqlite: typeof SqliteType;
 if(!__IS_WEB__) {
-  cardDb = require('../CardDb').cardDb;
+  Sqlite = require('../Sqlite');
 }
-
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import {Form, TextArea} from 'semantic-ui-react';
 import {actions} from "../actions";
 import {BaseButton} from "./BaseButton";
+import moment = require("moment");
+import {
+  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_NEXT_REVIEW_TIME,
+  CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
+  DATE_FORMAT
+} from "../Constants";
 
 export interface FieldProps {
   frontCardContents: string
@@ -30,26 +33,15 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 });
 
 class ConnectedField extends React.Component<FieldProps, undefined> {
-  get add(): () => void {
-    return this._add;
-  }
-
-  set add(value: () => void) {
-    this._add = value;
-  }
   render() {
     const style: React.CSSProperties = {
       form: {
-        marginBottom: "5px",
-        height: "100px",
-        overflow: "auto",
-        flex: "1",
       },
       container: {
         display: "flex",
         flexDirection: "column",
-        width: "100%",
-        margin: "10px",
+        justifyContent: 'space-between',
+        height: '100%',
       },
       addButton: {
         marginRight: 0,
@@ -63,12 +55,11 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
       },
       buttonContainer: {
         paddingTop: "10px",
-        marginBottom: "10px",
         borderTop: "1px solid #BEBEBE",
       }
     };
     return (
-      <div style={style.container} id="field">
+      <div style={style.container}>
         <Form style={style.form}>
           <TextArea
             placeholder='Front'
@@ -96,34 +87,34 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
       </div>
     );
   }
-  private _add = () => {
-    const now = new Date();
-    cardDb.get('cards')
-      .push<Card>({
-        id: this.getNextId(),
-        front: this.props.frontCardContents,
-        back: this.props.backCardContents,
-        creationTime: getStrFromDate(now),
-        nextReviewTime: getStrFromDate(this.getNextReviewDate([now])),
-        previousReviewTimeList: [],
-      })
-      .write();
+  private _add = async () => {
+    const db = await Sqlite.getDb();
+    const now = moment();
+    const front = this.props.frontCardContents;
+    const back = this.props.backCardContents;
+    const creationTime = now.format(DATE_FORMAT);
+    const nextReviewTime = this.getNextReviewMoment(now).format(DATE_FORMAT);
+    const previousReviewTimeList = '';
+    await db.run(`
+        INSERT INTO card (
+          ${CARD_COLUMN_FRONT},
+          ${CARD_COLUMN_BACK},
+          ${CARD_COLUMN_CREATION_TIME},
+          ${CARD_COLUMN_NEXT_REVIEW_TIME},
+          ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}
+        ) VALUES (?, ?, ?, ?, ?)`,
+         [front, back, creationTime, nextReviewTime, previousReviewTimeList]);
+
     this.props.setFrontCardContents('');
     this.props.setBackCardContents('');
   };
-  private getNextReviewDate = (previousReviewDates: Date[]) => {
-    const lastReviewDateCopy = new Date(previousReviewDates[previousReviewDates.length - 1]);
-    lastReviewDateCopy.setDate(lastReviewDateCopy.getDate() + 0);
-    lastReviewDateCopy.setHours(0, 0, 0, 0);
-    return lastReviewDateCopy;
+  private getNextReviewMoment = (creationTime: moment.Moment): moment.Moment => {
+    const nextReviewMoment = creationTime.add(0, 'days');
+    nextReviewMoment.set({
+      'hour': 0,
+      'minute': 0
+    });
+    return nextReviewMoment;
   };
-  private getNextId = (): number => {
-    const cards = cardDb.get('cards').value();
-    let maxId = 0;
-    for(const card of cards) {
-      maxId = card.id > maxId ? card.id : maxId;
-    }
-    return maxId;
-  }
 }
 export const Field = connect(mapStateToProps, mapDispatchToProps)(ConnectedField);

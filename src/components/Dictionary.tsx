@@ -1,16 +1,6 @@
-import * as React from 'react';
-import { actions } from '../actions'
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { Input, Segment } from 'semantic-ui-react';
-import '../stylesheets/components/Dictionary.scss';
-
-// definition related styles
-import '../stylesheets/dictionaries/common.scss';
-import '../stylesheets/dictionaries/dsl.scss';
+import {unescape} from "querystring";
 
 declare var __IS_WEB__: boolean;
-
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 import { dictParser as DictParser } from '../Parser';
@@ -19,6 +9,16 @@ let dictParser: typeof DictParser;
 if (!__IS_WEB__) {
   dictParser = require('../Parser').dictParser;
 }
+
+import * as React from 'react';
+import { actions } from '../actions'
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { Input, Segment } from 'semantic-ui-react';
+
+import '../stylesheets/components/Dictionary.scss';
+import '../stylesheets/dictionaries/common.scss';
+import '../stylesheets/dictionaries/dsl.scss';
 
 interface DictionaryProps {
   word: string
@@ -51,44 +51,21 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
 
   componentDidUpdate() {
     this.populateDefinition();
-    const audios = document.getElementsByClassName("audio");
-    for(let i = 0; i < audios.length; i++) {
-      const audio = audios[i] as HTMLLinkElement;
-      const resourceName = audio.dataset['resource-name'];
-      audio.addEventListener('click', (event) => {
-      });
-    }
   }
 
   render() {
     const styles: React.CSSProperties = {
-      searchRow: {
-        paddingBottom: "0.5em",
-        flexGrow: 1,
-        width: "100%",
-        height: "3.5em",
-        marginTop: "5px",
-        marginLeft: "auto",
-        marginRight: "auto",
-      },
-      input: {
-        borderRadius: 0,
-      },
       container: {
         display: "flex",
         flexDirection: "column",
         height: "100%",
       },
-      searchIcon: {
-
-      }
     };
     return (
       <div style={styles.container}>
         <Input
           icon="search"
           placeholder="Search in dictionaries..."
-          style={styles.input}
           value={this.props.word}
           className="search-input"
           onKeyDown={this.handleOnKeyDown}
@@ -99,7 +76,17 @@ class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
     )
   }
   private search = async () => {
-    const wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
+    let wordDefinitions: WordDefinition[];
+    if(!__IS_WEB__) {
+      wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
+    } else {
+      wordDefinitions = [{
+        word: '',
+        wordTree: undefined,
+        html: '<div>test<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></div>',
+        dict: undefined
+      }]
+    }
     this.props.setWordDefinitions(wordDefinitions);
   };
   private handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

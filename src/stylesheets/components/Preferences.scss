@@ -1,0 +1,14 @@
+.preferences-container {
+  width: 100%;
+  display: flex;
+}
+
+.ui.vertical.menu.preferences-selector {
+  width: 200px;
+  margin-bottom: 0;
+}
+
+.ui.segment.preferences-contents {
+  flex: 1;
+  margin: 0;
+}

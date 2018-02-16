@@ -1,32 +1,52 @@
 import * as sqlite from 'sqlite';
 import {getPathToSqliteDbFile} from "./Utils";
+import moment = require("moment");
+import {
+  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
+  CARD_COLUMN_NEXT_REVIEW_TIME, CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST
+} from "./Constants";
 
 export class Sqlite {
   private static _db: sqlite.Database;
   static init = async () => {
-    await (await Sqlite.getDb()).run(`
-                    CREATE TABLE IF NOT EXISTS zip_entry (
-                      resource_holder TEXT,
-                      ver_made INTEGER,
-                      version INTEGER,
-                      flags INTEGER,
-                      method INTEGER,
-                      time INTEGER,
-                      crc INTEGER,
-                      compressed_size INTEGER,
-                      size INTEGER,
-                      fname_len INTEGER,
-                      extra_len INTEGER,
-                      com_len INTEGER,
-                      disk_start INTEGER,
-                      inattr INTEGER,
-                      attr INTEGER,
-                      offset INTEGER,
-                      header_offset INTEGER,
-                      name TEXT,
-                      is_directory INTEGER,
-                      comment TEXT
-                    )`);
+    const db = await Sqlite.getDb();
+    await Promise.all(
+      [db.run(`
+          CREATE TABLE IF NOT EXISTS zip_entry (
+            resource_holder TEXT,
+            flags INTEGER,
+            method INTEGER,
+            compressed_size INTEGER,
+            fname_len INTEGER,
+            extra_len INTEGER,
+            com_len INTEGER,
+            offset INTEGER,
+            name TEXT,
+            is_directory INTEGER
+          )`), db.run(`
+          CREATE TABLE IF NOT EXISTS card (
+            ${CARD_COLUMN_ID} INTEGER PRIMARY KEY,
+            ${CARD_COLUMN_FRONT} TEXT,
+            ${CARD_COLUMN_BACK} TEXT,
+            ${CARD_COLUMN_CREATION_TIME} INTEGER,
+            ${CARD_COLUMN_NEXT_REVIEW_TIME} INTEGER,
+            ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} TEXT
+          )`), db.run(`
+          CREATE TABLE IF NOT EXISTS meta (
+            time_zone TEXT
+          )`)]
+    );
+    await Sqlite.setTimeZoneIfNotExists();
+  };
+
+  private static setTimeZoneIfNotExists = async () => {
+    const db = await Sqlite.getDb();
+    const meta = await db.get(`SELECT time_zone FROM meta`);
+    if(meta === null) {
+      // this is the first time the user uses this app,
+      // query the timezone and set it in the database
+      await db.run(`INSERT INTO meta (time_zone) VALUES (?)`, moment().format('Z'));
+    }
   };
 
   /**

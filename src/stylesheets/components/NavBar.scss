@@ -1,0 +1,11 @@
+.ui.menu.navbar {
+  height: 100%;
+}
+
+.ui.labeled.icon.menu.navbar .item {
+  min-width: 1em;
+}
+
+.ui.labeled.icon.menu.navbar .item > .icon:not(.dropdown) {
+  margin: 0 !important;
+}

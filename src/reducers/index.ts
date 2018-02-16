@@ -1,9 +1,9 @@
-import { RootAction } from './../actions/index';
+import { RootAction } from '../actions';
 import { getType } from 'typesafe-actions';
-import { AnyAction, Reducer, combineReducers } from "redux";
-import { actions } from '../actions/index';
+import { actions } from '../actions';
 import { removeFromArray } from '../Utils';
 import {WordDefinition} from "dict-parser";
+import {Tab} from "../components/NavBar";
 
 export type RootState = {
   readonly paths: string[]
@@ -11,9 +11,9 @@ export type RootState = {
   readonly scanMessage: string
   readonly wordDefinitions: WordDefinition[]
   readonly word: string
-  readonly isPreferencesOpen: boolean
   readonly frontCardContents: string;
   readonly backCardContents: string;
+  readonly activeTab: Tab;
 }
 
 const initialState: RootState = {
@@ -22,9 +22,9 @@ const initialState: RootState = {
   scanMessage: '',
   wordDefinitions: [],
   word: '',
-  isPreferencesOpen: false,
   frontCardContents: '',
   backCardContents: '',
+  activeTab: Tab.SEARCH_AND_ADD,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -70,12 +70,6 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
         word: action.word
       };
 
-    case getType(actions.setPreferencesVisibility):
-      return {
-        ...state,
-        isPreferencesOpen: action.visibility
-      };
-
     case getType(actions.setFrontCardContents):
       return {
         ...state,
@@ -86,6 +80,12 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         backCardContents: action.contents
+      };
+
+    case getType(actions.setActiveTab):
+      return {
+        ...state,
+        activeTab: action.activeTab
       };
 
     default:
