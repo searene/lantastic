@@ -109,12 +109,7 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
     this.props.setBackCardContents('');
   };
   private getNextReviewMoment = (creationTime: moment.Moment): moment.Moment => {
-    const nextReviewMoment = creationTime.add(0, 'days');
-    nextReviewMoment.set({
-      'hour': 0,
-      'minute': 0
-    });
-    return nextReviewMoment;
+    return creationTime;
   };
 }
 export const Field = connect(mapStateToProps, mapDispatchToProps)(ConnectedField);

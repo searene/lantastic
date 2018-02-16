@@ -7,3 +7,5 @@ export const CARD_COLUMN_BACK = 'back';
 export const CARD_COLUMN_CREATION_TIME = 'creation_time';
 export const CARD_COLUMN_NEXT_REVIEW_TIME = 'next_review_time';
 export const CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST = 'previous_review_time_list';
+
+export const AGAIN_DURATION_MINUTES = 10;
