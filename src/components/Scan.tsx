@@ -1,5 +1,7 @@
 /** prevent from importing electron and other related stuff when we are building a web app
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
+import {ZipEntry} from "../js/node-stream-zip";
+
 declare var __IS_WEB__: boolean;
 import * as Electron from 'electron';
 import { dictParser as DictParser } from '../Parser';
@@ -13,7 +15,7 @@ if(!__IS_WEB__) {
   electron = require('electron');
   dictParser = require('../Parser').dictParser;
   fse = require('fs-extra');
-  ZipReader = require('../ZipReader');
+  ZipReader = require('../ZipReader').ZipReader;
 }
 
 import * as React from 'react';

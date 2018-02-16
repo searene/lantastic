@@ -17,6 +17,7 @@ export class Sqlite {
             flags INTEGER,
             method INTEGER,
             compressed_size INTEGER,
+            size INTEGER,
             fname_len INTEGER,
             extra_len INTEGER,
             com_len INTEGER,

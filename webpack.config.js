@@ -3,7 +3,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
-const fs = require('fs');
 
 plugins = [
   new CleanWebpackPlugin(['dist'], {

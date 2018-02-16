@@ -22,7 +22,6 @@
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
     "@types/fs-extra": "5.0.0",
-    "@types/redux": "3.6.0",
     "components-font-awesome": "4.6.3",
     "fs-extra": "5.0.0",
     "moment": "^2.20.1",
@@ -35,9 +34,7 @@
     "sqlite": "2.9.1"
   },
   "devDependencies": {
-    "@types/electron": "1.6.10",
     "@types/inline-style-prefixer": "^3.0.1",
-    "@types/moment": "^2.13.0",
     "@types/node": "9.3.0",
     "@types/react": "16.0.34",
     "@types/react-dom": "16.0.3",

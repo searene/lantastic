@@ -2,7 +2,7 @@ declare const __IS_WEB__: boolean;
 import {Sqlite as SqliteType} from "../Sqlite";
 let Sqlite: typeof SqliteType;
 if(!__IS_WEB__) {
-  Sqlite = require('../Sqlite');
+  Sqlite = require('../Sqlite').Sqlite;
 }
 import * as React from 'react';
 import { Dispatch } from 'redux';

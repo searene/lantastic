@@ -2,7 +2,7 @@ declare var __IS_WEB__: boolean;
 import {Sqlite as SqliteType} from "../Sqlite";
 let Sqlite: typeof SqliteType;
 if(!__IS_WEB__) {
-  Sqlite = require('../Sqlite');
+  Sqlite = require('../Sqlite').Sqlite;
 }
 import {
   CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_ID, CARD_COLUMN_NEXT_REVIEW_TIME,
@@ -112,7 +112,6 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
             WHERE ${CARD_COLUMN_NEXT_REVIEW_TIME} <= ?
             `;
     const param = moment().format(DATE_FORMAT);
-    console.log(`Going to get the next review card, sql: ${sql}, param: ${param}`);
     const reviewCard = await db.get(sql, param);
     return reviewCard;
   };
@@ -145,7 +144,7 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     await this.adjustReviewTime(this.state.card[`${CARD_COLUMN_ID}`], nextReviewTime);
     this.setState({
       isAnswerShown: false,
-      card: this.getReviewCard(),
+      card: await this.getReviewCard(),
     });
   };
   private adjustReviewTime = async (cardId: number, nextReviewTime: moment.Moment): Promise<void> => {

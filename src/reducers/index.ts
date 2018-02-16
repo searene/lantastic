@@ -17,7 +17,7 @@ export type RootState = {
 }
 
 const initialState: RootState = {
-  paths: ['/home/searene/Public/dz'],
+  paths: ['/home/searene/Public/complete'],
   selectedPaths: [],
   scanMessage: '',
   wordDefinitions: [],

@@ -13,7 +13,6 @@ import {connect} from 'react-redux';
  *  http://ideasintosoftware.com/typescript-conditional-imports/ */
 declare var __IS_WEB__: boolean;
 import * as Electron from 'electron';
-import {BaseButton} from "./BaseButton";
 
 let electron: typeof Electron;
 if (!__IS_WEB__) {
