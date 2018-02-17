@@ -4,8 +4,7 @@ import { actions } from '../actions';
 import { removeFromArray } from '../Utils';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
-
-export type RootState = {
+ type RootState = {
   readonly paths: string[]
   readonly selectedPaths: string[]
   readonly scanMessage: string
@@ -24,7 +23,7 @@ const initialState: RootState = {
   word: '',
   frontCardContents: '',
   backCardContents: '',
-  activeTab: Tab.SEARCH_AND_ADD,
+  activeTab: Tab.DECK,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {

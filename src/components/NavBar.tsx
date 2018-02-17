@@ -6,7 +6,7 @@ import { Menu, Icon } from 'semantic-ui-react';
 import '../stylesheets/components/NavBar.scss';
 
 export enum Tab {
-  SEARCH_AND_ADD, REVIEW, PREFERENCES
+  DECK, SEARCH_AND_ADD, REVIEW, PREFERENCES
 }
 
 export interface NavBarProps {
@@ -24,6 +24,12 @@ export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
   render() {
     return (
       <Menu icon='labeled' vertical className="navbar">
+        <Menu.Item
+          name='deck'
+          active={this.props.activeTab === Tab.DECK}
+          onClick={() => this.props.setActiveTab(Tab.DECK)}>
+          <Icon name='book' />
+        </Menu.Item>
         <Menu.Item
           name='add'
           active={this.props.activeTab === Tab.SEARCH_AND_ADD}

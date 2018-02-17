@@ -45,3 +45,6 @@ export function getPathToDictionaryResources() {
 export const getPathToSqliteDbFile = () => {
   return path.join(getPathToLantastic(), 'sqlite.db');
 };
+export const getPathToConfigurationFile = () => {
+  return path.join(getPathToLantastic(), 'configuration.json');
+};

@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import {ZipReader} from './ZipReader';
 import {Sqlite} from "./Sqlite";
+import {Configuration} from "./Configuration";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -47,6 +48,7 @@ async function createWindow () {
   });
 
   await Sqlite.init();
+  await Configuration.init();
 }
 
 

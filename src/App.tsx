@@ -9,6 +9,7 @@ import './stylesheets/App.scss';
 import {NavBar, Tab} from "./components/NavBar";
 import {Review} from "./components/Review";
 import {SearchAndAdd} from "./components/SearchAndAdd";
+import {Deck} from "./components/Deck";
 
 export interface AppProps {
   deck: string;
@@ -47,17 +48,13 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
     let tabContents: React.ReactNode;
 
     if(this.props.activeTab === Tab.SEARCH_AND_ADD) {
-      tabContents = (
-        <SearchAndAdd />
-      );
+      tabContents = ( <SearchAndAdd /> );
     } else if(this.props.activeTab === Tab.REVIEW) {
-      tabContents = (
-        <Review />
-      );
+      tabContents = ( <Review /> );
     } else if(this.props.activeTab === Tab.PREFERENCES) {
-      tabContents = (
-        <Preferences />
-      );
+      tabContents = ( <Preferences /> );
+    } else if(this.props.activeTab === Tab.DECK) {
+      tabContents = ( <Deck /> );
     }
     return (
       <div style={styles.container}>
