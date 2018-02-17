@@ -4,6 +4,7 @@ import {actions} from "../actions";
 import { Menu, Icon } from 'semantic-ui-react';
 
 import '../stylesheets/components/NavBar.scss';
+import {bindActionCreators} from "redux";
 
 export enum Tab {
   DECK, SEARCH_AND_ADD, REVIEW, PREFERENCES
@@ -16,9 +17,9 @@ export interface NavBarProps {
 const mapStateToProps = (state: NavBarProps) => ({
   activeTab: state.activeTab
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  setActiveTab: (activeTab: Tab) => dispatch(actions.setActiveTab(activeTab))
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setActiveTab: actions.setActiveTab,
+}, dispatch);
 
 export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
   render() {

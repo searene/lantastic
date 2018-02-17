@@ -13,7 +13,7 @@ import {
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {Segment, Container} from "semantic-ui-react";
 import '../stylesheets/components/Review.scss';
 import {BaseButton} from "./BaseButton";
@@ -27,8 +27,8 @@ interface ReviewStates {
 }
 const mapStateToProps = (state: ReviewProps) => ({
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+}, dispatch);
 export enum Level {
   AGAIN, HARD, GOOD, EASY
 }

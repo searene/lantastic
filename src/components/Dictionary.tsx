@@ -12,7 +12,7 @@ if (!__IS_WEB__) {
 
 import * as React from 'react';
 import { actions } from '../actions'
-import { Dispatch } from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import { connect } from 'react-redux';
 import { Input, Segment } from 'semantic-ui-react';
 
@@ -31,10 +31,10 @@ const mapStateToProps = (state: DictionaryProps) => ({
   word: state.word,
   wordDefinitions: state.wordDefinitions,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  setWord: (word: string) => dispatch(actions.setWord(word)),
-  setWordDefinitions: (wordDefinitions: WordDefinition[]) => dispatch(actions.setWordDefinitions(wordDefinitions)),
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setWord: actions.setWord,
+  setWordDefinitions: actions.setWordDefinitions,
+}, dispatch);
 
 class ConnectedDictionary extends React.Component<DictionaryProps, {}> {
 

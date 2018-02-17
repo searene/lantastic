@@ -6,7 +6,7 @@ import {Grid, Menu, Segment, Modal, Button, Icon} from 'semantic-ui-react';
 
 import '../stylesheets/components/Preference.scss';
 import {actions} from '../actions/index';
-import {Dispatch} from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
 /** prevent from importing electron and other related stuff when we are building a web app
@@ -25,7 +25,8 @@ export interface PreferencesProps {
 }
 
 const mapStateToProps = (state: PreferencesProps) => ({});
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+}, dispatch);
 
 class ConnectPreferences extends React.Component<PreferencesProps> {
 

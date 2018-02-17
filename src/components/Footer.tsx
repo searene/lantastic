@@ -1,3 +1,5 @@
+import {bindActionCreators} from "redux";
+
 declare const __IS_WEB__: boolean;
 import {Sqlite as SqliteType} from "../Sqlite";
 let Sqlite: typeof SqliteType;
@@ -17,8 +19,8 @@ interface FooterProps {
 const mapStateToProps = (state: FooterProps) => ({
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+}, dispatch);
 
 export class ConnectedFooter extends React.Component<FooterProps, FooterStates> {
 

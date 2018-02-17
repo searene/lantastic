@@ -5,7 +5,7 @@ if(!__IS_WEB__) {
   Sqlite = require('../Sqlite').Sqlite;
 }
 import * as React from 'react';
-import { Dispatch } from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import { connect } from 'react-redux';
 import {Form, TextArea} from 'semantic-ui-react';
 import {actions} from "../actions";
@@ -27,10 +27,10 @@ const mapStateToProps = (state: FieldProps) => ({
   frontCardContents: state.frontCardContents,
   backCardContents: state.backCardContents,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  setFrontCardContents: (contents: string) => dispatch(actions.setFrontCardContents(contents)),
-  setBackCardContents: (contents: string) => dispatch(actions.setBackCardContents(contents)),
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setFrontCardContents: actions.setFrontCardContents,
+  setBackCardContents: actions.setBackCardContents,
+}, dispatch);
 
 class ConnectedField extends React.Component<FieldProps, undefined> {
   render() {

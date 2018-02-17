@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import {DictMap} from "dict-parser/lib/DictionaryFinder";
 import { actions } from '../actions';
 import { Button, Icon, Checkbox, Menu, CheckboxProps } from 'semantic-ui-react';
-import { Dispatch } from 'redux';
+import {bindActionCreators, Dispatch} from 'redux';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 import { getPathToLantastic, createDirIfNotExists } from '../Utils';
@@ -44,13 +44,13 @@ const mapStateToProps = (state: ScanProps) => ({
   selectedPaths: state.selectedPaths,
   scanMessage: state.scanMessage,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  addPaths: (paths: string[]) => dispatch(actions.addPaths(paths)),
-  removeSelectedPaths: () => dispatch(actions.removeSelectedPaths()),
-  addToSelectedPaths: (path: string) => dispatch(actions.addToSelectedPaths(path)),
-  removeFromSelectedPaths: (path: string) => dispatch(actions.removeFromSelectedPaths(path)),
-  setScanMessage: (message: string) => dispatch(actions.setScanMessage(message)),
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  addPaths: actions.addPaths,
+  removeSelectedPaths: actions.removeFromSelectedPaths,
+  addToSelectedPaths: actions.addToSelectedPaths,
+  removeFromSelectedPaths: actions.removeFromSelectedPaths,
+  setScanMessage: actions.setScanMessage,
+}, dispatch);
 
 class ConnectedScan extends React.Component<ScanProps, {}> {
 

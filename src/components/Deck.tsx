@@ -20,6 +20,7 @@ import {connect, Dispatch} from "react-redux";
 import {actions} from "../actions";
 import {DeckDetails} from "./DeckDetails";
 import {RootState} from "../reducers";
+import {bindActionCreators} from "redux";
 
 interface DeckStates {
 }
@@ -38,11 +39,11 @@ const mapStateToProps = (state: RootState) => ({
   decks: state.decks,
   moreDeckName: state.moreDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
-  setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
-  setMoreDeckName: (moreDeckName: string) => dispatch(actions.setMoreDeckName(moreDeckName)),
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setDecks: actions.setDecks,
+  setMoreDeckName: actions.setMoreDeckName,
+  setChosenDeckName: actions.setChosenDeckName,
+}, dispatch);
 
 export class ConnectedDeck extends React.Component<DeckProps, DeckStates> {
 

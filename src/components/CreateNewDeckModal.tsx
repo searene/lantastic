@@ -16,6 +16,7 @@ import {BaseButton} from "./BaseButton";
 
 import '../stylesheets/components/CreateNewDeckModal.scss'
 import {BaseInput} from "./BaseInput";
+import {bindActionCreators} from "redux";
 
 interface CreateNewDeckModalStates {
   message: string;
@@ -31,9 +32,9 @@ interface CreateNewDeckModalProps {
 const mapStateToProps = (state: CreateNewDeckModalProps) => ({
   decks: state.decks,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setDecks: actions.setDecks,
+}, dispatch);
 
 export class ConnectedCreateNewDeckModal extends React.Component<CreateNewDeckModalProps, CreateNewDeckModalStates> {
   constructor(props: CreateNewDeckModalProps) {

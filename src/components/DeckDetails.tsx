@@ -19,6 +19,7 @@ import {Icon, Segment, Modal} from 'semantic-ui-react';
 import '../stylesheets/components/DeckDetails.scss';
 import {BaseButton} from "./BaseButton";
 import {DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
+import {bindActionCreators} from "redux";
 
 interface DeckDetailsProps {
   decks: any[];
@@ -41,12 +42,12 @@ const mapStateToProps = (state: RootState) => ({
   defaultDeckName: state.defaultDeckName,
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  setMoreDeckName: (deckName: string) => dispatch(actions.setMoreDeckName(deckName)),
-  setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
-  setDefaultDeckName: (deckName: string) => dispatch(actions.setDefaultDeckName(deckName)),
-  setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
-});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setMoreDeckName: actions.setMoreDeckName,
+  setDecks: actions.setDecks,
+  setDefaultDeckName: actions.setDefaultDeckName,
+  setChosenDeckName: actions.setChosenDeckName,
+}, dispatch);
 
 export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, DeckDetailsStates> {
   constructor(props: DeckDetailsProps) {
