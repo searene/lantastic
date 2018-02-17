@@ -76,6 +76,6 @@ export class Sqlite {
                   ('Default')
       `);
     }
-  }
+  };
 
 }

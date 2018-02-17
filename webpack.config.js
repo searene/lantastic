@@ -12,7 +12,10 @@ plugins = [
   new CopyWebpackPlugin([{
     from: path.join(__dirname, 'src'),
     to: path.join(__dirname, 'dist'),
-    ignore: ['*.tsx', '*.ts', '*.scss', '*.ttf']
+    ignore: ['*.tsx', '*.ts', '*.scss']
+  }, {
+    from: path.join(__dirname, 'node_modules/semantic-ui-css'),
+    to: path.join(__dirname, 'dist/semantic-ui-css'),
   }]),
   new ExtractTextPlugin('css/style.css'),
   new webpack.DefinePlugin({

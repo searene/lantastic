@@ -5,18 +5,20 @@ import {removeFromArray} from '../Utils';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
 
-type RootState = {
-  readonly paths: string[]
-  readonly selectedPaths: string[]
-  readonly scanMessage: string
-  readonly wordDefinitions: WordDefinition[]
-  readonly word: string
+export type RootState = {
+  readonly paths: string[];
+  readonly selectedPaths: string[];
+  readonly scanMessage: string;
+  readonly wordDefinitions: WordDefinition[];
+  readonly word: string;
   readonly frontCardContents: string;
   readonly backCardContents: string;
   readonly activeTab: Tab;
   readonly chosenDeckName: string;
   readonly decks: any[];
   readonly isLoading: boolean;
+  readonly moreDeckName: string;
+  readonly defaultDeckName: string;
 }
 
 const initialState: RootState = {
@@ -31,6 +33,8 @@ const initialState: RootState = {
   chosenDeckName: '',
   decks: [],
   isLoading: true,
+  moreDeckName: '',
+  defaultDeckName: '',
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -113,6 +117,18 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         isLoading: action.isLoading
+      };
+
+    case getType(actions.setMoreDeckName):
+      return {
+        ...state,
+        moreDeckName: action.moreDeckName
+      };
+
+    case getType(actions.setDefaultDeckName):
+      return {
+        ...state,
+        defaultDeckName: action.defaultDeckName
       };
 
     default:

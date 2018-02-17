@@ -18,6 +18,8 @@ import '../stylesheets/components/Deck.scss';
 import {DECK_COLUMN_NAME} from "../Constants";
 import {connect, Dispatch} from "react-redux";
 import {actions} from "../actions";
+import {DeckDetails} from "./DeckDetails";
+import {RootState} from "../reducers";
 
 interface DeckStates {
 }
@@ -26,52 +28,50 @@ interface DeckProps {
   decks: any[];
   setDecks: (decks: any[]) => any;
   chosenDeckName: string;
+  moreDeckName: string;
+  setMoreDeckName: (moreDeckName: string) => any;
   setChosenDeckName: (deckName: string) => any;
 }
 
-const mapStateToProps = (state: DeckProps) => ({
+const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
   decks: state.decks,
+  moreDeckName: state.moreDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
   setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
+  setMoreDeckName: (moreDeckName: string) => dispatch(actions.setMoreDeckName(moreDeckName)),
 });
 
 export class ConnectedDeck extends React.Component<DeckProps, DeckStates> {
 
-  constructor(props: DeckProps) {
-    super(props);
-    this.state = {
-      decks: [],
-    };
-  }
-
   render() {
     return (
       <Segment className="deck-segment">
-        <div className="decks">
-          {this.props.decks.map(deck => (
-            <Segment stacked className="single-deck" key={deck.name}>
-              <b>{deck.name}</b>
-              <div className="single-deck-bottom">
-                <BaseButton
-                  size="mini"
-                  primary
-                  disabled={deck.name === this.props.chosenDeckName}
-                  onClick={async () => {
-                    this.props.setChosenDeckName(deck.name)
-                  }}>
-                  {deck.name === this.props.chosenDeckName ? 'In use' : 'Switch'}
-                </BaseButton>
-                <BaseButton size="mini">More...</BaseButton>
-              </div>
-            </Segment>
-          ))}
-        </div>
-        <div className="decks-bottom-area">
-          <CreateNewDeckModal />
-        </div>
+        {this.props.moreDeckName === '' ?
+          [<div className="decks" key="decks">
+            {this.props.decks.map(deck => (
+              <Segment stacked className="single-deck" key={deck.name}>
+                <b>{deck.name}</b>
+                <div className="single-deck-bottom">
+                  <BaseButton
+                    size="mini"
+                    primary
+                    disabled={deck.name === this.props.chosenDeckName}
+                    onClick={() => this.props.setChosenDeckName(deck.name)}>
+                    {deck.name === this.props.chosenDeckName ? 'In use' : 'Switch'}
+                  </BaseButton>
+                  <BaseButton size="mini" onClick={() => this.props.setMoreDeckName(deck.name)}>More...</BaseButton>
+                </div>
+              </Segment>
+            ))}
+          </div>,
+            <div className="decks-bottom-area" key="decks-bottom-area">
+              <CreateNewDeckModal/>
+            </div>]
+          : <DeckDetails/>
+        }
       </Segment>
     );
   }

@@ -17,6 +17,8 @@ const CHOSEN_DECK_NAME = 'CHOSEN_DECK_NAME';
 const SET_CHOSEN_DECK_NAME = 'SET_CHOSEN_DECK_NAME';
 const SET_DECKS = 'SET_DECKS';
 const SET_LOADING = 'SET_LOADING';
+const SET_MORE_DECK_NAME = 'SET_MORE_DECK_NAME';
+const SET_DEFAULT_DECK_NAME = 'SET_DEFAULT_DECK_NAME';
 
 export const actions = {
   addPaths: createAction(ADD_PATHS, (paths: string[]) => ({ type: ADD_PATHS, payload: paths })),
@@ -32,6 +34,8 @@ export const actions = {
   setChosenDeckName: createAction(SET_CHOSEN_DECK_NAME, (deckName: string) => ({ type: SET_CHOSEN_DECK_NAME, chosenDeckName: deckName })),
   setDecks: createAction(SET_DECKS, (decks: any[]) => ({ type: SET_DECKS, decks: decks })),
   setLoading: createAction(SET_LOADING, (isLoading: boolean) => ({ type: SET_LOADING, isLoading: isLoading })),
+  setMoreDeckName: createAction(SET_MORE_DECK_NAME, (moreDeckName: string) => ({ type: SET_MORE_DECK_NAME, moreDeckName: moreDeckName })),
+  setDefaultDeckName: createAction(SET_DEFAULT_DECK_NAME, (defaultDeckName: string) => ({ type: SET_DEFAULT_DECK_NAME, defaultDeckName: defaultDeckName })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);

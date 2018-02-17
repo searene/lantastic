@@ -1,0 +1,18 @@
+.back {
+  float: left;
+  color: gray;
+  &:hover {
+    color: black;
+    cursor: pointer;
+  }
+}
+.top {
+  display: flex;
+  margin-bottom: 20px;
+}
+.title {
+  width: 100%;
+  text-align: center;
+  line-height: 28px;
+  font-weight: bold;
+}

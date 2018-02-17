@@ -16,7 +16,7 @@ export class Configuration {
   static init = async (): Promise<void> => {
     const pathExists = await fse.pathExists(getPathToConfigurationFile());
     if(!pathExists) {
-      const defaultDeckName = await Configuration.createDefaultDeck();
+      const defaultDeckName = await Configuration.assignOrCreateDefaultDeck();
       await fse.writeJSON(getPathToConfigurationFile(), {
         timeZone: moment().format('Z'),
         defaultDeckName: defaultDeckName,
@@ -38,20 +38,23 @@ export class Configuration {
   static getConfSync = (): any => {
     return fse.readJSONSync(getPathToConfigurationFile());
   };
-  private static createDefaultDeck = async (): Promise<string> => {
+  static assignOrCreateDefaultDeck = async (): Promise<string> => {
     const db = await Sqlite.getDb();
+    let defaultDeckName = '';
     const firstDeck = await db.get(`SELECT ${DECK_COLUMN_NAME} FROM ${DECK_TABLE}`);
     if(firstDeck === undefined) {
       // insert a default deck
+      defaultDeckName = 'Default';
       await db.run(`
               INSERT INTO ${DECK_TABLE}
                 (${DECK_COLUMN_NAME})
               VALUES
-                ('Default')
-      `);
-      return 'Default';
+                (?)
+      `, defaultDeckName);
+    } else {
+      defaultDeckName = firstDeck[`${DECK_COLUMN_NAME}`];
     }
-    return firstDeck[`${DECK_COLUMN_NAME}`];
+    return defaultDeckName;
   };
   static getValue = async (key: string): Promise<any> => {
     const conf = await Configuration.getConf();
@@ -60,13 +63,6 @@ export class Configuration {
   static getValueSync = (key: string): any => {
     const conf = Configuration.getConfSync();
     return conf[key];
-  };
-  static getDefaultDeckIdSync = (): number => {
-    if(__IS_WEB__) {
-      return 0;
-    } else {
-      return Configuration.getValueSync('defaultDeckName');
-    }
   };
   static getDefaultDeckName = async (): Promise<string> => {
     return Configuration.getValue('defaultDeckName');

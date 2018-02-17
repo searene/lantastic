@@ -30,6 +30,7 @@ export interface AppProps {
   decks: any[];
   setDecks: (decks: any[]) => any;
   setChosenDeckName: (deckName: string) => any;
+  setDefaultDeckName: (deckName: string) => any;
 }
 
 const mapStateToProps = (state: AppProps) => ({
@@ -41,6 +42,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading)),
   setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
   setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
+  setDefaultDeckName: (deckName: string) => dispatch(actions.setDefaultDeckName(deckName)),
 });
 
 export class ConnectedApp extends React.Component<AppProps, {}> {
@@ -48,6 +50,7 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
   init = async (): Promise<void> => {
     await this.setUpDecks();
     await this.setUpChosenDeckName();
+    await this.setUpDefaultDeck();
     this.props.setLoading(false);
   };
 
@@ -141,6 +144,15 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
       defaultDeckName = await Configuration.getDefaultDeckName();
     }
     this.props.setChosenDeckName(defaultDeckName);
+  };
+  private setUpDefaultDeck = async (): Promise<void> => {
+    let defaultDeckName: string;
+    if(__IS_WEB__) {
+      defaultDeckName = 'Default';
+    } else {
+      defaultDeckName = await Configuration.getDefaultDeckName();
+    }
+    this.props.setDefaultDeckName(defaultDeckName);
   }
 }
 
