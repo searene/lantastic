@@ -13,6 +13,10 @@ const WORD = 'WORD';
 const FRONT_CARD_CONTENTS = 'FRONT_CARD_CONTENTS';
 const BACK_CARD_CONTENTS = 'BACK_CARD_CONTENTS';
 const SET_ACTIVE_TAB = 'SET_ACTIVE_TAB';
+const CHOSEN_DECK_NAME = 'CHOSEN_DECK_NAME';
+const SET_CHOSEN_DECK_NAME = 'SET_CHOSEN_DECK_NAME';
+const SET_DECKS = 'SET_DECKS';
+const SET_LOADING = 'SET_LOADING';
 
 export const actions = {
   addPaths: createAction(ADD_PATHS, (paths: string[]) => ({ type: ADD_PATHS, payload: paths })),
@@ -25,6 +29,9 @@ export const actions = {
   setFrontCardContents: createAction(FRONT_CARD_CONTENTS, (contents: string) => ({ type: FRONT_CARD_CONTENTS, contents: contents })),
   setBackCardContents: createAction(BACK_CARD_CONTENTS, (contents: string) => ({ type: BACK_CARD_CONTENTS, contents: contents })),
   setActiveTab: createAction(SET_ACTIVE_TAB, (activeTab: Tab) => ({ type: SET_ACTIVE_TAB, activeTab: activeTab })),
+  setChosenDeckName: createAction(SET_CHOSEN_DECK_NAME, (deckName: string) => ({ type: SET_CHOSEN_DECK_NAME, chosenDeckName: deckName })),
+  setDecks: createAction(SET_DECKS, (decks: any[]) => ({ type: SET_DECKS, decks: decks })),
+  setLoading: createAction(SET_LOADING, (isLoading: boolean) => ({ type: SET_LOADING, isLoading: isLoading })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);

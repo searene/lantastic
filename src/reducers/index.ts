@@ -1,10 +1,11 @@
-import { RootAction } from '../actions';
-import { getType } from 'typesafe-actions';
-import { actions } from '../actions';
-import { removeFromArray } from '../Utils';
+import {RootAction} from '../actions';
+import {getType} from 'typesafe-actions';
+import {actions} from '../actions';
+import {removeFromArray} from '../Utils';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
- type RootState = {
+
+type RootState = {
   readonly paths: string[]
   readonly selectedPaths: string[]
   readonly scanMessage: string
@@ -13,6 +14,9 @@ import {Tab} from "../components/NavBar";
   readonly frontCardContents: string;
   readonly backCardContents: string;
   readonly activeTab: Tab;
+  readonly chosenDeckName: string;
+  readonly decks: any[];
+  readonly isLoading: boolean;
 }
 
 const initialState: RootState = {
@@ -24,13 +28,19 @@ const initialState: RootState = {
   frontCardContents: '',
   backCardContents: '',
   activeTab: Tab.DECK,
+  chosenDeckName: '',
+  decks: [],
+  isLoading: true,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
-  switch(action.type) {
+  switch (action.type) {
 
     case getType(actions.addPaths):
-      return {...state, paths: state.paths.concat(action.payload)}
+      return {
+        ...state,
+        paths: state.paths.concat(action.payload),
+      };
 
     case getType(actions.removeSelectedPaths):
       return {
@@ -38,7 +48,7 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
         paths: state.paths.filter(item => state.selectedPaths.indexOf(item) === -1),
         selectedPaths: []
       };
-    
+
     case getType(actions.addToSelectedPaths):
       return {
         ...state,
@@ -62,7 +72,7 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
         ...state,
         wordDefinitions: action.wordDefinitions
       };
-      
+
     case getType(actions.setWord):
       return {
         ...state,
@@ -85,6 +95,24 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         activeTab: action.activeTab
+      };
+
+    case getType(actions.setChosenDeckName):
+      return {
+        ...state,
+        chosenDeckName: action.chosenDeckName
+      };
+
+    case getType(actions.setDecks):
+      return {
+        ...state,
+        decks: action.decks
+      };
+
+    case getType(actions.setLoading):
+      return {
+        ...state,
+        isLoading: action.isLoading
       };
 
     default:

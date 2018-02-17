@@ -1,8 +1,19 @@
+import {DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
+
+declare const __IS_WEB__: boolean;
+import {Sqlite as SqliteType} from "./Sqlite";
+import {Configuration as ConfigurationType} from "./Configuration";
+let Sqlite: typeof SqliteType;
+let Configuration: typeof ConfigurationType;
+if(!__IS_WEB__) {
+  Sqlite = require('./Sqlite').Sqlite;
+  Configuration = require('./Configuration').Configuration;
+}
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Footer} from './components/Footer';
 import {Preferences} from './components/Preferences';
-import {connect, Provider} from 'react-redux';
+import {connect, Dispatch, Provider} from 'react-redux';
 import {store} from './store';
 
 import './stylesheets/App.scss';
@@ -10,18 +21,39 @@ import {NavBar, Tab} from "./components/NavBar";
 import {Review} from "./components/Review";
 import {SearchAndAdd} from "./components/SearchAndAdd";
 import {Deck} from "./components/Deck";
+import {actions} from "./actions";
 
 export interface AppProps {
-  deck: string;
-  type: string;
   activeTab: Tab;
+  isLoading: boolean;
+  setLoading: (isLoading: boolean) => any;
+  decks: any[];
+  setDecks: (decks: any[]) => any;
+  setChosenDeckName: (deckName: string) => any;
 }
 
 const mapStateToProps = (state: AppProps) => ({
-  activeTab: state.activeTab
+  activeTab: state.activeTab,
+  isLoading: state.isLoading,
+  decks: state.decks,
+});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading)),
+  setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
+  setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
 });
 
 export class ConnectedApp extends React.Component<AppProps, {}> {
+
+  init = async (): Promise<void> => {
+    await this.setUpDecks();
+    await this.setUpChosenDeckName();
+    this.props.setLoading(false);
+  };
+
+  async componentWillMount() {
+    await this.init();
+  }
 
   render() {
     const styles: React.CSSProperties = {
@@ -47,42 +79,76 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
     };
     let tabContents: React.ReactNode;
 
-    if(this.props.activeTab === Tab.SEARCH_AND_ADD) {
-      tabContents = ( <SearchAndAdd /> );
-    } else if(this.props.activeTab === Tab.REVIEW) {
-      tabContents = ( <Review /> );
-    } else if(this.props.activeTab === Tab.PREFERENCES) {
-      tabContents = ( <Preferences /> );
-    } else if(this.props.activeTab === Tab.DECK) {
-      tabContents = ( <Deck /> );
+    if (this.props.activeTab === Tab.SEARCH_AND_ADD) {
+      tabContents = (<SearchAndAdd/>);
+    } else if (this.props.activeTab === Tab.REVIEW) {
+      tabContents = (<Review/>);
+    } else if (this.props.activeTab === Tab.PREFERENCES) {
+      tabContents = (<Preferences/>);
+    } else if (this.props.activeTab === Tab.DECK) {
+      tabContents = (<Deck/>);
     }
     return (
-      <div style={styles.container}>
 
-        <div style={{
-          width: '100%',
-          display: 'flex',
-          flex: 1,
-          padding: '10px',
-        }}>
-          <NavBar/>
-          {tabContents}
-        </div>
+      <div className="app-container">
+        {this.props.isLoading ? <div></div> :
+          <div style={styles.container}>
 
-        <div style={{width: '100%'}}>
-          <Footer deck="Default" type="Basic"/>
-        </div>
+            <div style={{
+              width: '100%',
+              display: 'flex',
+              flex: 1,
+              padding: '10px',
+            }}>
+              <NavBar/>
+              {tabContents}
+            </div>
 
+            <div style={{width: '100%'}}>
+              <Footer/>
+            </div>
+
+          </div>
+        }
       </div>
     );
   }
+  private setUpDecks = async (): Promise<void> => {
+    let decks: any[];
+    if(__IS_WEB__) {
+      decks = [{
+        id: 0,
+        name: 'English',
+      }, {
+        id: 1,
+        name: 'Japanese',
+      }];
+    } else {
+      const db = await Sqlite.getDb();
+      decks = await db.all(`
+          SELECT 
+            ${DECK_COLUMN_NAME}
+          FROM
+            ${DECK_TABLE}`);
+    }
+    this.props.setDecks(decks);
+  };
+  private setUpChosenDeckName = async (): Promise<void> => {
+    let defaultDeckName: string;
+    if(__IS_WEB__) {
+      defaultDeckName = 'Default';
+    } else {
+      defaultDeckName = await Configuration.getDefaultDeckName();
+    }
+    this.props.setChosenDeckName(defaultDeckName);
+  }
 }
 
-export const App = connect(mapStateToProps, {})(ConnectedApp);
+export const App = connect(mapStateToProps, mapDispatchToProps)(ConnectedApp);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App deck="Default" type="Basic"/>
+    <App/>
   </Provider>,
   document.getElementById('app')
 );

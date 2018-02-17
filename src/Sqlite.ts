@@ -1,9 +1,8 @@
 import * as sqlite from 'sqlite';
 import {getPathToSqliteDbFile} from "./Utils";
-import moment = require("moment");
 import {
   CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
-  CARD_COLUMN_NEXT_REVIEW_TIME, CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST, CARD_TABLE, DECK_COLUMN_ID, DECK_COLUMN_NAME,
+  CARD_COLUMN_NEXT_REVIEW_TIME, CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST, CARD_TABLE, DECK_COLUMN_NAME,
   DECK_TABLE,
 } from "./Constants";
 
@@ -35,11 +34,10 @@ export class Sqlite {
             ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} TEXT
           )`), db.run(`
           CREATE TABLE IF NOT EXISTS ${DECK_TABLE} (
-            ${DECK_COLUMN_ID} INTEGER PRIMARY KEY,
-            ${DECK_COLUMN_NAME} TEXT
+            ${DECK_COLUMN_NAME} TEXT PRIMARY KEY
           )`)]
     );
-    await Sqlite.createDefaultDeckIfNoDeckExists();
+    await Sqlite.createDefaultDeckNoDeckExists();
   };
 
   /**
@@ -67,18 +65,16 @@ export class Sqlite {
     }
     return Sqlite._db;
   };
-  static createDefaultDeckIfNoDeckExists = async (): Promise<void> => {
+  static createDefaultDeckNoDeckExists = async (): Promise<void> => {
     const db = await Sqlite.getDb();
     const deckNum = (await db.get(`SELECT COUNT(*) AS count FROM ${DECK_TABLE}`)).count;
     if(deckNum === 0) {
-      const defaultDeckId = 0;
       await db.run(`
                 INSERT INTO ${DECK_TABLE}
-                  (id, name)
+                  (${DECK_COLUMN_NAME})
                 VALUES
-                  (?, ?)
-      `, [defaultDeckId, 'Default']);
-      await db.run(``)
+                  ('Default')
+      `);
     }
   }
 

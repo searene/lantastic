@@ -1,16 +1,25 @@
-import * as fse from 'fs-extra';
+declare const __IS_WEB__: boolean;
+import {Sqlite as SqliteType} from "./Sqlite";
+import * as FseType from 'fs-extra';
+let Sqlite: typeof SqliteType;
+let fse: typeof FseType;
+if(!__IS_WEB__) {
+  Sqlite = require('./Sqlite').Sqlite;
+  fse = require('fs-extra');
+}
+
 import {getPathToConfigurationFile} from "./Utils";
 import moment = require("moment");
-import {Sqlite} from "./Sqlite";
-import {DECK_COLUMN_ID, DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
+import {DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
 
 export class Configuration {
   static init = async (): Promise<void> => {
     const pathExists = await fse.pathExists(getPathToConfigurationFile());
     if(!pathExists) {
+      const defaultDeckName = await Configuration.createDefaultDeck();
       await fse.writeJSON(getPathToConfigurationFile(), {
         timeZone: moment().format('Z'),
-        defaultDeckId: await Configuration.createDefaultDeckId()
+        defaultDeckName: defaultDeckName,
       });
     }
   };
@@ -26,23 +35,40 @@ export class Configuration {
   static getConf = async (): Promise<any> => {
     return fse.readJSON(getPathToConfigurationFile());
   };
-  private static createDefaultDeckId = async (): Promise<number> => {
+  static getConfSync = (): any => {
+    return fse.readJSONSync(getPathToConfigurationFile());
+  };
+  private static createDefaultDeck = async (): Promise<string> => {
     const db = await Sqlite.getDb();
-    const firstDeck = await db.get(`SELECT ${DECK_COLUMN_ID} FROM ${DECK_TABLE}`);
+    const firstDeck = await db.get(`SELECT ${DECK_COLUMN_NAME} FROM ${DECK_TABLE}`);
     if(firstDeck === undefined) {
       // insert a default deck
       await db.run(`
               INSERT INTO ${DECK_TABLE}
-                (${DECK_COLUMN_ID}, ${DECK_COLUMN_NAME})
+                (${DECK_COLUMN_NAME})
               VALUES
-                (0, 'default')
+                ('Default')
       `);
-      return 0;
+      return 'Default';
     }
-    return firstDeck.id;
+    return firstDeck[`${DECK_COLUMN_NAME}`];
   };
   static getValue = async (key: string): Promise<any> => {
     const conf = await Configuration.getConf();
     return conf[key];
+  };
+  static getValueSync = (key: string): any => {
+    const conf = Configuration.getConfSync();
+    return conf[key];
+  };
+  static getDefaultDeckIdSync = (): number => {
+    if(__IS_WEB__) {
+      return 0;
+    } else {
+      return Configuration.getValueSync('defaultDeckName');
+    }
+  };
+  static getDefaultDeckName = async (): Promise<string> => {
+    return Configuration.getValue('defaultDeckName');
   }
 }

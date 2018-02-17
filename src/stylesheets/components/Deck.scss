@@ -1,4 +1,35 @@
 .ui.segment.deck-segment {
   margin: 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.decks {
+  display: flex;
+  justify-content: flex-start;
+  flex: 1;
+  overflow: auto;
+}
+.ui.segment.single-deck {
+  margin: 0 20px 0 0;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.single-deck-bottom {
+  display: flex;
+  justify-content: flex-end;
+}
+.decks-bottom-area {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  padding-top: 10px;
+  border-top: 1px solid #BEBEBE;
+  :last-child {
+    margin-right: 0;
+  }
 }
