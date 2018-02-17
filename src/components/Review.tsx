@@ -1,5 +1,3 @@
-import {inspect} from "util";
-
 declare var __IS_WEB__: boolean;
 import {Sqlite as SqliteType} from "../Sqlite";
 let Sqlite: typeof SqliteType;
@@ -70,7 +68,10 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
   render() {
     return (
       <Container>
-        {this.state.card === undefined ?
+        {this.state.card === INITIAL_CARD ?
+          <div></div>
+        :
+         this.state.card === undefined ?
           <div className="congrat-div">
             <h1>Congratulations!</h1>
             <div>You have finished reviewing cards in this deck.</div>
@@ -117,15 +118,13 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
             WHERE ${CARD_COLUMN_NEXT_REVIEW_TIME} <= ?`;
     const param = moment().format(DATE_FORMAT);
     const reviewCard = await db.get(sql, param);
-    console.log(reviewCard);
     return reviewCard;
   };
   private getInterval = (level: Level): Interval => {
     if(this.state.card[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`] === '') {
       return this.getInitialInterval(level);
     }
-    const previousReviewTimeList = this.state.card[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`];
-    console.log(this.state.card);
+    const previousReviewTimeList = this.state.card[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`].split(',');
     const lastReviewTime = moment(previousReviewTimeList[previousReviewTimeList.length - 1], DATE_FORMAT);
     const duration = ~~moment.duration(moment().diff(lastReviewTime)).asDays();
     if(duration === 0) {
@@ -159,13 +158,23 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
   };
   private adjustReviewTime = async (cardId: number, nextReviewTime: moment.Moment): Promise<void> => {
     const db = await Sqlite.getDb();
-    await db.exec(`
+    const previousReviewTimeList = (await db.get(`
+            SELECT
+              ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}
+            FROM
+              ${CARD_TABLE}
+            WHERE ${CARD_COLUMN_ID} = ${cardId}
+    `))[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`];
+    const currentReviewTime = moment().format(DATE_FORMAT);
+    const updatedReviewTimeList = previousReviewTimeList === '' ? currentReviewTime : previousReviewTimeList + ',' + currentReviewTime;
+    await db.run(`
             UPDATE
               ${CARD_TABLE}
             SET
               ${CARD_COLUMN_NEXT_REVIEW_TIME} = ${nextReviewTime.format(DATE_FORMAT)},
-              ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} = ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} + ',${moment().format(DATE_FORMAT)}'`
-    );
+              ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} = ?
+            WHERE ${CARD_COLUMN_ID} = ${cardId}
+    `, updatedReviewTimeList);
   };
   private getNextReviewTime = (interval: Interval): moment.Moment => {
     if(interval instanceof MinutesInterval) {
