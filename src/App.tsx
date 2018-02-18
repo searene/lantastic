@@ -1,14 +1,7 @@
 import {DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
 
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "./Sqlite";
-import {Configuration as ConfigurationType} from "./Configuration";
-let Sqlite: typeof SqliteType;
-let Configuration: typeof ConfigurationType;
-if(!__IS_WEB__) {
-  Sqlite = require('./Sqlite').Sqlite;
-  Configuration = require('./Configuration').Configuration;
-}
+import {Sqlite} from './Sqlite';
+import {Configuration} from './Configuration';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Footer} from './components/Footer';
@@ -91,7 +84,7 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
       tabContents = (<Preferences/>);
     } else if (this.props.activeTab === Tab.DECK) {
       tabContents = (<Deck/>);
-    } else if(this.props.activeTab === Tab.CARD_BROWSER) {
+    } else if (this.props.activeTab === Tab.CARD_BROWSER) {
       tabContents = (<CardBrowser/>);
     }
     return (
@@ -119,42 +112,24 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
       </div>
     );
   }
+
   private setUpDecks = async (): Promise<void> => {
     let decks: any[];
-    if(__IS_WEB__) {
-      decks = [{
-        id: 0,
-        name: 'English',
-      }, {
-        id: 1,
-        name: 'Japanese',
-      }];
-    } else {
-      const db = await Sqlite.getDb();
-      decks = await db.all(`
+    const db = await Sqlite.getDb();
+    decks = await db.all(`
           SELECT 
             ${DECK_COLUMN_NAME}
           FROM
             ${DECK_TABLE}`);
-    }
     this.props.setDecks(decks);
   };
   private setUpChosenDeckName = async (): Promise<void> => {
     let defaultDeckName: string;
-    if(__IS_WEB__) {
-      defaultDeckName = 'Default';
-    } else {
-      defaultDeckName = await Configuration.getDefaultDeckName();
-    }
+    defaultDeckName = await Configuration.getDefaultDeckName();
     this.props.setChosenDeckName(defaultDeckName);
   };
   private setUpDefaultDeck = async (): Promise<void> => {
-    let defaultDeckName: string;
-    if(__IS_WEB__) {
-      defaultDeckName = 'Default';
-    } else {
-      defaultDeckName = await Configuration.getDefaultDeckName();
-    }
+    const defaultDeckName = await Configuration.getDefaultDeckName();
     this.props.setDefaultDeckName(defaultDeckName);
   }
 }

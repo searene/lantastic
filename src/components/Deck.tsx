@@ -1,21 +1,8 @@
 import {CreateNewDeckModal} from "./CreateNewDeckModal";
-
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-import {Configuration as ConfigurationType} from "../Configuration";
-
-let Sqlite: typeof SqliteType;
-let Configuration: typeof ConfigurationType;
-if (!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-  Configuration = require('../Configuration').Configuration;
-}
-
 import * as React from 'react';
 import {BaseButton} from "./BaseButton";
 import {Segment} from "semantic-ui-react";
 import '../stylesheets/components/Deck.scss';
-import {DECK_COLUMN_NAME} from "../Constants";
 import {connect, Dispatch} from "react-redux";
 import {actions} from "../actions";
 import {DeckDetails} from "./DeckDetails";
@@ -48,7 +35,6 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 export class ConnectedDeck extends React.Component<DeckProps, DeckStates> {
 
   render() {
-    console.log(this.props.decks);
     return (
       <Segment className="deck-segment">
         {this.props.moreDeckName === '' ?

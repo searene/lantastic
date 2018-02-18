@@ -1,25 +1,15 @@
 import {RootState} from "../reducers";
 
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-import {Configuration as ConfigurationType} from "../Configuration";
-
-let Sqlite: typeof SqliteType;
-let Configuration: typeof ConfigurationType;
-if (!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-  Configuration = require('../Configuration').Configuration;
-}
-
 import * as React from 'react';
 import {connect, Dispatch} from "react-redux";
 import {actions} from "../actions";
-import {Icon, Segment, Modal, Input} from 'semantic-ui-react';
-
+import {Icon, Modal, Input} from 'semantic-ui-react';
 import '../stylesheets/components/DeckDetails.scss';
 import {BaseButton} from "./BaseButton";
 import {CARD_COLUMN_DECK, CARD_TABLE, DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
 import {bindActionCreators} from "redux";
+import {Sqlite} from "../Sqlite";
+import {Configuration} from "../Configuration";
 
 interface DeckDetailsProps {
   decks: any[];
@@ -131,7 +121,7 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
     // delete this deck and related cards
     const newDecks = this.props.decks.filter(deck => deck.name !== this.props.moreDeckName);
     this.props.setDecks(newDecks);
-    const [deleteDeckStatement, deleteCardStatement] = await Promise.all([
+    const [_, deleteCardStatement] = await Promise.all([
       db.run(`DELETE FROM ${DECK_TABLE} WHERE ${DECK_COLUMN_NAME} = ?`, this.props.moreDeckName),
       db.run(`DELETE FROM ${CARD_TABLE} WHERE ${CARD_COLUMN_DECK} = ?`, this.props.moreDeckName),
     ]);

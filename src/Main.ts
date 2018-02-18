@@ -4,6 +4,7 @@ import * as url from 'url';
 import {ZipReader} from './ZipReader';
 import {Sqlite} from "./Sqlite";
 import {Configuration} from "./Configuration";
+import * as fse from 'fs-extra';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -52,8 +53,6 @@ async function createWindow () {
 }
 
 
-// zipReader.extractFileFromZip('/home/searene/Public/complete/En-En-Longman_DOCE5.dsl.dz.files.zip', 'exa_p008-001109504.wav');
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -74,6 +73,11 @@ app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
+});
+
+// for hot reload
+fse.watch(__dirname, (event, fileName) => {
+  win.webContents.reloadIgnoringCache();
 });
 
 // In this file you can include the rest of your app's specific main process

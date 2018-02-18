@@ -1,14 +1,7 @@
 import {bindActionCreators} from "redux";
 
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-let Sqlite: typeof SqliteType;
-if(!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-}
 import * as React from 'react';
 import {connect, Dispatch} from "react-redux";
-import {DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
 
 interface FooterStates {
 

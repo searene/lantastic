@@ -1,11 +1,6 @@
 import * as path from 'path';
-import * as FSE from 'fs-extra';
-let fse: typeof FSE;
+import * as fse from 'fs-extra';
 
-declare var __IS_WEB__: boolean;
-if(!__IS_WEB__) {
-  fse = require('fs-extra');
-}
 export function removeFromArray<T>(array: Array<T>, element: T): Array<T> {
   return array.filter(a => a != element);
 }

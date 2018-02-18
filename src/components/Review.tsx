@@ -1,11 +1,6 @@
 import {RootState} from "../reducers";
 
-declare var __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-let Sqlite: typeof SqliteType;
-if(!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-}
+import {Sqlite} from '../Sqlite';
 import {
   AGAIN_DURATION_MINUTES,
   CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,

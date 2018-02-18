@@ -9,15 +9,7 @@ import {actions} from '../actions/index';
 import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
 
-/** prevent from importing electron and other related stuff when we are building a web app
- *  http://ideasintosoftware.com/typescript-conditional-imports/ */
-declare var __IS_WEB__: boolean;
-import * as Electron from 'electron';
-
-let electron: typeof Electron;
-if (!__IS_WEB__) {
-  electron = require('electron');
-}
+import * as electron from 'electron';
 
 import '../stylesheets/components/Preferences.scss';
 

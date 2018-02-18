@@ -1,12 +1,6 @@
 import {BaseInput} from "./BaseInput";
 
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-
-let Sqlite: typeof SqliteType;
-if (!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-}
+import {Sqlite} from '../Sqlite';
 import '../stylesheets/components/CardBrowser.scss';
 import * as React from 'react';
 import {RootState} from "../reducers";
@@ -122,12 +116,8 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
     });
   };
   private setInitialCards = async (): Promise<void> => {
-    let results: any[];
-    if (__IS_WEB__) {
-      results = tableCards;
-    } else {
-      const db = await Sqlite.getDb();
-      results = await db.all(`
+    const db = await Sqlite.getDb();
+    const results = await db.all(`
                      SELECT
                         ${CARD_COLUMN_ID},
                         ${CARD_COLUMN_DECK},
@@ -139,7 +129,6 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
                      ${this.getOrderByStatement()}
                      ${this.getPageLimitStatement()}
       `);
-    }
     this.setState({
       cards: results
     });
@@ -180,7 +169,7 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
       <Table.Footer>
         <Table.Row>
           <Table.HeaderCell colSpan='3'>
-            <Pagination defaultActivePage={5} totalPages={this.getPageCount(this.props.totalCardCount)} />
+            <Pagination defaultActivePage={5} totalPages={this.getPageCount(this.props.totalCardCount)}/>
           </Table.HeaderCell>
         </Table.Row>
       </Table.Footer>
@@ -196,9 +185,6 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
 
 // TODO make sure it's called when adding/deleting cards/decks
 export const getTotalCardCount = async (): Promise<number> => {
-  if(__IS_WEB__) {
-    return tableCards.length;
-  }
   const db = await Sqlite.getDb();
   const result = await db.get(`
                     SELECT COUNT(*) AS count

@@ -1,16 +1,8 @@
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "./Sqlite";
-import * as FseType from 'fs-extra';
-let Sqlite: typeof SqliteType;
-let fse: typeof FseType;
-if(!__IS_WEB__) {
-  Sqlite = require('./Sqlite').Sqlite;
-  fse = require('fs-extra');
-}
-
+import * as fse from 'fs-extra';
 import {getPathToConfigurationFile} from "./Utils";
 import moment = require("moment");
 import {DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
+import {Sqlite} from "./Sqlite";
 
 export class Configuration {
   static init = async (): Promise<void> => {
@@ -58,10 +50,6 @@ export class Configuration {
   };
   static getValue = async (key: string): Promise<any> => {
     const conf = await Configuration.getConf();
-    return conf[key];
-  };
-  static getValueSync = (key: string): any => {
-    const conf = Configuration.getConfSync();
     return conf[key];
   };
   static getDefaultDeckName = async (): Promise<string> => {

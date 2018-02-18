@@ -1,22 +1,15 @@
 import {DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
 
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-import {Configuration as ConfigurationType} from "../Configuration";
-
-let Sqlite: typeof SqliteType;
-if (!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-}
 import * as React from 'react';
 import {connect, Dispatch} from "react-redux";
 import {actions} from "../actions";
-import {Modal, Input, Button, Icon} from 'semantic-ui-react';
+import {Modal, Icon} from 'semantic-ui-react';
 import {BaseButton} from "./BaseButton";
 
 import '../stylesheets/components/CreateNewDeckModal.scss'
 import {BaseInput} from "./BaseInput";
 import {bindActionCreators} from "redux";
+import {Sqlite} from "../Sqlite";
 
 interface CreateNewDeckModalStates {
   message: string;

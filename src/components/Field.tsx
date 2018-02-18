@@ -1,11 +1,6 @@
 import {RootState} from "../reducers";
 
-declare const __IS_WEB__: boolean;
-import {Sqlite as SqliteType} from "../Sqlite";
-let Sqlite: typeof SqliteType;
-if(!__IS_WEB__) {
-  Sqlite = require('../Sqlite').Sqlite;
-}
+import {Sqlite} from '../Sqlite';
 import * as React from 'react';
 import {bindActionCreators, Dispatch} from 'redux';
 import { connect } from 'react-redux';
@@ -18,7 +13,6 @@ import {
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
-import {getTotalCardCount} from "./CardBrowser";
 
 export interface FieldProps {
   frontCardContents: string
