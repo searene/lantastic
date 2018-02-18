@@ -14,12 +14,14 @@ export enum Tab {
 export interface NavBarProps {
   activeTab: Tab;
   setActiveTab: (activeTab: Tab) => any;
+  setCardBrowserLoaded: (isCardBrowserLoaded: boolean) => any;
 }
 const mapStateToProps = (state: RootState) => ({
   activeTab: state.activeTab
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
   setActiveTab: actions.setActiveTab,
+  setCardBrowserLoaded: actions.setCardBrowserLoaded,
 }, dispatch);
 
 export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
@@ -45,7 +47,7 @@ export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
 
         <Menu.Item
           active={this.props.activeTab === Tab.CARD_BROWSER}
-          onClick={() => this.props.setActiveTab(Tab.CARD_BROWSER)}>
+          onClick={this.handleClickOnCardBrowserTab}>
           <Icon name='browser' />
         </Menu.Item>
 
@@ -57,6 +59,10 @@ export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
 
       </Menu>
     )
+  }
+  private handleClickOnCardBrowserTab = () => {
+    this.props.setCardBrowserLoaded(false);
+    this.props.setActiveTab(Tab.CARD_BROWSER);
   }
 }
 

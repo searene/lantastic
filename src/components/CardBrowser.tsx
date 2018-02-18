@@ -13,29 +13,28 @@ import {
   CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
   CARD_COLUMN_NEXT_REVIEW_TIME, CARD_TABLE, DATE_FORMAT
 } from "../Constants";
-import {tableCards} from "../MockData";
 import moment = require("moment");
 import {actions} from "../actions";
 
 interface CardBrowserProps {
-  totalCardCount: number;
-  setTotalCardCount: (totalCardPages: number) => any;
+  isCardBrowserLoaded: boolean;
+  setCardBrowserLoaded: (isCardBrowserLoaded: boolean) => any;
 }
 
 interface CardBrowserStates {
+  pageNum: number;
   searchInputValue: string;
   cards: any[];
   currentPage: number;
   orderBy: string;
   isOrderByAscending: boolean;
-  initialized: boolean;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  totalCardCount: state.totalCardCount,
+  isCardBrowserLoaded: state.isCardBrowserLoaded,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-  setTotalCardCount: actions.setTotalCardCount,
+  setCardBrowserLoaded: actions.setCardBrowserLoaded,
 }, dispatch);
 
 
@@ -48,28 +47,30 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
     super(props);
     this.state = {
       cards: [],
+      pageNum: 0,
       searchInputValue: '',
-      currentPage: 0,
+      currentPage: 1,
       orderBy: CARD_COLUMN_DECK,
       isOrderByAscending: true,
-      initialized: false,
     };
   }
 
   async componentWillMount() {
-    if (!this.state.initialized) {
-      await this.setInitialCards();
-      this.props.setTotalCardCount(await getTotalCardCount());
-      this.setState({
-        initialized: true,
-      });
+    if (!this.props.isCardBrowserLoaded) {
+      await this.reloadData();
+    }
+  }
+
+  async componentWillUpdate() {
+    if(!this.props.isCardBrowserLoaded) {
+      await this.reloadData();
     }
   }
 
   render() {
     return (
       <Segment className={"card-browser-segment"}>
-        {this.state.initialized ?
+        {this.props.isCardBrowserLoaded ?
           [<div className={"search-row"} key={"search-row"}>
             <BaseInput
               placeholder={"Search cards..."}
@@ -78,13 +79,37 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
             />
             <BaseButton onClick={() => this.search()}>Search</BaseButton>
           </div>,
-            <div className={"table-body-row"} key={"table-body-row"}>
-              {this.state.cards === undefined ? '' : this.getTableBody()}
-            </div>,
-            <div className={"table-footer-row"} key={"table-footer-row"}>
-              {this.getTableFooter()}
-            </div>]
-          : <div></div>}
+          <div className={"table-body-row"} key={"table-body-row"}>
+            <Table celled>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Deck</Table.HeaderCell>
+                  <Table.HeaderCell>Front</Table.HeaderCell>
+                  <Table.HeaderCell>Back</Table.HeaderCell>
+                  <Table.HeaderCell>Creation Time</Table.HeaderCell>
+                  <Table.HeaderCell>Next Review Time</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                {this.state.cards.map(card => (
+                  <Table.Row key={card[CARD_COLUMN_ID]}>
+                    <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
+                    <Table.Cell>{card[CARD_COLUMN_FRONT]}</Table.Cell>
+                    <Table.Cell>{card[CARD_COLUMN_BACK]}</Table.Cell>
+                    <Table.Cell>{moment(card[CARD_COLUMN_CREATION_TIME], DATE_FORMAT).format(TABLE_DATE_FORMAT)}</Table.Cell>
+                    <Table.Cell>{moment(card[CARD_COLUMN_NEXT_REVIEW_TIME], DATE_FORMAT).format(TABLE_DATE_FORMAT)}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          </div>,
+
+          <div className={'pagination-row'} key={'pagination-row'}>
+            <Pagination defaultActivePage={5} totalPages={this.state.pageNum}/>
+          </div>
+          ]
+          : <div/>}
       </Segment>
     )
   }
@@ -136,61 +161,25 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
   private getOrderByStatement = () => {
     return `ORDER BY ${this.state.orderBy} ${this.state.isOrderByAscending ? "ASC" : "DESC"}`;
   };
-  private getTableBody = () => {
-    return (
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Deck</Table.HeaderCell>
-            <Table.HeaderCell>Front</Table.HeaderCell>
-            <Table.HeaderCell>Back</Table.HeaderCell>
-            <Table.HeaderCell>Creation Time</Table.HeaderCell>
-            <Table.HeaderCell>Next Review Time</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          {this.state.cards.map(card => (
-            <Table.Row key={card[CARD_COLUMN_ID]}>
-              <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
-              <Table.Cell>{card[CARD_COLUMN_FRONT]}</Table.Cell>
-              <Table.Cell>{card[CARD_COLUMN_BACK]}</Table.Cell>
-              <Table.Cell>{moment(card[CARD_COLUMN_CREATION_TIME], DATE_FORMAT).format(TABLE_DATE_FORMAT)}</Table.Cell>
-              <Table.Cell>{moment(card[CARD_COLUMN_NEXT_REVIEW_TIME], DATE_FORMAT).format(TABLE_DATE_FORMAT)}</Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-
-      </Table>
-    )
-  };
-  private getTableFooter = () => {
-    return (
-      <Table.Footer>
-        <Table.Row>
-          <Table.HeaderCell colSpan='3'>
-            <Pagination defaultActivePage={5} totalPages={this.getPageCount(this.props.totalCardCount)}/>
-          </Table.HeaderCell>
-        </Table.Row>
-      </Table.Footer>
-    )
-  };
   private getPageLimitStatement = (): string => {
     return `LIMIT ${PAGE_SIZE * (this.state.currentPage - 1)}, ${PAGE_SIZE * this.state.currentPage}`;
   };
-  private getPageCount = (cardCount: number) => {
-    return Math.ceil(cardCount / PAGE_SIZE);
-  }
-}
-
-// TODO make sure it's called when adding/deleting cards/decks
-export const getTotalCardCount = async (): Promise<number> => {
-  const db = await Sqlite.getDb();
-  const result = await db.get(`
+  private getPageNum = async (): Promise<number> => {
+    const db = await Sqlite.getDb();
+    const result = await db.get(`
                     SELECT COUNT(*) AS count
                     FROM ${CARD_TABLE}
     `);
-  return result.count;
-};
+    return Math.ceil(result.count / PAGE_SIZE);
+  };
+  private reloadData = async () => {
+    await this.setInitialCards();
+    this.props.setCardBrowserLoaded(true);
+    this.setState({
+      pageNum: await this.getPageNum(),
+    });
+  }
+}
+
 
 export const CardBrowser = connect(mapStateToProps, mapDispatchToProps)(ConnectedCardBrowser);
