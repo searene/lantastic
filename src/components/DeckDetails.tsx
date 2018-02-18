@@ -63,14 +63,14 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
 
   render() {
     return (
-      <div>
+      <div className={"deck-details-root"}>
         <div className="top">
           <div onClick={this.handleBackClick}><i className="fas fa-long-arrow-alt-left fa-2x back"/></div>
           <div className="title">{this.props.moreDeckName}</div>
         </div>
         <div className="deck-details-contents">
-          <Segment>
-            <h3>Deletion</h3>
+          <div className={"area"}>
+            <h3 className={"area-title"}>Deletion</h3>
             <p>Please be careful, the deletion is permanent!</p>
 
             <Modal
@@ -90,10 +90,10 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
               </Modal.Actions>
             </Modal>
 
-          </Segment>
+          </div>
 
-          <Segment>
-            <h3>Deck Name</h3>
+          <div className={"area"}>
+            <h3 className={"area-title"}>Deck Name</h3>
             <div className={"deck-name-contents-with-message"}>
               <div className="alert">{this.state.updateDeckNameMessage}</div>
               <div className="deck-name-contents">
@@ -104,15 +104,15 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
                 <BaseButton onClick={this.updateDeckName}>Update Deck Name</BaseButton>
               </div>
             </div>
-          </Segment>
+          </div>
 
-          <Segment>
-            <h3>Default Deck</h3>
+          <div className={"area"}>
+            <h3 className={"area-title"}>Default Deck</h3>
             {this.props.defaultDeckName === this.props.moreDeckName ?
               <BaseButton disabled>This deck is used by default.</BaseButton> :
               <BaseButton onClick={() => this.setDefaultDeck(this.props.moreDeckName)}>Set As Default</BaseButton>
             }
-          </Segment>
+          </div>
         </div>
       </div>
     );
