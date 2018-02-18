@@ -13,7 +13,7 @@ if (!__IS_WEB__) {
 
 import * as React from 'react';
 import {BaseButton} from "./BaseButton";
-import {Segment, Modal} from "semantic-ui-react";
+import {Segment} from "semantic-ui-react";
 import '../stylesheets/components/Deck.scss';
 import {DECK_COLUMN_NAME} from "../Constants";
 import {connect, Dispatch} from "react-redux";

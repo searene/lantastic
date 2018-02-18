@@ -18,22 +18,27 @@ import {
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
+import {getTotalCardCount} from "./CardBrowser";
 
 export interface FieldProps {
   frontCardContents: string
   backCardContents: string
   chosenDeckName: string
+  totalCardCount: number
   setFrontCardContents: (contents: string) => any
   setBackCardContents: (contents: string) => any
+  setTotalCardCount: (totalCardPages: number) => any;
 }
 const mapStateToProps = (state: RootState) => ({
   frontCardContents: state.frontCardContents,
   backCardContents: state.backCardContents,
   chosenDeckName: state.chosenDeckName,
+  totalCardCount: state.totalCardCount,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
   setFrontCardContents: actions.setFrontCardContents,
   setBackCardContents: actions.setBackCardContents,
+  setTotalCardCount: actions.setTotalCardCount,
 }, dispatch);
 
 class ConnectedField extends React.Component<FieldProps, undefined> {
@@ -110,6 +115,7 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
         ) VALUES (?, ?, ?, ?, ?)`,
          [this.props.chosenDeckName, front, back, creationTime, nextReviewTime, previousReviewTimeList]);
 
+    this.props.setTotalCardCount(this.props.totalCardCount + 1);
     this.props.setFrontCardContents('');
     this.props.setBackCardContents('');
   };

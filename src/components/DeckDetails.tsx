@@ -18,7 +18,7 @@ import {Icon, Segment, Modal, Input} from 'semantic-ui-react';
 
 import '../stylesheets/components/DeckDetails.scss';
 import {BaseButton} from "./BaseButton";
-import {DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
+import {CARD_COLUMN_DECK, CARD_TABLE, DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
 import {bindActionCreators} from "redux";
 
 interface DeckDetailsProps {
@@ -26,10 +26,12 @@ interface DeckDetailsProps {
   moreDeckName: string;
   defaultDeckName: string;
   chosenDeckName: string;
+  totalCardCount: number;
   setMoreDeckName: (deckName: string) => any;
   setDecks: (decks: any[]) => any;
   setDefaultDeckName: (deckName: string) => any;
   setChosenDeckName: (deckName: string) => any;
+  setTotalCardCount: (totalCardCount: number) => any;
 }
 
 interface DeckDetailsStates {
@@ -40,6 +42,7 @@ interface DeckDetailsStates {
 
 const mapStateToProps = (state: RootState) => ({
   decks: state.decks,
+  totalCardCount: state.totalCardCount,
   moreDeckName: state.moreDeckName,
   defaultDeckName: state.defaultDeckName,
   chosenDeckName: state.chosenDeckName,
@@ -49,6 +52,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
   setDecks: actions.setDecks,
   setDefaultDeckName: actions.setDefaultDeckName,
   setChosenDeckName: actions.setChosenDeckName,
+  setTotalCardCount: actions.setTotalCardCount,
 }, dispatch);
 
 export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, DeckDetailsStates> {
@@ -124,10 +128,14 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
   private deleteDeck = async () => {
     const db = await Sqlite.getDb();
 
-    // delete this deck
+    // delete this deck and related cards
     const newDecks = this.props.decks.filter(deck => deck.name !== this.props.moreDeckName);
     this.props.setDecks(newDecks);
-    await db.run(`DELETE FROM ${DECK_TABLE} WHERE ${DECK_COLUMN_NAME} = ?`, this.props.moreDeckName);
+    const [deleteDeckStatement, deleteCardStatement] = await Promise.all([
+      db.run(`DELETE FROM ${DECK_TABLE} WHERE ${DECK_COLUMN_NAME} = ?`, this.props.moreDeckName),
+      db.run(`DELETE FROM ${CARD_TABLE} WHERE ${CARD_COLUMN_DECK} = ?`, this.props.moreDeckName),
+    ]);
+    this.props.setTotalCardCount(this.props.totalCardCount - deleteCardStatement.changes);
 
     // check if this is the only deck
     if(this.props.decks.length === 0) {

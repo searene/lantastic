@@ -9,10 +9,16 @@
   width: 100%;
   flex-shrink: 0;
 }
-.table-row {
+.table-body-row {
   width: 100%;
   flex-grow: 1;
   overflow: auto;
-  margin: 10px 10px 0 0;
+  margin: 10px 10px 20px 0;
   padding-right: 10px;
+}
+.table-footer-row {
+  flex-shrink: 0;
+}
+tfoot {
+  float: right;
 }

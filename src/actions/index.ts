@@ -19,6 +19,7 @@ export const actions = {
   setLoading: createAction('SET_LOADING', (isLoading: boolean) => ({ type: 'SET_LOADING', isLoading: isLoading })),
   setMoreDeckName: createAction('SET_MORE_DECK_NAME', (moreDeckName: string) => ({ type: 'SET_MORE_DECK_NAME', moreDeckName: moreDeckName })),
   setDefaultDeckName: createAction('SET_DEFAULT_DECK_NAME', (defaultDeckName: string) => ({ type: 'SET_DEFAULT_DECK_NAME', defaultDeckName: defaultDeckName })),
+  setTotalCardCount: createAction('SET_TOTAL_CARD_COUNT', (totalCardCount: number) => ({ type: 'SET_TOTAL_CARD_COUNT', totalCardCount: totalCardCount })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);
