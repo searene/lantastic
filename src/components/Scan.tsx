@@ -27,6 +27,7 @@ import {bindActionCreators, Dispatch} from 'redux';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 import { getPathToLantastic, createDirIfNotExists } from '../Utils';
+import {RootState} from "../reducers";
 
 
 export interface ScanProps {
@@ -39,7 +40,7 @@ export interface ScanProps {
   removeFromSelectedPaths: (path: string) => any
   setScanMessage: (message: string) => any
 }
-const mapStateToProps = (state: ScanProps) => ({
+const mapStateToProps = (state: RootState) => ({
   paths: state.paths,
   selectedPaths: state.selectedPaths,
   scanMessage: state.scanMessage,

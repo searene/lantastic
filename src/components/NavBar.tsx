@@ -8,7 +8,7 @@ import {bindActionCreators} from "redux";
 import {RootState} from "../reducers";
 
 export enum Tab {
-  DECK, SEARCH_AND_ADD, REVIEW, PREFERENCES
+  DECK, SEARCH_AND_ADD, REVIEW, CARD_BROWSER, PREFERENCES
 }
 
 export interface NavBarProps {
@@ -27,31 +27,34 @@ export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
     return (
       <Menu icon='labeled' vertical className="navbar">
         <Menu.Item
-          name='deck'
           active={this.props.activeTab === Tab.DECK}
           onClick={() => this.props.setActiveTab(Tab.DECK)}>
           <Icon name='book' />
         </Menu.Item>
         <Menu.Item
-          name='add'
           active={this.props.activeTab === Tab.SEARCH_AND_ADD}
           onClick={() => this.props.setActiveTab(Tab.SEARCH_AND_ADD)}>
           <Icon name='add' />
         </Menu.Item>
 
         <Menu.Item
-          name='newspaper'
           active={this.props.activeTab === Tab.REVIEW}
           onClick={() => this.props.setActiveTab(Tab.REVIEW)}>
           <Icon name='newspaper' />
         </Menu.Item>
 
         <Menu.Item
-          name='setting'
+          active={this.props.activeTab === Tab.CARD_BROWSER}
+          onClick={() => this.props.setActiveTab(Tab.CARD_BROWSER)}>
+          <Icon name='browser' />
+        </Menu.Item>
+
+        <Menu.Item
           active={this.props.activeTab === Tab.PREFERENCES}
           onClick={() => this.props.setActiveTab(Tab.PREFERENCES)}>
           <Icon name='setting' />
         </Menu.Item>
+
       </Menu>
     )
   }

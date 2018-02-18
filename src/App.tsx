@@ -22,6 +22,7 @@ import {Review} from "./components/Review";
 import {SearchAndAdd} from "./components/SearchAndAdd";
 import {Deck} from "./components/Deck";
 import {actions} from "./actions";
+import {CardBrowser} from "./components/CardBrowser";
 
 export interface AppProps {
   activeTab: Tab;
@@ -90,6 +91,8 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
       tabContents = (<Preferences/>);
     } else if (this.props.activeTab === Tab.DECK) {
       tabContents = (<Deck/>);
+    } else if(this.props.activeTab === Tab.CARD_BROWSER) {
+      tabContents = (<CardBrowser/>);
     }
     return (
 

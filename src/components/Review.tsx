@@ -1,3 +1,5 @@
+import {RootState} from "../reducers";
+
 declare var __IS_WEB__: boolean;
 import {Sqlite as SqliteType} from "../Sqlite";
 let Sqlite: typeof SqliteType;
@@ -6,7 +8,8 @@ if(!__IS_WEB__) {
 }
 import {
   AGAIN_DURATION_MINUTES,
-  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_ID, CARD_COLUMN_NEXT_REVIEW_TIME,
+  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
+  CARD_COLUMN_NEXT_REVIEW_TIME,
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST, CARD_TABLE,
   DATE_FORMAT
 } from "../Constants";
@@ -14,18 +17,20 @@ import {
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import {Segment, Container} from "semantic-ui-react";
+import {Container} from "semantic-ui-react";
 import '../stylesheets/components/Review.scss';
 import {BaseButton} from "./BaseButton";
 import moment = require("moment");
 
 interface ReviewProps {
+  chosenDeckName: string;
 }
 interface ReviewStates {
   isAnswerShown: boolean;
   card: any;
 }
-const mapStateToProps = (state: ReviewProps) => ({
+const mapStateToProps = (state: RootState) => ({
+  chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 }, dispatch);
@@ -109,15 +114,17 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     const sql = `
             SELECT
               ${CARD_COLUMN_ID},
+              ${CARD_COLUMN_DECK},
               ${CARD_COLUMN_FRONT},
               ${CARD_COLUMN_BACK},
               ${CARD_COLUMN_CREATION_TIME},
               ${CARD_COLUMN_NEXT_REVIEW_TIME},
               ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}
             FROM ${CARD_TABLE}
-            WHERE ${CARD_COLUMN_NEXT_REVIEW_TIME} <= ?`;
-    const param = moment().format(DATE_FORMAT);
-    const reviewCard = await db.get(sql, param);
+            WHERE ${CARD_COLUMN_NEXT_REVIEW_TIME} <= ?
+              AND ${CARD_COLUMN_DECK} = ?`;
+    const params = [moment().format(DATE_FORMAT), this.props.chosenDeckName];
+    const reviewCard = await db.get(sql, params);
     return reviewCard;
   };
   private getInterval = (level: Level): Interval => {

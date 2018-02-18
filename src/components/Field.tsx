@@ -1,3 +1,5 @@
+import {RootState} from "../reducers";
+
 declare const __IS_WEB__: boolean;
 import {Sqlite as SqliteType} from "../Sqlite";
 let Sqlite: typeof SqliteType;
@@ -12,7 +14,7 @@ import {actions} from "../actions";
 import {BaseButton} from "./BaseButton";
 import moment = require("moment");
 import {
-  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_FRONT, CARD_COLUMN_NEXT_REVIEW_TIME,
+  CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_NEXT_REVIEW_TIME,
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
@@ -20,12 +22,14 @@ import {
 export interface FieldProps {
   frontCardContents: string
   backCardContents: string
+  chosenDeckName: string
   setFrontCardContents: (contents: string) => any
   setBackCardContents: (contents: string) => any
 }
-const mapStateToProps = (state: FieldProps) => ({
+const mapStateToProps = (state: RootState) => ({
   frontCardContents: state.frontCardContents,
   backCardContents: state.backCardContents,
+  chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
   setFrontCardContents: actions.setFrontCardContents,
@@ -97,13 +101,14 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
     const previousReviewTimeList = '';
     await db.run(`
         INSERT INTO card (
+          ${CARD_COLUMN_DECK},
           ${CARD_COLUMN_FRONT},
           ${CARD_COLUMN_BACK},
           ${CARD_COLUMN_CREATION_TIME},
           ${CARD_COLUMN_NEXT_REVIEW_TIME},
           ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}
         ) VALUES (?, ?, ?, ?, ?)`,
-         [front, back, creationTime, nextReviewTime, previousReviewTimeList]);
+         [this.props.chosenDeckName, front, back, creationTime, nextReviewTime, previousReviewTimeList]);
 
     this.props.setFrontCardContents('');
     this.props.setBackCardContents('');

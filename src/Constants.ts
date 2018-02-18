@@ -2,6 +2,7 @@ export const DATE_FORMAT = 'YYYYMMDDHHmm';
 
 export const CARD_TABLE = 'card';
 export const CARD_COLUMN_ID = 'id';
+export const CARD_COLUMN_DECK = 'deck';
 export const CARD_COLUMN_FRONT = 'front';
 export const CARD_COLUMN_BACK = 'back';
 export const CARD_COLUMN_CREATION_TIME = 'creation_time';

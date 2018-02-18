@@ -29,7 +29,7 @@ const initialState: RootState = {
   word: '',
   frontCardContents: '',
   backCardContents: '',
-  activeTab: Tab.DECK,
+  activeTab: Tab.CARD_BROWSER,
   chosenDeckName: '',
   decks: [],
   isLoading: true,
