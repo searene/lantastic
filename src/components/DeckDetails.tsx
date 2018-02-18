@@ -110,7 +110,7 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
             <h3>Default Deck</h3>
             {this.props.defaultDeckName === this.props.moreDeckName ?
               <BaseButton disabled>This deck is used by default.</BaseButton> :
-              <BaseButton>Set As Default</BaseButton>
+              <BaseButton onClick={() => this.setDefaultDeck(this.props.moreDeckName)}>Set As Default</BaseButton>
             }
           </Segment>
         </div>

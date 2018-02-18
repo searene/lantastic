@@ -66,5 +66,5 @@ export class Configuration {
   };
   static getDefaultDeckName = async (): Promise<string> => {
     return Configuration.getValue('defaultDeckName');
-  }
+  };
 }
