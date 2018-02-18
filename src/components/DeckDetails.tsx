@@ -14,7 +14,7 @@ if (!__IS_WEB__) {
 import * as React from 'react';
 import {connect, Dispatch} from "react-redux";
 import {actions} from "../actions";
-import {Icon, Segment, Modal} from 'semantic-ui-react';
+import {Icon, Segment, Modal, Input} from 'semantic-ui-react';
 
 import '../stylesheets/components/DeckDetails.scss';
 import {BaseButton} from "./BaseButton";
@@ -34,6 +34,8 @@ interface DeckDetailsProps {
 
 interface DeckDetailsStates {
   isDeleteDeckModalShown: boolean;
+  deckNameInputValue: string;
+  updateDeckNameMessage: string;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -53,7 +55,9 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
   constructor(props: DeckDetailsProps) {
     super(props);
     this.state = {
-      isDeleteDeckModalShown: false
+      isDeleteDeckModalShown: false,
+      deckNameInputValue: this.props.moreDeckName,
+      updateDeckNameMessage: '',
     }
   }
 
@@ -64,7 +68,7 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
           <div onClick={this.handleBackClick}><i className="fas fa-long-arrow-alt-left fa-2x back"/></div>
           <div className="title">{this.props.moreDeckName}</div>
         </div>
-        <div>
+        <div className="deck-details-contents">
           <Segment>
             <h3>Deletion</h3>
             <p>Please be careful, the deletion is permanent!</p>
@@ -87,9 +91,31 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
             </Modal>
 
           </Segment>
+
+          <Segment>
+            <h3>Deck Name</h3>
+            <div className={"deck-name-contents-with-message"}>
+              <div className="alert">{this.state.updateDeckNameMessage}</div>
+              <div className="deck-name-contents">
+                <Input
+                  className="deck-name-input"
+                  value={this.state.deckNameInputValue}
+                  onChange={(event) => this.setState({deckNameInputValue: (event.target as HTMLInputElement).value})} />
+                <BaseButton onClick={this.updateDeckName}>Update Deck Name</BaseButton>
+              </div>
+            </div>
+          </Segment>
+
+          <Segment>
+            <h3>Default Deck</h3>
+            {this.props.defaultDeckName === this.props.moreDeckName ?
+              <BaseButton disabled>This deck is used by default.</BaseButton> :
+              <BaseButton>Set As Default</BaseButton>
+            }
+          </Segment>
         </div>
       </div>
-    )
+    );
   }
 
   private handleBackClick = () => {
@@ -136,6 +162,51 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
       isDeleteDeckModalShown: false
     });
     this.props.setMoreDeckName('');
+  };
+  private updateDeckName = async () => {
+    if(this.props.moreDeckName === this.state.deckNameInputValue) {
+      this.setState({
+        updateDeckNameMessage: `Deck name is not changed`
+      });
+      return;
+    }
+    for(const deck of this.props.decks) {
+      if(this.state.deckNameInputValue === deck.name && deck.name !== this.props.moreDeckName) {
+        this.setState({
+          updateDeckNameMessage: `Deck name ${this.state.deckNameInputValue} already exists`
+        });
+        return;
+      }
+    }
+
+    // update database
+    const db = await Sqlite.getDb();
+    await db.run(`
+                UPDATE ${DECK_TABLE}
+                SET ${DECK_COLUMN_NAME} = ?
+                WHERE ${DECK_COLUMN_NAME} = ?
+    `, this.state.deckNameInputValue, this.props.moreDeckName);
+
+    // update props
+    if(this.props.defaultDeckName === this.props.moreDeckName) {
+      await this.setDefaultDeck(this.state.deckNameInputValue);
+    }
+    if(this.props.chosenDeckName === this.props.moreDeckName) {
+      this.props.setChosenDeckName(this.state.deckNameInputValue);
+    }
+    let newDecks = this.props.decks.concat();
+    for(let i = 0; i < newDecks.length; i++) {
+      if(newDecks[i].name === this.props.moreDeckName) {
+        newDecks[i].name = this.state.deckNameInputValue;
+        break;
+      }
+    }
+    this.props.setDecks(newDecks);
+    this.props.setMoreDeckName(this.state.deckNameInputValue);
+  };
+  setDefaultDeck = async (deckName: string): Promise<void> => {
+    this.props.setDefaultDeckName(deckName);
+    Configuration.insertOrUpdate("defaultDeckName", deckName);
   };
 }
 

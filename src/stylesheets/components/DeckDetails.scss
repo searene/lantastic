@@ -16,3 +16,21 @@
   line-height: 28px;
   font-weight: bold;
 }
+.deck-name-contents {
+  display: flex;
+}
+.deck-name-input {
+  flex: 1;
+}
+.alert {
+  color: red;
+  width: 100%;
+}
+.deck-details-contents {
+  overflow: auto;
+  width: 100%;
+}
+.deck-name-contents-with-message {
+  display: flex;
+  flex-direction: column;
+}

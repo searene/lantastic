@@ -48,6 +48,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 export class ConnectedDeck extends React.Component<DeckProps, DeckStates> {
 
   render() {
+    console.log(this.props.decks);
     return (
       <Segment className="deck-segment">
         {this.props.moreDeckName === '' ?
