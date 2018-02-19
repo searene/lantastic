@@ -35,7 +35,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 }, dispatch);
 
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 10;
 const TABLE_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowserStates> {

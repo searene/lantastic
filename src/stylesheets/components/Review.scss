@@ -5,7 +5,6 @@
   padding: 10px;
 }
 .review-div {
-  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -21,4 +20,11 @@ hr {
 .bottom-buttons {
   display: flex;
   justify-content: flex-end;
+}
+.review-card {
+  text-align: center;
+  padding: 50px;
+}
+.answer-hr {
+  border: 1px dashed black;
 }
