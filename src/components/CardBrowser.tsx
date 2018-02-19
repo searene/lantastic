@@ -6,7 +6,7 @@ import * as React from 'react';
 import {RootState} from "../reducers";
 import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
-import {Segment, Table, Pagination} from 'semantic-ui-react';
+import {Segment, Table, Pagination, PaginationProps} from 'semantic-ui-react';
 import {BaseButton} from "./BaseButton";
 import {
   CARD_COLUMN_BACK,
@@ -17,28 +17,25 @@ import moment = require("moment");
 import {actions} from "../actions";
 
 interface CardBrowserProps {
-  isCardBrowserLoaded: boolean;
-  setCardBrowserLoaded: (isCardBrowserLoaded: boolean) => any;
 }
 
 interface CardBrowserStates {
   pageNum: number;
   searchInputValue: string;
   cards: any[];
-  currentPage: number;
+  activePage: number;
   orderBy: string;
   isOrderByAscending: boolean;
+  isLoaded: boolean;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  isCardBrowserLoaded: state.isCardBrowserLoaded,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-  setCardBrowserLoaded: actions.setCardBrowserLoaded,
 }, dispatch);
 
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 3;
 const TABLE_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowserStates> {
@@ -49,35 +46,31 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
       cards: [],
       pageNum: 0,
       searchInputValue: '',
-      currentPage: 1,
+      activePage: 1,
       orderBy: CARD_COLUMN_DECK,
       isOrderByAscending: true,
+      isLoaded: false,
     };
   }
-
   async componentWillMount() {
-    if (!this.props.isCardBrowserLoaded) {
-      await this.reloadData();
-    }
-  }
-
-  async componentWillUpdate() {
-    if(!this.props.isCardBrowserLoaded) {
-      await this.reloadData();
-    }
+    this.setState({
+      cards: await this.getCards(this.state.activePage),
+      pageNum: await this.getPageNum(),
+      isLoaded: true,
+    });
   }
 
   render() {
     return (
       <Segment className={"card-browser-segment"}>
-        {this.props.isCardBrowserLoaded ?
+        {this.state.isLoaded ?
           [<div className={"search-row"} key={"search-row"}>
             <BaseInput
               placeholder={"Search cards..."}
               value={this.state.searchInputValue}
               onChange={(evt) => this.setState({searchInputValue: (evt.target as HTMLInputElement).value})}
             />
-            <BaseButton onClick={() => this.search()}>Search</BaseButton>
+            <BaseButton onClick={() => this.search(0)}>Search</BaseButton>
           </div>,
           <div className={"table-body-row"} key={"table-body-row"}>
             <Table celled>
@@ -106,7 +99,10 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
           </div>,
 
           <div className={'pagination-row'} key={'pagination-row'}>
-            <Pagination defaultActivePage={5} totalPages={this.state.pageNum}/>
+            <Pagination
+              activePage={this.state.activePage}
+              totalPages={this.state.pageNum}
+              onPageChange={this.handleClickOnPagination}/>
           </div>
           ]
           : <div/>}
@@ -115,7 +111,7 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
   }
 
   // page starts with 1
-  private search = async (): Promise<void> => {
+  private search = async (pageNo: number): Promise<void> => {
     const db = await Sqlite.getDb();
     const param = '%' + this.state.searchInputValue
       .replace(/!/, '!!')
@@ -134,15 +130,15 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
                        OR (${CARD_COLUMN_FRONT} LIKE ? ESCAPE '!')
                        OR (${CARD_COLUMN_BACK} LIKE ? ESCAPE '!'))
                    ${this.getOrderByStatement()}
-                   ${this.getPageLimitStatement()}
+                   ${this.getPageLimitStatement(pageNo)}
     `, [param, param, param]);
     this.setState({
       cards: results
     });
   };
-  private setInitialCards = async (): Promise<void> => {
+  private getCards = async (pageNo: number): Promise<any[]> => {
     const db = await Sqlite.getDb();
-    const results = await db.all(`
+    return await db.all(`
                      SELECT
                         ${CARD_COLUMN_ID},
                         ${CARD_COLUMN_DECK},
@@ -152,17 +148,14 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
                         ${CARD_COLUMN_BACK}
                      FROM ${CARD_TABLE}
                      ${this.getOrderByStatement()}
-                     ${this.getPageLimitStatement()}
+                     ${this.getPageLimitStatement(pageNo)}
       `);
-    this.setState({
-      cards: results
-    });
   };
   private getOrderByStatement = () => {
     return `ORDER BY ${this.state.orderBy} ${this.state.isOrderByAscending ? "ASC" : "DESC"}`;
   };
-  private getPageLimitStatement = (): string => {
-    return `LIMIT ${PAGE_SIZE * (this.state.currentPage - 1)}, ${PAGE_SIZE * this.state.currentPage}`;
+  private getPageLimitStatement = (pageNo: number): string => {
+    return `LIMIT ${PAGE_SIZE * (pageNo - 1)}, ${PAGE_SIZE * pageNo}`;
   };
   private getPageNum = async (): Promise<number> => {
     const db = await Sqlite.getDb();
@@ -172,14 +165,14 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
     `);
     return Math.ceil(result.count / PAGE_SIZE);
   };
-  private reloadData = async () => {
-    await this.setInitialCards();
-    this.props.setCardBrowserLoaded(true);
+  private handleClickOnPagination = async (event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => {
+    const pageNo = data.activePage as number;
+    const cards = await this.getCards(pageNo);
     this.setState({
-      pageNum: await this.getPageNum(),
+      cards: cards,
+      activePage: pageNo,
     });
-  }
+  };
 }
-
 
 export const CardBrowser = connect(mapStateToProps, mapDispatchToProps)(ConnectedCardBrowser);

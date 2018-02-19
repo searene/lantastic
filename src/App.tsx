@@ -16,6 +16,7 @@ import {SearchAndAdd} from "./components/SearchAndAdd";
 import {Deck} from "./components/Deck";
 import {actions} from "./actions";
 import {CardBrowser} from "./components/CardBrowser";
+import {TestComponent} from "./components/TestComponent";
 
 export interface AppProps {
   activeTab: Tab;

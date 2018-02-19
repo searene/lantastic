@@ -19,7 +19,6 @@ export type RootState = {
   readonly isLoading: boolean;
   readonly moreDeckName: string;
   readonly defaultDeckName: string;
-  readonly isCardBrowserLoaded: boolean;
 }
 
 const initialState: RootState = {
@@ -36,7 +35,6 @@ const initialState: RootState = {
   isLoading: true,
   moreDeckName: '',
   defaultDeckName: '',
-  isCardBrowserLoaded: false,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -131,12 +129,6 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         defaultDeckName: action.defaultDeckName
-      };
-
-    case getType(actions.setCardBrowserLoaded):
-      return {
-        ...state,
-        isCardBrowserLoaded: action.isCardBrowserLoaded
       };
 
     default:

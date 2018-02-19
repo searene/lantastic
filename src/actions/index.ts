@@ -19,7 +19,6 @@ export const actions = {
   setLoading: createAction('SET_LOADING', (isLoading: boolean) => ({ type: 'SET_LOADING', isLoading: isLoading })),
   setMoreDeckName: createAction('SET_MORE_DECK_NAME', (moreDeckName: string) => ({ type: 'SET_MORE_DECK_NAME', moreDeckName: moreDeckName })),
   setDefaultDeckName: createAction('SET_DEFAULT_DECK_NAME', (defaultDeckName: string) => ({ type: 'SET_DEFAULT_DECK_NAME', defaultDeckName: defaultDeckName })),
-  setCardBrowserLoaded: createAction('SET_CARD_BROWSER_LOADED', (isCardBrowserLoaded: boolean) => ({ type: 'SET_CARD_BROWSER_LOADED', isCardBrowserLoaded: isCardBrowserLoaded })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);
