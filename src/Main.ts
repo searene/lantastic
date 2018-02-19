@@ -76,7 +76,7 @@ app.on('activate', () => {
 });
 
 // for hot reload
-fse.watch(__dirname, (event, fileName) => {
+fse.watch(path.join(__dirname, 'bundle.js'), (event, fileName) => {
   win.webContents.reloadIgnoringCache();
 });
 
