@@ -65,6 +65,7 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
               placeholder={"Search cards..."}
               value={this.state.searchInputValue}
               onChange={(evt) => this.setState({searchInputValue: (evt.target as HTMLInputElement).value})}
+              onKeyPress={this.handleInputKeyPress}
             />
             <BaseButton onClick={this.search}>Search</BaseButton>
           </div>,
@@ -117,7 +118,7 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
   };
 
   // page starts with 1
-  private search = async (event: React.SyntheticEvent<HTMLButtonElement>): Promise<void> => {
+  private search = async (): Promise<void> => {
     await this.reloadData(1);
   };
   private getFilteredKeyWord = (keyWord: string): string => {
@@ -185,6 +186,11 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, CardBrowser
       cards: cards,
       activePage: pageNo,
     });
+  };
+  private handleInputKeyPress = async (event: KeyboardEvent) => {
+    if(event.key === 'Enter') {
+      await this.search();
+    }
   };
 }
 
