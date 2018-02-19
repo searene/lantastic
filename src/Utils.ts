@@ -1,3 +1,4 @@
+/// <reference path="./types/Types.d.ts"/>
 import * as path from 'path';
 import * as fse from 'fs-extra';
 
@@ -42,4 +43,14 @@ export const getPathToSqliteDbFile = () => {
 };
 export const getPathToConfigurationFile = () => {
   return path.join(getPathToLantastic(), 'configuration.json');
+};
+
+Array.prototype.remove = function<T>(o: T): T[] {
+  const element = arguments[0];
+  for (let i = 0; i < this.length; i++) {
+    if (this[i] === element) {
+      this.splice(i, 1);
+    }
+  }
+  return this;
 };

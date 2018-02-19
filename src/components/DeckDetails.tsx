@@ -10,6 +10,7 @@ import {CARD_COLUMN_DECK, CARD_TABLE, DECK_COLUMN_NAME, DECK_TABLE} from "../Con
 import {bindActionCreators} from "redux";
 import {Sqlite} from "../Sqlite";
 import {Configuration} from "../Configuration";
+import {Title} from './Title';
 
 interface DeckDetailsProps {
   decks: any[];
@@ -59,8 +60,7 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
           <div className="title">{this.props.moreDeckName}</div>
         </div>
         <div className="deck-details-contents">
-          <div className={"area"}>
-            <h3 className={"area-title"}>Deletion</h3>
+          <Title name={"Deletion"}>
             <p>Please be careful, the deletion is permanent!</p>
 
             <Modal
@@ -79,11 +79,9 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
                 </BaseButton>
               </Modal.Actions>
             </Modal>
+          </Title>
 
-          </div>
-
-          <div className={"area"}>
-            <h3 className={"area-title"}>Deck Name</h3>
+          <Title name={"Deck Name"}>
             <div className={"deck-name-contents-with-message"}>
               <div className="alert">{this.state.updateDeckNameMessage}</div>
               <div className="deck-name-contents">
@@ -94,15 +92,13 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
                 <BaseButton onClick={this.updateDeckName}>Update Deck Name</BaseButton>
               </div>
             </div>
-          </div>
-
-          <div className={"area"}>
-            <h3 className={"area-title"}>Default Deck</h3>
+          </Title>
+          <Title name={"Default Deck"}>
             {this.props.defaultDeckName === this.props.moreDeckName ?
               <BaseButton disabled>This deck is used by default.</BaseButton> :
               <BaseButton onClick={() => this.setDefaultDeck(this.props.moreDeckName)}>Set As Default</BaseButton>
             }
-          </div>
+          </Title>
         </div>
       </div>
     );

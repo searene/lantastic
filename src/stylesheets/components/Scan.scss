@@ -13,16 +13,10 @@
 .scan-path-label {
   margin-bottom: 10px;
 }
-.item.path {
+.ui.vertical.menu .item.path {
   display: flex;
   justify-content: space-between;
 }
 .ui.checkbox {
   float: right;
-}
-.ui.vertical.menu .item.path {
-  &:hover {
-    background-color: #F2F2F2;
-    cursor: pointer;
-  }
 }

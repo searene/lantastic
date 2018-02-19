@@ -31,6 +31,9 @@
   flex-grow: 1;
   overflow: auto;
   width: 100%;
+  & > * {
+    margin-top: 50px;
+  }
   & > :first-child {
     margin-top: 10px;
   }
@@ -38,13 +41,6 @@
 .deck-name-contents-with-message {
   display: flex;
   flex-direction: column;
-}
-.area-title {
-  padding-bottom: 5px;
-  border-bottom: 1px solid #BEBEBE;
-}
-.area {
-  margin-top: 60px;
 }
 .deck-details-root {
   display: flex;

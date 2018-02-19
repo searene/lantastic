@@ -16,7 +16,7 @@ import {SearchAndAdd} from "./components/SearchAndAdd";
 import {Deck} from "./components/Deck";
 import {actions} from "./actions";
 import {CardBrowser} from "./components/CardBrowser";
-import {TestComponent} from "./components/TestComponent";
+import {ConnectedTestComponent} from "./components/TestComponent";
 
 export interface AppProps {
   activeTab: Tab;
@@ -43,6 +43,8 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
 export class ConnectedApp extends React.Component<AppProps, {}> {
 
   init = async (): Promise<void> => {
+    await Sqlite.init();
+    await Configuration.init();
     await this.setUpDecks();
     await this.setUpChosenDeckName();
     await this.setUpDefaultDeck();
@@ -126,11 +128,11 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
   };
   private setUpChosenDeckName = async (): Promise<void> => {
     let defaultDeckName: string;
-    defaultDeckName = await Configuration.getDefaultDeckName();
+    defaultDeckName = await Configuration.get(Configuration.DEFAULT_DECK_NAME_KEY);
     this.props.setChosenDeckName(defaultDeckName);
   };
   private setUpDefaultDeck = async (): Promise<void> => {
-    const defaultDeckName = await Configuration.getDefaultDeckName();
+    const defaultDeckName = await Configuration.get(Configuration.DEFAULT_DECK_NAME_KEY);
     this.props.setDefaultDeckName(defaultDeckName);
   }
 }

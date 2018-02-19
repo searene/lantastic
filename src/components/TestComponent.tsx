@@ -4,58 +4,37 @@ import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import * as fse from 'fs-extra';
+import {Segment} from 'semantic-ui-react';
 
 interface TestComponentProps {
 }
 
 interface TestComponentStates {
-  isLoaded: boolean;
-  anotherIsLoaded: boolean;
 }
 
-const mapStateToProps = (state: RootState) => ({
-});
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-}, dispatch);
+// const mapStateToProps = (state: RootState) => ({
+// });
+// const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+// }, dispatch);
 
 
-class ConnectedTestComponent extends React.Component<TestComponentProps, TestComponentStates> {
+export class ConnectedTestComponent extends React.Component<TestComponentProps, TestComponentStates> {
 
-  constructor(props: TestComponentProps) {
-    super(props);
-    this.state = {
-      isLoaded: false,
-      anotherIsLoaded: false
-    };
-  }
-  async componentWillMount() {
-    debugger;
-    console.log('will mount');
-    this.setState({
-      isLoaded: await fse.pathExists("/"),
-      anotherIsLoaded: await fse.pathExists("/home"),
-    });
-  }
-
-  async componentWillUpdate() {
-    debugger;
-    console.log('will update');
-  }
-
-  async componentDidMount() {
-    debugger;
-  }
-
-  async componentDidUpdate() {
-    debugger;
-  }
+  private segment: typeof Segment;
 
   render() {
-    debugger;
     return (
-      <div>test</div>
+      <Segment
+        onClick={this.handleClick}
+        ref={(ref: typeof Segment) => this.segment = ref}>
+        test
+      </Segment>
     );
   }
+  private handleClick = () => {
+    console.log('use segment');
+    console.log(this.segment);
+  };
 }
 
-export const TestComponent = connect(mapStateToProps, mapDispatchToProps)(ConnectedTestComponent);
+// export const TestComponent = connect(mapStateToProps, mapDispatchToProps)(ConnectedTestComponent);

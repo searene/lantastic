@@ -9,45 +9,38 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {DictMap} from "dict-parser/lib/DictionaryFinder";
 import {actions} from '../actions';
-import {Button, Icon, Checkbox, Menu, CheckboxProps} from 'semantic-ui-react';
+import {Button, Icon, Checkbox, Menu, CheckboxProps, Table} from 'semantic-ui-react';
 import {bindActionCreators, Dispatch} from 'redux';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
 import {getPathToLantastic, createDirIfNotExists} from '../Utils';
 import {RootState} from "../reducers";
+import {BaseButton} from "./BaseButton";
+import {Title} from "./Title";
+import {Configuration} from "../Configuration";
+import Config = Electron.Config;
 
 
 export interface ScanProps {
-  paths: string[]
-  selectedPaths: string[]
-  scanMessage: string
-  addPaths: (paths: string[]) => any
-  removeSelectedPaths: () => any
-  addToSelectedPaths: (path: string) => any
-  removeFromSelectedPaths: (path: string) => any
-  setScanMessage: (message: string) => any
+}
+
+interface ScanStates {
+  scanPaths: string[];
+  scanMessage: string;
 }
 
 const mapStateToProps = (state: RootState) => ({
-  paths: state.paths,
-  selectedPaths: state.selectedPaths,
-  scanMessage: state.scanMessage,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-  addPaths: actions.addPaths,
-  removeSelectedPaths: actions.removeFromSelectedPaths,
-  addToSelectedPaths: actions.addToSelectedPaths,
-  removeFromSelectedPaths: actions.removeFromSelectedPaths,
-  setScanMessage: actions.setScanMessage,
 }, dispatch);
 
-class ConnectedScan extends React.Component<ScanProps, {}> {
+class ConnectedScan extends React.Component<ScanProps, ScanStates> {
 
   constructor(props: ScanProps) {
     super(props);
     this.state = {
-      selectedPaths: [],
-      message: ''
+      scanPaths: Configuration.get(Configuration.SCAN_PATHS_KEY),
+      scanMessage: '',
     }
   }
 
@@ -56,21 +49,11 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
       <div className="scan-container">
         <div className="scan-path">
           <div className="scan-top">
-            <div className="scan-path-label">Scan Path:</div>
-            <Menu vertical className="scan-item">
-              {this.props.paths.map(path =>
-                <label key={path}>
-                  <Menu.Item className="path">
-                    {path}
-                    <Checkbox
-                      checked={this.props.selectedPaths.indexOf(path) > -1}
-                      onChange={(event: React.FormEvent<HTMLInputElement>, data: CheckboxProps) => {
-                        this.changeSelectedPath(path, data.checked)
-                      }}/>
-                  </Menu.Item>
-                </label>
-              )}
-            </Menu>
+
+            <Title name={"Scan Paths"}>
+              {this.getTable()}
+            </Title>
+
           </div>
           <div style={{marginTop: '20px', paddingTop: '10px', width: '100%'}}>
             <div style={{display: 'inline-block'}}>
@@ -78,13 +61,9 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
                 <Icon name='add'/>
                 Add
               </Button>
-              <Button icon labelPosition='left' onClick={this.handleClickOnRemove}>
-                <Icon name='minus'/>
-                Remove
-              </Button>
             </div>
             <div style={{float: 'right'}}>
-              <span style={{marginRight: '10px'}}>{this.props.scanMessage}</span>
+              <span style={{marginRight: '10px'}}>{this.state.scanMessage}</span>
               <Button icon labelPosition='left' color="teal" onClick={this.handleClickOnScan.bind(this)}>
                 <Icon name='search'/>
                 Scan
@@ -96,61 +75,75 @@ class ConnectedScan extends React.Component<ScanProps, {}> {
     )
   }
 
+  private getTable = () => (
+    <Table celled>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>Path</Table.HeaderCell>
+          <Table.HeaderCell>Actions</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+
+      <Table.Body>
+        {this.state.scanPaths.map(path => (
+          <Table.Row key={path}>
+            <Table.Cell>{path}</Table.Cell>
+            <Table.Cell collapsing>
+              <BaseButton color={"red"} size={"tiny"} onClick={this.handleClickOnRemove}>Remove</BaseButton>
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table>
+  );
+
   private handleClickOnAdd = () => {
     electron.remote.dialog.showOpenDialog({
       properties: ['openDirectory']
-    }, filePaths => {
-      let addedPathsAfterRemovingDuplicates = this.removeDuplicates(filePaths, this.props.paths);
-      this.props.addPaths(addedPathsAfterRemovingDuplicates);
+    }, async filePaths => {
+      let uniquePaths = this.removeDuplicates(filePaths, this.state.scanPaths);
+      await Configuration.insertOrUpdate(Configuration.SCAN_PATHS_KEY, uniquePaths);
+      this.setState({
+        scanPaths: uniquePaths,
+      });
     });
   };
   private removeDuplicates = (addedPaths: string[], previousPaths: string[]) => {
-    let duplicateIndex: number[] = [];
-    for (let i = 0; i < addedPaths.length; i++) {
-      for (let previousPath of previousPaths) {
-        if (path.normalize(addedPaths[i]) === path.normalize(previousPath)) {
-          // found a duplicate
-          duplicateIndex.push(i);
-        }
-      }
-    }
-    let finalAddedPaths: string[] = [];
-    for (let i = 0; i < addedPaths.length; i++) {
-      if (duplicateIndex.indexOf(i) === -1) {
-        finalAddedPaths.push(addedPaths[i]);
-      }
-    }
-    return finalAddedPaths;
+    const normalizedPaths = addedPaths.concat(previousPaths)
+      .map(p => path.normalize(p));
+    return normalizedPaths.filter((value, index) => normalizedPaths.indexOf(value) === index);
   };
-  private handleClickOnRemove = () => {
-    this.props.removeSelectedPaths();
-  };
-  private changeSelectedPath = (path: string, isAdded: boolean) => {
-    if (isAdded) {
-      this.props.addToSelectedPaths(path);
-    } else {
-      this.props.removeFromSelectedPaths(path);
-    }
+  private handleClickOnRemove = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    const target = event.target as HTMLButtonElement;
+    const path = (target.parentElement.previousElementSibling as HTMLTableDataCellElement).innerHTML;
+    const newPaths = Configuration.get(Configuration.SCAN_PATHS_KEY).concat().remove(path);
+    await Configuration.insertOrUpdate(Configuration.SCAN_PATHS_KEY, newPaths);
+    this.setState({
+      scanPaths: newPaths
+    });
   };
 
   private async handleClickOnScan() {
-    this.props.setScanMessage('Start scanning...');
     dictParser.on('name', (dictionaryName: string) => {
-      this.props.setScanMessage(`Scanning ${dictionaryName}...`);
+      this.setState({
+        scanMessage: `Scanning ${dictionaryName}`,
+      });
     });
     await createDirIfNotExists(getPathToLantastic());
-    const dictMapList = await dictParser.scan(this.props.paths);
+    const dictMapList = await dictParser.scan(this.state.scanPaths);
 
     // build zip entries for each zip file
     const resourceHolderList = await this.getZippedResourceHolders(dictMapList);
     for (const resourceHolder of resourceHolderList) {
-      this.props.setScanMessage(`Building entries for ${path.basename(resourceHolder)}...`);
+      this.setState({
+        scanMessage: `Building entries for ${path.basename(resourceHolder)}...`,
+      });
       await this.buildZipEntries(resourceHolder);
-      console.log(`entries are built successfully`);
     }
 
-    console.log(`scan is completed`);
-    this.props.setScanMessage('Scan is completed');
+    this.setState({
+      scanMessage: `Scan is completed`,
+    });
   }
 
   private buildZipEntries = async (resourceHolder: string): Promise<void> => {

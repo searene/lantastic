@@ -2,7 +2,6 @@ import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import {ZipReader} from './ZipReader';
-import {Sqlite} from "./Sqlite";
 import {Configuration} from "./Configuration";
 import * as fse from 'fs-extra';
 
@@ -10,7 +9,7 @@ import * as fse from 'fs-extra';
 // be closed automatically when the JavaScript object is garbage collected.
 let win: Electron.BrowserWindow;
 
-async function createWindow () {
+function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({width: 800, height: 600});
 
@@ -47,9 +46,6 @@ async function createWindow () {
       data: buffer
     });
   });
-
-  await Sqlite.init();
-  await Configuration.init();
 }
 
 
@@ -76,7 +72,7 @@ app.on('activate', () => {
 });
 
 // for hot reload
-fse.watch(path.join(__dirname, 'bundle.js'), (event, fileName) => {
+fse.watch(path.join(__dirname), (event, fileName) => {
   win.webContents.reloadIgnoringCache();
 });
 

@@ -5,30 +5,28 @@ import {DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
 import {Sqlite} from "./Sqlite";
 
 export class Configuration {
+
+  static TIME_ZONE_KEY = "timeZone";
+  static DEFAULT_DECK_NAME_KEY = "defaultDeckName";
+  static SCAN_PATHS_KEY = "scanPaths";
+
+  static conf: {[index: string]: any} = {};
+
   static init = async (): Promise<void> => {
     const pathExists = await fse.pathExists(getPathToConfigurationFile());
     if(!pathExists) {
       const defaultDeckName = await Configuration.assignOrCreateDefaultDeck();
-      await fse.writeJSON(getPathToConfigurationFile(), {
-        timeZone: moment().format('Z'),
-        defaultDeckName: defaultDeckName,
-      });
+      Configuration.conf[Configuration.TIME_ZONE_KEY] = moment().format('Z');
+      Configuration.conf[Configuration.DEFAULT_DECK_NAME_KEY] = defaultDeckName;
+      Configuration.conf[Configuration.SCAN_PATHS_KEY] = [];
+      await fse.writeJSON(getPathToConfigurationFile(), Configuration.conf);
+    } else {
+      Configuration.conf = await fse.readJSON(getPathToConfigurationFile());
     }
   };
-  static isKeyExists = async (key: string): Promise<boolean> => {
-    const conf = await fse.readJSON(getPathToConfigurationFile());
-    return key in conf;
-  };
-  static insertOrUpdate = async (key: string, value: string): Promise<void> => {
-    const conf = await Configuration.getConf();
-    conf[key] = value;
-    await fse.writeJSON(getPathToConfigurationFile(), conf);
-  };
-  static getConf = async (): Promise<any> => {
-    return fse.readJSON(getPathToConfigurationFile());
-  };
-  static getConfSync = (): any => {
-    return fse.readJSONSync(getPathToConfigurationFile());
+  static insertOrUpdate = async (key: string, value: any): Promise<void> => {
+    Configuration.conf[key] = value;
+    await fse.writeJSON(getPathToConfigurationFile(), Configuration.conf);
   };
   static assignOrCreateDefaultDeck = async (): Promise<string> => {
     const db = await Sqlite.getDb();
@@ -48,11 +46,7 @@ export class Configuration {
     }
     return defaultDeckName;
   };
-  static getValue = async (key: string): Promise<any> => {
-    const conf = await Configuration.getConf();
-    return conf[key];
-  };
-  static getDefaultDeckName = async (): Promise<string> => {
-    return Configuration.getValue('defaultDeckName');
-  };
+  static get = (key: string) => {
+    return Configuration.conf[key];
+  }
 }
