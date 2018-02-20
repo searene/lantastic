@@ -13,6 +13,11 @@ import {
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
+import {EditorState, Editor} from "draft-js";
+import {RichEditor} from "./RichEditor";
+
+export interface FieldStates {
+}
 
 export interface FieldProps {
   frontCardContents: string
@@ -31,7 +36,10 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
   setBackCardContents: actions.setBackCardContents,
 }, dispatch);
 
-class ConnectedField extends React.Component<FieldProps, undefined> {
+class ConnectedField extends React.Component<FieldProps, FieldStates> {
+  constructor(props: FieldProps) {
+    super(props);
+  }
   render() {
     const style: React.CSSProperties = {
       form: {
@@ -60,20 +68,8 @@ class ConnectedField extends React.Component<FieldProps, undefined> {
     return (
       <div style={style.container}>
         <Form style={style.form}>
-          <TextArea
-            placeholder='Front'
-            value={this.props.frontCardContents}
-            onChange={(event) => this.props.setFrontCardContents((event.target as HTMLTextAreaElement).value)}
-            rows={1}
-            autoHeight
-            style={style.textarea}/>
-          <TextArea
-            placeholder='Back'
-            value={this.props.backCardContents}
-            onChange={(event) => this.props.setBackCardContents((event.target as HTMLTextAreaElement).value)}
-            rows={1}
-            autoHeight
-            style={style.textarea}/>
+          <RichEditor />
+          <RichEditor />
         </Form>
         <div style={style.buttonContainer}>
           <BaseButton

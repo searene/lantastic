@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
+    "draft-js": "^0.10.5",
     "fs-extra": "5.0.0",
     "moment": "2.20.1",
     "react": "16.2.0",
@@ -29,6 +30,7 @@
     "sqlite": "2.9.1"
   },
   "devDependencies": {
+    "@types/draft-js": "^0.10.20",
     "@types/fs-extra": "5.0.0",
     "@types/inline-style-prefixer": "3.0.1",
     "@types/node": "9.3.0",

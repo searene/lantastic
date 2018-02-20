@@ -16,7 +16,8 @@ import {SearchAndAdd} from "./components/SearchAndAdd";
 import {Deck} from "./components/Deck";
 import {actions} from "./actions";
 import {CardBrowser} from "./components/CardBrowser";
-import {ConnectedTestComponent} from "./components/TestComponent";
+import {ConnectedTestComponent, TestComponent} from "./components/TestComponent";
+import {ToolBar} from "./components/ToolBar";
 
 export interface AppProps {
   activeTab: Tab;
@@ -141,7 +142,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(ConnectedApp);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App/>
+    <App />
   </Provider>,
   document.getElementById('app')
 );

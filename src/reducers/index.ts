@@ -4,6 +4,7 @@ import {actions} from '../actions';
 import {removeFromArray} from '../Utils';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
+import {EditorState} from 'draft-js';
 
 export type RootState = {
   readonly wordDefinitions: WordDefinition[];
@@ -16,6 +17,7 @@ export type RootState = {
   readonly isLoading: boolean;
   readonly moreDeckName: string;
   readonly defaultDeckName: string;
+  readonly editorState: EditorState;
 }
 
 const initialState: RootState = {
@@ -23,12 +25,13 @@ const initialState: RootState = {
   word: '',
   frontCardContents: '',
   backCardContents: '',
-  activeTab: Tab.PREFERENCES,
+  activeTab: Tab.SEARCH_AND_ADD,
   chosenDeckName: '',
   decks: [],
   isLoading: true,
   moreDeckName: '',
   defaultDeckName: '',
+  editorState: EditorState.createEmpty(),
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -92,6 +95,12 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         defaultDeckName: action.defaultDeckName
+      };
+
+    case getType(actions.setEditorState):
+      return {
+        ...state,
+        editorState: action.editorState
       };
 
     default:

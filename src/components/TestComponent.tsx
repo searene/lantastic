@@ -5,36 +5,38 @@ import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import * as fse from 'fs-extra';
 import {Segment} from 'semantic-ui-react';
+import {Editor, EditorState} from 'draft-js';
 
 interface TestComponentProps {
 }
 
 interface TestComponentStates {
+  editorState: EditorState,
 }
 
-// const mapStateToProps = (state: RootState) => ({
-// });
-// const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-// }, dispatch);
+const mapStateToProps = (state: RootState) => ({
+});
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+}, dispatch);
 
 
 export class ConnectedTestComponent extends React.Component<TestComponentProps, TestComponentStates> {
 
-  private segment: typeof Segment;
+  private onChange: (editorState: EditorState) => void;
+
+  constructor(props: TestComponentProps) {
+    super(props);
+    this.state =  {
+      editorState: EditorState.createEmpty(),
+    };
+    this.onChange = (editorState: EditorState) => this.setState({editorState});
+  }
 
   render() {
     return (
-      <Segment
-        onClick={this.handleClick}
-        ref={(ref: typeof Segment) => this.segment = ref}>
-        test
-      </Segment>
+      <Editor editorState={this.state.editorState} onChange={this.onChange} />
     );
   }
-  private handleClick = () => {
-    console.log('use segment');
-    console.log(this.segment);
-  };
 }
 
-// export const TestComponent = connect(mapStateToProps, mapDispatchToProps)(ConnectedTestComponent);
+export const TestComponent = connect(mapStateToProps, mapDispatchToProps)(ConnectedTestComponent);

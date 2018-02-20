@@ -2,6 +2,7 @@ import { $call } from 'utility-types';
 import { createAction } from 'typesafe-actions';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
+import {EditorState} from "draft-js";
 
 export const actions = {
   setWord: createAction('WORD', (word: string) => ({ type: 'WORD', word: word })),
@@ -14,6 +15,7 @@ export const actions = {
   setLoading: createAction('SET_LOADING', (isLoading: boolean) => ({ type: 'SET_LOADING', isLoading: isLoading })),
   setMoreDeckName: createAction('SET_MORE_DECK_NAME', (moreDeckName: string) => ({ type: 'SET_MORE_DECK_NAME', moreDeckName: moreDeckName })),
   setDefaultDeckName: createAction('SET_DEFAULT_DECK_NAME', (defaultDeckName: string) => ({ type: 'SET_DEFAULT_DECK_NAME', defaultDeckName: defaultDeckName })),
+  setEditorState: createAction('SET_EDITOR_STATE', (editorState: EditorState) => ({ type: 'SET_EDITOR_STATE', editorState: editorState })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);

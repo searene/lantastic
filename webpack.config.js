@@ -57,6 +57,9 @@ const appConfig = {
     }, {
       from: path.join(__dirname, 'node_modules/semantic-ui-css'),
       to: path.join(__dirname, 'dist/semantic-ui-css'),
+    }, {
+      from: path.join(__dirname, 'node_modules/draft-js/dist/Draft.css'),
+      to: path.join(__dirname, 'dist/css/Draft.css'),
     }]),
     new ExtractTextPlugin('css/style.css'),
   ],
