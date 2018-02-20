@@ -7,13 +7,14 @@ import { connect } from 'react-redux';
 import {Form, TextArea} from 'semantic-ui-react';
 import {actions} from "../actions";
 import {BaseButton} from "./BaseButton";
+import {stateToHTML} from 'draft-js-export-html';
 import moment = require("moment");
 import {
   CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_NEXT_REVIEW_TIME,
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
-import {EditorState, Editor} from "draft-js";
+import {EditorState, Editor, ContentState} from "draft-js";
 import {RichEditor} from "./RichEditor";
 import {ToolBar} from "./ToolBar";
 
@@ -21,21 +22,15 @@ export interface AddCardStates {
 }
 
 export interface AddCardProps {
-  frontCardContents: string
-  backCardContents: string
   chosenDeckName: string
-  setFrontCardContents: (contents: string) => any
-  setBackCardContents: (contents: string) => any
   setEditorStateList: (editorStateList: EditorState[]) => any;
+  editorStateList: EditorState[];
 }
 const mapStateToProps = (state: RootState) => ({
-  frontCardContents: state.frontCardContents,
-  backCardContents: state.backCardContents,
+  editorStateList: state.editorStateList,
   chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-  setFrontCardContents: actions.setFrontCardContents,
-  setBackCardContents: actions.setBackCardContents,
   setEditorStateList: actions.setEditorStateList,
 }, dispatch);
 
@@ -46,8 +41,6 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
   }
   render() {
     const style: React.CSSProperties = {
-      form: {
-      },
       container: {
         display: "flex",
         flexDirection: "column",
@@ -90,8 +83,8 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
   private _add = async () => {
     const db = await Sqlite.getDb();
     const now = moment();
-    const front = this.props.frontCardContents;
-    const back = this.props.backCardContents;
+    const front = stateToHTML(this.props.editorStateList[0].getCurrentContent());
+    const back = stateToHTML(this.props.editorStateList[1].getCurrentContent());
     const creationTime = now.format(DATE_FORMAT);
     const nextReviewTime = this.getNextReviewMoment(now).format(DATE_FORMAT);
     const previousReviewTimeList = '';
@@ -106,11 +99,16 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
         ) VALUES (?, ?, ?, ?, ?, ?)`,
          [this.props.chosenDeckName, front, back, creationTime, nextReviewTime, previousReviewTimeList]);
 
-    this.props.setFrontCardContents('');
-    this.props.setBackCardContents('');
+    [0, 1].map(editorIndex => this.clearEditor(editorIndex));
   };
   private getNextReviewMoment = (creationTime: moment.Moment): moment.Moment => {
     return creationTime;
+  };
+  private clearEditor = (editorIndex: number): void => {
+    const newEditorState = EditorState.push(this.props.editorStateList[editorIndex], ContentState.createFromText(''), 'remove-range');
+    const newEditorStateList = this.props.editorStateList.concat();
+    newEditorStateList[editorIndex] = newEditorState;
+    this.props.setEditorStateList(newEditorStateList);
   };
 }
 export const AddCard = connect(mapStateToProps, mapDispatchToProps)(ConnectedAddCard);

@@ -20,6 +20,7 @@
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
     "draft-js": "^0.10.5",
+    "draft-js-export-html": "^1.2.0",
     "fs-extra": "5.0.0",
     "moment": "2.20.1",
     "react": "16.2.0",

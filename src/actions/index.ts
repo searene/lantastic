@@ -7,8 +7,6 @@ import {EditorState} from "draft-js";
 export const actions = {
   setWord: createAction('WORD', (word: string) => ({ type: 'WORD', word: word })),
   setWordDefinitions: createAction('WORD_DEFINITIONS', (wordDefinitions: WordDefinition[]) => ({ type: 'WORD_DEFINITIONS', wordDefinitions: wordDefinitions })),
-  setFrontCardContents: createAction('FRONT_CARD_CONTENTS', (contents: string) => ({ type: 'FRONT_CARD_CONTENTS', contents: contents })),
-  setBackCardContents: createAction('BACK_CARD_CONTENTS', (contents: string) => ({ type: 'BACK_CARD_CONTENTS', contents: contents })),
   setActiveTab: createAction('SET_ACTIVE_TAB', (activeTab: Tab) => ({ type: 'SET_ACTIVE_TAB', activeTab: activeTab })),
   setChosenDeckName: createAction('SET_CHOSEN_DECK_NAME', (deckName: string) => ({ type: 'SET_CHOSEN_DECK_NAME', chosenDeckName: deckName })),
   setDecks: createAction('SET_DECKS', (decks: any[]) => ({ type: 'SET_DECKS', decks: decks })),

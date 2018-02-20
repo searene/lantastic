@@ -9,8 +9,6 @@ import {EditorState} from 'draft-js';
 export type RootState = {
   readonly wordDefinitions: WordDefinition[];
   readonly word: string;
-  readonly frontCardContents: string;
-  readonly backCardContents: string;
   readonly activeTab: Tab;
   readonly chosenDeckName: string;
   readonly decks: any[];
@@ -24,8 +22,6 @@ export type RootState = {
 const initialState: RootState = {
   wordDefinitions: [],
   word: '',
-  frontCardContents: '',
-  backCardContents: '',
   activeTab: Tab.SEARCH_AND_ADD,
   chosenDeckName: '',
   decks: [],
@@ -49,18 +45,6 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         word: action.word
-      };
-
-    case getType(actions.setFrontCardContents):
-      return {
-        ...state,
-        frontCardContents: action.contents
-      };
-
-    case getType(actions.setBackCardContents):
-      return {
-        ...state,
-        backCardContents: action.contents
       };
 
     case getType(actions.setActiveTab):
