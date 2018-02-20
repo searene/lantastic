@@ -8,15 +8,22 @@ import {EditorState} from 'draft-js';
 import '../stylesheets/components/ToolBar.scss'
 
 interface ToolBarProps {
-  editorState: EditorState
+  editorStateList: EditorState[];
+  focusedEditorIndex: number;
+  setEditorStateList: (editorStateList: EditorState[]) => any;
+  setFocusedEditorIndex: (focusedEditorIndex: number) => any;
 }
 
 interface ToolBarStates {
 }
 
 const mapStateToProps = (state: RootState) => ({
+  editorStateList: state.editorStateList,
+  focusedEditorIndex: state.focusedEditorIndex,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+  setEditorStateList: actions.setEditorStateList,
+  setFocusedEditorIndex: actions.setFocusedEditorIndex,
 }, dispatch);
 
 
@@ -28,17 +35,17 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
 
   render() {
     return (
-      <Menu icon>
-        <Menu.Item name='bold'>
-          <Icon name='gamepad' />
+      <Menu icon className={"toolbar-container"}>
+        <Menu.Item className={"toolbar-icon"}>
+          <Icon name='bold' />
         </Menu.Item>
 
-        <Menu.Item name='italic'>
-          <Icon name='video camera' />
+        <Menu.Item className={"toolbar-icon"}>
+          <Icon name='italic' />
         </Menu.Item>
 
-        <Menu.Item name='underline'>
-          <Icon name='video play' />
+        <Menu.Item className={"toolbar-icon"}>
+          <Icon name='underline' />
         </Menu.Item>
       </Menu>
     );

@@ -17,7 +17,8 @@ export type RootState = {
   readonly isLoading: boolean;
   readonly moreDeckName: string;
   readonly defaultDeckName: string;
-  readonly editorState: EditorState;
+  readonly editorStateList: EditorState[],
+  readonly focusedEditorIndex: number, // starts from 0
 }
 
 const initialState: RootState = {
@@ -31,7 +32,8 @@ const initialState: RootState = {
   isLoading: true,
   moreDeckName: '',
   defaultDeckName: '',
-  editorState: EditorState.createEmpty(),
+  editorStateList: [],
+  focusedEditorIndex: 0,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -97,10 +99,16 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
         defaultDeckName: action.defaultDeckName
       };
 
-    case getType(actions.setEditorState):
+    case getType(actions.setFocusedEditorIndex):
       return {
         ...state,
-        editorState: action.editorState
+        focusedEditorIndex: action.focusedEditorIndex
+      };
+
+    case getType(actions.setEditorStateList):
+      return {
+        ...state,
+        editorStateList: action.editorStateList
       };
 
     default:

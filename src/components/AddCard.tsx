@@ -15,16 +15,18 @@ import {
 } from "../Constants";
 import {EditorState, Editor} from "draft-js";
 import {RichEditor} from "./RichEditor";
+import {ToolBar} from "./ToolBar";
 
-export interface FieldStates {
+export interface AddCardStates {
 }
 
-export interface FieldProps {
+export interface AddCardProps {
   frontCardContents: string
   backCardContents: string
   chosenDeckName: string
   setFrontCardContents: (contents: string) => any
   setBackCardContents: (contents: string) => any
+  setEditorStateList: (editorStateList: EditorState[]) => any;
 }
 const mapStateToProps = (state: RootState) => ({
   frontCardContents: state.frontCardContents,
@@ -34,11 +36,13 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
   setFrontCardContents: actions.setFrontCardContents,
   setBackCardContents: actions.setBackCardContents,
+  setEditorStateList: actions.setEditorStateList,
 }, dispatch);
 
-class ConnectedField extends React.Component<FieldProps, FieldStates> {
-  constructor(props: FieldProps) {
+class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
+  constructor(props: AddCardProps) {
     super(props);
+    this.props.setEditorStateList([EditorState.createEmpty(), EditorState.createEmpty()]);
   }
   render() {
     const style: React.CSSProperties = {
@@ -68,8 +72,9 @@ class ConnectedField extends React.Component<FieldProps, FieldStates> {
     return (
       <div style={style.container}>
         <Form style={style.form}>
-          <RichEditor />
-          <RichEditor />
+          <ToolBar/>
+          <RichEditor editorIndex={0}/>
+          <RichEditor editorIndex={1}/>
         </Form>
         <div style={style.buttonContainer}>
           <BaseButton
@@ -108,4 +113,4 @@ class ConnectedField extends React.Component<FieldProps, FieldStates> {
     return creationTime;
   };
 }
-export const Field = connect(mapStateToProps, mapDispatchToProps)(ConnectedField);
+export const AddCard = connect(mapStateToProps, mapDispatchToProps)(ConnectedAddCard);

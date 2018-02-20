@@ -5,56 +5,57 @@ import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import * as fse from 'fs-extra';
 import {Segment} from 'semantic-ui-react';
-import {Editor, EditorState} from 'draft-js';
+import {Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue} from 'draft-js';
 import '../stylesheets/components/RichEditor.scss';
 
 interface RichEditorProps {
-  editorState: EditorState;
-  setEditorState: (editorState: EditorState) => any;
+  editorIndex: number;
+  editorStateList: EditorState[];
+  focusedEditorIndex: number;
+  setEditorStateList: (editorStateList: EditorState[]) => any;
+  setFocusedEditorIndex: (focusedEditorIndex: number) => any;
 }
 
 interface RichEditorStates {
-  editorState: EditorState,
 }
 
 const mapStateToProps = (state: RootState) => ({
-  editorState: state.editorState,
+  editorStateList: state.editorStateList,
+  focusedEditorIndex: state.focusedEditorIndex,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-  setEditorState: actions.setEditorState,
+  setEditorStateList: actions.setEditorStateList,
+  setFocusedEditorIndex: actions.setFocusedEditorIndex,
 }, dispatch);
 
 
 export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEditorStates> {
 
-  constructor(props: RichEditorProps) {
-    super(props);
-    this.state = {
-      editorState: EditorState.createEmpty(),
-    };
-  }
-
   render() {
     return (
       <Editor
-        editorState={this.state.editorState}
+        editorState={this.props.editorStateList[this.props.editorIndex]}
+        handleKeyCommand={this.handleKeyCommand}
         onFocus={this.onFocus}
         onChange={this.onChange}/>
     );
   }
 
   private onChange = (editorState: EditorState): void => {
-
-    // render is done according to the internal state
-    this.setState({editorState});
-
-    // notify the toolbar of this change
-    this.props.setEditorState(editorState);
+    const newEditorStateList = this.props.editorStateList.concat();
+    newEditorStateList[this.props.editorIndex] = editorState;
+    this.props.setEditorStateList(newEditorStateList);
   };
   private onFocus = (): void => {
-
-    // set the current editorState as the active one
-    this.props.setEditorState(this.state.editorState);
+    this.props.setFocusedEditorIndex(this.props.editorIndex);
+  };
+  private handleKeyCommand = (command: DraftEditorCommand | string, editorState: EditorState): DraftHandleValue => {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if(newState) {
+      this.onChange(newState);
+      return 'handled';
+    }
+    return 'not-handled';
   }
 }
 

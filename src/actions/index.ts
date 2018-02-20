@@ -15,7 +15,8 @@ export const actions = {
   setLoading: createAction('SET_LOADING', (isLoading: boolean) => ({ type: 'SET_LOADING', isLoading: isLoading })),
   setMoreDeckName: createAction('SET_MORE_DECK_NAME', (moreDeckName: string) => ({ type: 'SET_MORE_DECK_NAME', moreDeckName: moreDeckName })),
   setDefaultDeckName: createAction('SET_DEFAULT_DECK_NAME', (defaultDeckName: string) => ({ type: 'SET_DEFAULT_DECK_NAME', defaultDeckName: defaultDeckName })),
-  setEditorState: createAction('SET_EDITOR_STATE', (editorState: EditorState) => ({ type: 'SET_EDITOR_STATE', editorState: editorState })),
+  setFocusedEditorIndex: createAction('SET_FOCUSED_EDITOR_INDEX', (focusedEditorIndex: number) => ({ type: 'SET_FOCUSED_EDITOR_INDEX', focusedEditorIndex: focusedEditorIndex })),
+  setEditorStateList: createAction('SET_EDITOR_STATE_LIST', (editorStateList: EditorState[]) => ({ type: 'SET_EDITOR_STATE_LIST', editorStateList: editorStateList })),
 };
 
 const returnsOfActions = Object.values(actions).map($call);
