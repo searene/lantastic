@@ -2,6 +2,12 @@ import {CharacterMetadata, EditorState, ContentBlock} from "draft-js";
 import {List, OrderedMap, OrderedSet} from "immutable";
 import {range} from "./CommonUtils";
 
+export const DRAFT_INLINE_STYLE_BOLD = 'BOLD';
+export const DRAFT_INLINE_STYLE_ITALIC = 'ITALIC';
+export const DRAFT_INLINE_STYLE_STRIKETHROUGH = 'STRIKETHROUGH';
+export const DRAFT_INLINE_STYLE_CODE = 'CODE';
+export const DRAFT_INLINE_STYLE_UNDERLINE = 'UNDERLINE';
+
 export const getSelectedContentBlocksAsOrderedMap = (editorState: EditorState): OrderedMap<string, ContentBlock> => {
   const selectionState = editorState.getSelection();
   const contentState = editorState.getCurrentContent();
@@ -24,9 +30,10 @@ export const getSelectedCharacterStyles = (editorState: EditorState): List<Order
   const startOffset = editorState.getSelection().getStartOffset();
   const endOffset = editorState.getSelection().getEndOffset();
   const selectedContentBlocks = getSelectedContentBlocksAsList(editorState);
-  if(selectedContentBlocks.size === 0) {
-    throw new Error("No selection.");
-  } else if(selectedContentBlocks.size === 1) {
+
+  // we don't need to consider the situation when selectedContentBlocks.size === 0,
+  // because it just wouldn't happen, there's still an empty ContentBlock when no text is selected.
+  if(selectedContentBlocks.size === 1) {
     const contentBlock = selectedContentBlocks.get(0);
     return List(range(startOffset, endOffset))
       .map(offset => contentBlock.getInlineStyleAt(offset))
