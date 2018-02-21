@@ -1,5 +1,5 @@
 import * as fse from 'fs-extra';
-import {getPathToConfigurationFile} from "./Utils";
+import {getPathToConfigurationFile} from "./Utils/CommonUtils";
 import moment = require("moment");
 import {DECK_COLUMN_NAME, DECK_TABLE} from "./Constants";
 import {Sqlite} from "./Sqlite";

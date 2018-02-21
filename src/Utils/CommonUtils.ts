@@ -1,4 +1,4 @@
-/// <reference path="./types/Types.d.ts"/>
+/// <reference path="../types/Types.d.ts"/>
 import * as path from 'path';
 import * as fse from 'fs-extra';
 
@@ -53,4 +53,7 @@ Array.prototype.remove = function<T>(o: T): T[] {
     }
   }
   return this;
+};
+export const range = (start: number, end: number): number[] => {
+  return new Array(end - start).fill(1).map((d, i) => i + start);
 };

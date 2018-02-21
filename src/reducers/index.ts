@@ -1,7 +1,6 @@
 import {RootAction} from '../actions';
 import {getType} from 'typesafe-actions';
 import {actions} from '../actions';
-import {removeFromArray} from '../Utils';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
 import {EditorState} from 'draft-js';
@@ -15,8 +14,8 @@ export type RootState = {
   readonly isLoading: boolean;
   readonly moreDeckName: string;
   readonly defaultDeckName: string;
-  readonly editorStateList: EditorState[],
-  readonly focusedEditorIndex: number, // starts from 0
+  readonly editorStateList: EditorState[];
+  readonly focusedEditorIndex: number; // starts from 0
 }
 
 const initialState: RootState = {

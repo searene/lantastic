@@ -1,6 +1,3 @@
-/** prevent from importing electron and other related stuff when we are building a web app
- *  http://ideasintosoftware.com/typescript-conditional-imports/ */
-
 import * as electron from 'electron';
 import {dictParser} from "../Parser";
 import {ZipReader} from "../ZipReader";
@@ -13,7 +10,7 @@ import {Button, Icon, Checkbox, Menu, CheckboxProps, Table} from 'semantic-ui-re
 import {bindActionCreators, Dispatch} from 'redux';
 import * as path from 'path';
 import '../stylesheets/components/Scan.scss';
-import {getPathToLantastic, createDirIfNotExists} from '../Utils';
+import {getPathToLantastic, createDirIfNotExists} from '../Utils/CommonUtils';
 import {RootState} from "../reducers";
 import {BaseButton} from "./BaseButton";
 import {Title} from "./Title";

@@ -7,6 +7,7 @@ import * as fse from 'fs-extra';
 import {Segment} from 'semantic-ui-react';
 import {Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue} from 'draft-js';
 import '../stylesheets/components/RichEditor.scss';
+import {getSelectedCharacterStyles} from "../Utils/DraftJsUtils";
 
 interface RichEditorProps {
   editorIndex: number;
@@ -56,7 +57,7 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
       return 'handled';
     }
     return 'not-handled';
-  }
+  };
 }
 
 export const RichEditor = connect(mapStateToProps, mapDispatchToProps)(ConnectedRichEditor);

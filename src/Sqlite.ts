@@ -1,5 +1,5 @@
 import * as sqlite from 'sqlite';
-import {getPathToSqliteDbFile} from "./Utils";
+import {getPathToSqliteDbFile} from "./Utils/CommonUtils";
 import {
   CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
   CARD_COLUMN_NEXT_REVIEW_TIME, CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST, CARD_TABLE, DECK_COLUMN_NAME,
