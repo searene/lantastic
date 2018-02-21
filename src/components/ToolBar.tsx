@@ -8,8 +8,8 @@ import {CharacterMetadata, Editor, EditorState, Modifier, ContentState, ContentB
 
 import '../stylesheets/components/ToolBar.scss'
 import {
-  DRAFT_INLINE_STYLE_BOLD, DRAFT_INLINE_STYLE_ITALIC, DRAFT_INLINE_STYLE_UNDERLINE,
-  getSelectedCharacterStyles, getSelectedContentBlocksAsOrderedMap
+  DRAFT_INLINE_STYLE_BOLD, DRAFT_INLINE_STYLE_ITALIC, DRAFT_INLINE_STYLE_UNDERLINE, getSelectedCharacterStyles,
+  getSelectedContentBlocksAsOrderedMap, isInSelection
 } from "../Utils/DraftJsUtils";
 import {List, OrderedMap} from "immutable";
 
@@ -70,7 +70,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     newEditorStateList[this.props.focusedEditorIndex] = editorState;
     this.props.setEditorStateList(newEditorStateList);
   };
-  private checkIfSelectionInStyle = (style: string): boolean => {
+  private isStyleActiveOnSelection = (style: string): boolean => {
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
     const selectedCharacterStyles = getSelectedCharacterStyles(editorState);
     if(selectedCharacterStyles.size === 0) {
@@ -79,9 +79,22 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     return selectedCharacterStyles.findIndex(s => !s.contains(style)) === -1;
   };
   private isStyleActive = (style: string): boolean => {
-    return this.checkIfSelectionInStyle(style);
+    const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
+    if(isInSelection(editorState)) {
+      return this.isStyleActiveOnSelection(style);
+    } else {
+      return this.isStyleActiveOnNextCharacter(style);
+    }
   };
   private toggleStyle = (style: string): void => {
+    const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
+    if(isInSelection(editorState)) {
+      this.toggleStyleWhenSelected(style);
+    } else {
+      this.toggleStyleWhenNotSelected(style);
+    }
+  };
+  private toggleStyleWhenSelected = (style: string): void => {
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
     const selectionState = editorState.getSelection();
     const startOffset = selectionState.getStartOffset();
@@ -95,12 +108,11 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
         const endPos = index === selectedContentBlocks.size - 1 ? endOffset : contentBlock.getCharacterList().size;
         const newCharacterList: List<CharacterMetadata> = contentBlock
           .getCharacterList()
-          .map((characterMetadata: CharacterMetadata, index: number) => {
-            if (index >= startPos && index < endPos) {
-              return CharacterMetadata.applyStyle(characterMetadata, style);
-            }
-            return characterMetadata;
-          }).toList();
+          .map((characterMetadata, index) => {
+            const func = this.isStyleActiveOnSelection(style) ? CharacterMetadata.removeStyle : CharacterMetadata.applyStyle;
+            return index >= startPos && index < endPos ? func(characterMetadata, style) : characterMetadata;
+          })
+          .toList();
         const newContentBlock: ContentBlock = new ContentBlock({
           key: key,
           type: contentBlock.getType(),
@@ -120,6 +132,26 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
       ContentState.createFromBlockArray(newContentBlocks),
       'change-inline-style');
     this.applyEditorState(newEditorState);
+  };
+  private toggleStyleWhenNotSelected = (style: string): void => {
+  };
+  private isStyleActiveOnNextCharacter = (style: string): boolean => {
+    const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
+    const selectionState = editorState.getSelection();
+    const key = selectionState.getStartKey();
+    const blockContent = editorState.getCurrentContent().getBlockForKey(key);
+    const offset = selectionState.getStartOffset();
+    const characterList = blockContent.getCharacterList();
+    if(characterList.size === 0) {
+      const previousBlockContent = editorState.getCurrentContent().getBlockBefore(key);
+      if(previousBlockContent === undefined) return false;
+      const previousCharacterList = previousBlockContent.getCharacterList();
+      return previousCharacterList.get(previousCharacterList.size - 1).hasStyle(style);
+    } else if(offset === 0) {
+      return characterList.get(0).hasStyle(style);
+    } else {
+      return characterList.get(offset - 1).hasStyle(style);
+    }
   }
 }
 

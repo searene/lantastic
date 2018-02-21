@@ -56,3 +56,7 @@ export const getSelectedCharacterStyles = (editorState: EditorState): List<Order
     }).toList();
   }
 };
+export const isInSelection = (editorState: EditorState): boolean => {
+  const selectionState = editorState.getSelection();
+  return !selectionState.isCollapsed();
+};
