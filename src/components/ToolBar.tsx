@@ -4,7 +4,7 @@ import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import {Icon, Menu} from 'semantic-ui-react';
-import {CharacterMetadata, Editor, EditorState, Modifier, ContentState, ContentBlock} from 'draft-js';
+import {CharacterMetadata, EditorState, ContentState, ContentBlock, RichUtils, SelectionState} from 'draft-js';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
@@ -90,47 +90,18 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
     if(isInSelection(editorState)) {
       this.toggleStyleWhenSelected(style);
+    } else {
+      this.toggleStyleWhenNotSelected(style);
     }
   };
   private toggleStyleWhenSelected = (style: string): void => {
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
-    const selectionState = editorState.getSelection();
-    const startOffset = selectionState.getStartOffset();
-    const endOffset = selectionState.getEndOffset();
-    const selectedContentBlocks = getSelectedContentBlocksAsOrderedMap(editorState);
-    const styledSelectedContentBlocks = selectedContentBlocks
-      .mapEntries((entry, index) => {
-        const key = entry[0] as string;
-        const contentBlock = entry[1] as ContentBlock;
-        const startPos = index === 0 ? startOffset : 0;
-        const endPos = index === selectedContentBlocks.size - 1 ? endOffset : contentBlock.getCharacterList().size;
-        const newCharacterList: List<CharacterMetadata> = contentBlock
-          .getCharacterList()
-          .map((characterMetadata, index) => {
-            const func = this.isStyleActiveOnSelection(style) ? CharacterMetadata.removeStyle : CharacterMetadata.applyStyle;
-            return index >= startPos && index < endPos ? func(characterMetadata, style) : characterMetadata;
-          })
-          .toList();
-        const newContentBlock: ContentBlock = new ContentBlock({
-          key: key,
-          type: contentBlock.getType(),
-          characterList: newCharacterList,
-          text: contentBlock.getText(),
-        });
-        return [key, newContentBlock];
-      }) as OrderedMap<string, ContentBlock>;
-    const newContentBlocks: Array<ContentBlock> = editorState
-      .getCurrentContent()
-      .getBlockMap()
-      .map((contentBlock: ContentBlock, key: string): ContentBlock =>
-        styledSelectedContentBlocks.has(key) ? styledSelectedContentBlocks.get(key) : contentBlock)
-      .toArray();
-    const styledEditorState = EditorState.push(
-      editorState,
-      ContentState.createFromBlockArray(newContentBlocks),
-      'change-inline-style');
-    const selectedEditorState = EditorState.forceSelection(styledEditorState, selectionState);
-    this.applyEditorState(selectedEditorState);
+    const styledEditorState = RichUtils.toggleInlineStyle(editorState, style);
+    const focusedEditorState = this.refocus(styledEditorState, editorState.getSelection());
+    this.applyEditorState(focusedEditorState);
+  };
+  private refocus = (editorState: EditorState, originalSelectionState: SelectionState): EditorState => {
+    return EditorState.forceSelection(editorState, originalSelectionState);
   };
   private isStyleActiveOnNextCharacter = (style: string): boolean => {
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
@@ -149,7 +120,9 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     } else {
       return characterList.get(offset - 1).hasStyle(style);
     }
-  }
+  };
+  private toggleStyleWhenNotSelected = (style: string): void => {
+  };
 }
 
 export const ToolBar = connect(mapStateToProps, mapDispatchToProps)(ConnectedToolBar);
