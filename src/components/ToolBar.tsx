@@ -4,7 +4,7 @@ import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import {Icon, Menu} from 'semantic-ui-react';
-import {CharacterMetadata, EditorState, ContentState, ContentBlock, RichUtils, SelectionState} from 'draft-js';
+import {CharacterMetadata, EditorState, ContentState, ContentBlock, RichUtils, SelectionState, Modifier} from 'draft-js';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
@@ -111,10 +111,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     const offset = selectionState.getStartOffset();
     const characterList = blockContent.getCharacterList();
     if(characterList.size === 0) {
-      const previousBlockContent = editorState.getCurrentContent().getBlockBefore(key);
-      if(previousBlockContent === undefined) return false;
-      const previousCharacterList = previousBlockContent.getCharacterList();
-      return previousCharacterList.get(previousCharacterList.size - 1).hasStyle(style);
+      return this.isLastUnemptyContentBlockHasStyle(editorState, style);
     } else if(offset === 0) {
       return characterList.get(0).hasStyle(style);
     } else {
@@ -122,7 +119,31 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     }
   };
   private toggleStyleWhenNotSelected = (style: string): void => {
+    debugger;
+    const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
+    const contentState = editorState.getCurrentContent();
+    console.log(contentState.getLastCreatedEntityKey());
+    const contentStateWithEntity = contentState.createEntity(
+      'LINK',
+      'MUTABLE',
+      {url: 'http://www.zombo.com'}
+    );
+    const newEditorState = EditorState.push(editorState, contentStateWithEntity, 'insert-fragment');
+    this.applyEditorState(newEditorState);
   };
+  private isLastUnemptyContentBlockHasStyle = (editorState: EditorState, style: string): boolean => {
+    const key = editorState.getSelection().getStartKey();
+    let previousBlockContent = editorState.getCurrentContent().getBlockBefore(key);
+    while(true) {
+      if(previousBlockContent === undefined) return false;
+      const previousCharacterList = previousBlockContent.getCharacterList();
+      if(previousCharacterList.size === 0) {
+        previousBlockContent = editorState.getCurrentContent().getBlockBefore(previousBlockContent.getKey());
+        continue;
+      }
+      return previousCharacterList.get(previousCharacterList.size - 1).hasStyle(style);
+    }
+  }
 }
 
 export const ToolBar = connect(mapStateToProps, mapDispatchToProps)(ConnectedToolBar);
