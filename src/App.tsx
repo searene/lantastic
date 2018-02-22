@@ -18,6 +18,7 @@ import {actions} from "./actions";
 import {CardBrowser} from "./components/CardBrowser";
 import {ConnectedTestComponent, TestComponent} from "./components/TestComponent";
 import {ToolBar} from "./components/ToolBar";
+import {RichEditorExample} from "./components/RichEditorExample";
 
 export interface AppProps {
   activeTab: Tab;
@@ -142,7 +143,7 @@ export const App = connect(mapStateToProps, mapDispatchToProps)(ConnectedApp);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <RichEditorExample />
   </Provider>,
   document.getElementById('app')
 );

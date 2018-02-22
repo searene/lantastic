@@ -45,21 +45,21 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
         <Menu.Item
           className={"toolbar-icon"}
           active={this.isStyleActive(DRAFT_INLINE_STYLE_BOLD)}
-          onClick={() => this.toggleStyle(DRAFT_INLINE_STYLE_BOLD)}>
+          onClick={() => this.toggleInlineStyle(DRAFT_INLINE_STYLE_BOLD)}>
           <Icon name='bold' />
         </Menu.Item>
 
         <Menu.Item
           className={"toolbar-icon"}
           active={this.isStyleActive(DRAFT_INLINE_STYLE_ITALIC)}
-          onClick={() => this.toggleStyle(DRAFT_INLINE_STYLE_ITALIC)}>
+          onClick={() => this.toggleInlineStyle(DRAFT_INLINE_STYLE_ITALIC)}>
           <Icon name='italic' />
         </Menu.Item>
 
         <Menu.Item
           className={"toolbar-icon"}
           active={this.isStyleActive(DRAFT_INLINE_STYLE_UNDERLINE)}
-          onClick={() => this.toggleStyle(DRAFT_INLINE_STYLE_UNDERLINE)}>
+          onClick={() => this.toggleInlineStyle(DRAFT_INLINE_STYLE_UNDERLINE)}>
           <Icon name='underline' />
         </Menu.Item>
       </Menu>
@@ -117,6 +117,17 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     } else {
       return characterList.get(offset - 1).hasStyle(style);
     }
+  };
+  private getEditorState = (): EditorState => {
+    return this.props.editorStateList[this.props.focusedEditorIndex];
+  };
+  private toggleInlineStyle = (style: string): void => {
+    this.applyEditorState(
+      RichUtils.toggleInlineStyle(
+        this.getEditorState(),
+        style,
+      )
+    );
   };
   private toggleStyleWhenNotSelected = (style: string): void => {
     debugger;

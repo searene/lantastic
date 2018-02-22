@@ -5,7 +5,8 @@ import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import * as fse from 'fs-extra';
 import {Segment} from 'semantic-ui-react';
-import {Editor, EditorState} from 'draft-js';
+import {Editor, EditorState, RichUtils} from 'draft-js';
+import {BaseButton} from "./BaseButton";
 
 interface TestComponentProps {
 }
@@ -34,7 +35,12 @@ export class ConnectedTestComponent extends React.Component<TestComponentProps, 
 
   render() {
     return (
-      <Editor editorState={this.state.editorState} onChange={this.onChange} />
+      <div>
+        <BaseButton onClick={() => {
+          this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'BOLD'));
+        }}>Bold</BaseButton>
+        <Editor editorState={this.state.editorState} onChange={this.onChange} />
+      </div>
     );
   }
 }
