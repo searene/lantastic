@@ -41,7 +41,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
 
   render() {
     return (
-      <Menu icon className={"toolbar-container"}>
+      <Menu icon className={"toolbar-container borderless"}>
         <Menu.Item
           className={"toolbar-icon"}
           active={this.isStyleActive(DRAFT_INLINE_STYLE_BOLD)}
@@ -90,8 +90,6 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
     if(isInSelection(editorState)) {
       this.toggleStyleWhenSelected(style);
-    } else {
-      this.toggleStyleWhenNotSelected(style);
     }
   };
   private toggleStyleWhenSelected = (style: string): void => {
@@ -127,13 +125,12 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
       .map((contentBlock: ContentBlock, key: string): ContentBlock =>
         styledSelectedContentBlocks.has(key) ? styledSelectedContentBlocks.get(key) : contentBlock)
       .toArray();
-    const newEditorState = EditorState.push(
+    const styledEditorState = EditorState.push(
       editorState,
       ContentState.createFromBlockArray(newContentBlocks),
       'change-inline-style');
-    this.applyEditorState(newEditorState);
-  };
-  private toggleStyleWhenNotSelected = (style: string): void => {
+    const selectedEditorState = EditorState.forceSelection(styledEditorState, selectionState);
+    this.applyEditorState(selectedEditorState);
   };
   private isStyleActiveOnNextCharacter = (style: string): boolean => {
     const editorState = this.props.editorStateList[this.props.focusedEditorIndex];
