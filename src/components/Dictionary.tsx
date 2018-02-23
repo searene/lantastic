@@ -9,9 +9,9 @@ import '../stylesheets/components/Dictionary.scss';
 import '../stylesheets/dictionaries/common.scss';
 import '../stylesheets/dictionaries/dsl.scss';
 import {dictParser} from "../Parser";
+import {AutoSuggestInput} from "./AutoSuggestInput";
 
 interface DictionaryStates {
-  testKey: string;
 }
 
 interface DictionaryProps {
@@ -32,7 +32,6 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 
 class ConnectedDictionary extends React.Component<DictionaryProps, DictionaryStates> {
 
-  private inputComponent: HTMLElement;
   private definitionSegment: HTMLElement;
   constructor(props: DictionaryProps) {
     super(props);
@@ -59,34 +58,15 @@ class ConnectedDictionary extends React.Component<DictionaryProps, DictionarySta
     };
     return (
       <div style={styles.container}>
-        <button id={'refer-word-search-button'}
-                onClick={(event: React.SyntheticEvent<HTMLButtonElement>) => this.search((event.target as HTMLButtonElement).innerHTML)}>
-        </button>
-        <Ref innerRef={ref => this.inputComponent = ref}>
-          <Input
-            icon={<Icon name={'search'} inverted circular link id={"search-word-icon"} onClick={() => this.search(this.props.word)}/>}
-            placeholder="Search in dictionaries..."
-            value={this.props.word}
-            className="search-input"
-            onKeyDown={this.handleOnKeyDown}
-            onChange={(evt: React.SyntheticEvent<HTMLInputElement>) => this.props.setWord((evt.target as HTMLInputElement).value)}/>
-        </Ref>
+        <AutoSuggestInput
+          onFetched={() => {this.definitionSegment.scrollTop = 0;}}
+        />
         <Ref innerRef={ref => this.definitionSegment = ref}>
           <Segment className="definition"/>
         </Ref>
       </div>
     )
   }
-  private search = async (word: string) => {
-    const wordDefinitions = await dictParser.getWordDefinitions(word);
-    this.props.setWordDefinitions(wordDefinitions);
-    this.definitionSegment.scrollTop = 0;
-  };
-  private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      await this.search(this.props.word);
-    }
-  };
   private populateDefinition = () => {
     this.definitionSegment.innerHTML = this.getDefinitionHTMLs();
   };
