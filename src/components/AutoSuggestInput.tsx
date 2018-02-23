@@ -79,9 +79,9 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
   private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
     const input = (event.target as HTMLInputElement).value;
     this.props.setWord(input);
-    const wordCandidates = await Parser.getDictParser().getWordCandidates(input);
+    const suggestions = await Parser.getDictParser().getWordCandidates(input);
     this.setState({
-      suggestions: wordCandidates.map(wordCandidate => wordCandidate.word),
+      suggestions: suggestions,
     });
   };
 }

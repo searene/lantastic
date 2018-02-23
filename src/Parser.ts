@@ -6,7 +6,7 @@ export class Parser {
   private static _dictParser: DictParser;
   static init = async () => {
     Parser._dictParser = new DictParser(getPathToDictParserDbFile(), getPathToWordFormsFolder(), getPathToDictionaryResources());
-    Parser._dictParser.setDictMapList(await Parser._dictParser.readDictMapListFromFile());
+    Parser._dictParser.init();
   };
   static getDictParser = (): DictParser => {
     if(Parser._dictParser === undefined) {
