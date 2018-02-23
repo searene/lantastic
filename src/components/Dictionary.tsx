@@ -15,30 +15,18 @@ interface DictionaryStates {
 }
 
 interface DictionaryProps {
-  word: string
   wordDefinitions: WordDefinition[]
-  setWord: (word: string) => any
-  setWordDefinitions: (wordDefinitions: WordDefinition[]) => any
 }
 
 const mapStateToProps = (state: DictionaryProps) => ({
-  word: state.word,
   wordDefinitions: state.wordDefinitions,
 });
 const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-  setWord: actions.setWord,
-  setWordDefinitions: actions.setWordDefinitions,
 }, dispatch);
 
 class ConnectedDictionary extends React.Component<DictionaryProps, DictionaryStates> {
 
   private definitionSegment: HTMLElement;
-  constructor(props: DictionaryProps) {
-    super(props);
-    this.state = {
-      testKey: '',
-    };
-  }
 
   componentDidMount() {
     this.populateDefinition();
@@ -51,15 +39,12 @@ class ConnectedDictionary extends React.Component<DictionaryProps, DictionarySta
   render() {
     const styles: React.CSSProperties = {
       container: {
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
       },
     };
     return (
-      <div style={styles.container}>
+      <div className={"dictionary-container"}>
         <AutoSuggestInput
-          onFetched={() => {this.definitionSegment.scrollTop = 0;}}
+          onSearchCompleted={() => {this.definitionSegment.scrollTop = 0;}}
         />
         <Ref innerRef={ref => this.definitionSegment = ref}>
           <Segment className="definition"/>

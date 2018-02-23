@@ -5,13 +5,16 @@ import {Ref, Input, Icon} from 'semantic-ui-react';
 import {actions} from "../actions";
 import {dictParser} from "../Parser";
 import {WordDefinition} from "dict-parser";
+import '../stylesheets/components/AutoSuggestInput.scss';
 
 interface AutoSuggestInputStates {
+  isSuggestionsVisible: boolean;
+  suggestions: string[];
 }
 
 interface AutoSuggestInputProps {
   word: string;
-  onFetched: () => void;
+  onSearchCompleted: () => void;
   wordDefinitions: WordDefinition[]
   setWord: (word: string) => any
   setWordDefinitions: (wordDefinitions: WordDefinition[]) => any
@@ -28,21 +31,37 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 
 class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, AutoSuggestInputStates> {
   private inputComponent: HTMLElement;
+  constructor(props: AutoSuggestInputProps) {
+    super(props);
+    this.state = {
+      isSuggestionsVisible: false,
+      suggestions: [],
+    }
+  }
   render() {
     return (
       <div>
         <button id={'refer-word-search-button'}
                 onClick={(event: React.SyntheticEvent<HTMLButtonElement>) => this.search((event.target as HTMLButtonElement).innerHTML)}>
         </button>
-        <Ref innerRef={ref => this.inputComponent = ref}>
-          <Input
-            icon={<Icon name={'search'} inverted circular link id={"search-word-icon"} onClick={() => this.search(this.props.word)}/>}
-            placeholder="Search in dictionaries..."
-            value={this.props.word}
-            className="search-input"
-            onKeyDown={this.handleOnKeyDown}
-            onChange={(evt: React.SyntheticEvent<HTMLInputElement>) => this.props.setWord((evt.target as HTMLInputElement).value)}/>
-        </Ref>
+        <div className={"input-with-suggestions"}>
+          <Ref innerRef={ref => this.inputComponent = ref}>
+            <Input
+              icon={<Icon name={'search'} inverted circular link id={"search-word-icon"} onClick={() => this.search(this.props.word)}/>}
+              placeholder="Search in dictionaries..."
+              value={this.props.word}
+              className="search-input"
+              onKeyDown={this.handleOnKeyDown}
+              onChange={this.handleChangeOnInput}/>
+          </Ref>
+          {this.state.isSuggestionsVisible ?
+          <div className={"suggestions"}>
+            {this.state.suggestions.map(suggestion =>
+              <div key={suggestion} className={"suggestion-item"}>{suggestion}</div>
+            )}
+          </div>
+            : <div/>}
+        </div>
       </div>
     )
   }
@@ -54,7 +73,17 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
   private search = async (word: string) => {
     const wordDefinitions = await dictParser.getWordDefinitions(word);
     this.props.setWordDefinitions(wordDefinitions);
-    this.props.onFetched();
+    this.props.onSearchCompleted();
+  };
+  private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
+    const input = (event.target as HTMLInputElement).value;
+    this.props.setWord(input);
+    const wordCandidates = await dictParser.getWordCandidates(input);
+    console.log(wordCandidates);
+    this.setState({
+      isSuggestionsVisible: input !== '',
+      suggestions: wordCandidates.map(wordCandidate => wordCandidate.word),
+    });
   };
 }
 export const AutoSuggestInput = connect(mapStateToProps, mapDispatchToProps)(ConnectedAutoSuggestInput);

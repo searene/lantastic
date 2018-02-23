@@ -1,0 +1,22 @@
+#refer-word-search-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.ui.input.search-input {
+  flex-shrink: 0;
+  input {
+    border-radius: 0;
+  }
+}
+.suggestions {
+  position: absolute;
+  z-index: 99;
+  background-color: white;
+  border: 1px solid #BEBEBE;
+  border-top: none;
+  width: 100%;
+  padding: 10px;
+  height: 200px;
+  overflow: auto;
+}
