@@ -20,6 +20,7 @@ interface ToolBarProps {
 }
 
 interface ToolBarStates {
+  blockType: string;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -36,7 +37,15 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
 
   constructor(props: ToolBarProps) {
     super(props);
+    this.state = {
+      blockType: this.BLOCK_TYPE_LABEL_NORMAL_TEXTS
+    };
   }
+
+  private BLOCK_TYPE_LABEL_HEADING1 = 'Heading 1';
+  private BLOCK_TYPE_LABEL_HEADING2 = 'Heading 2';
+  private BLOCK_TYPE_LABEL_HEADING3 = 'Heading 3';
+  private BLOCK_TYPE_LABEL_NORMAL_TEXTS = 'Normal Text';
 
   private INLINE_ICONS = [{
     style: DRAFT_INLINE_STYLE_BOLD,
@@ -50,28 +59,22 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
   }];
 
   private BLOCK_TYPES = [
-    {label: 'Normal', style: 'unstyled'},
-    {label: 'H1', style: 'header-one'},
-    {label: 'H2', style: 'header-two'},
-    {label: 'H3', style: 'header-three'},
-    {label: 'H4', style: 'header-four'},
-    {label: 'H5', style: 'header-five'},
-    {label: 'H6', style: 'header-six'},
-    {label: 'Blockquote', style: 'blockquote'},
+    {label: this.BLOCK_TYPE_LABEL_HEADING1, style: 'header-one'},
+    {label: this.BLOCK_TYPE_LABEL_HEADING2, style: 'header-two'},
+    {label: this.BLOCK_TYPE_LABEL_HEADING3, style: 'header-three'},
+    {label: this.BLOCK_TYPE_LABEL_NORMAL_TEXTS, style: 'unstyled'},
   ];
 
   render() {
     return (
       <Menu icon className={"toolbar-container borderless"}>
-        <Dropdown text={"type"} pointing className={"link item"}>
+        <Dropdown text={this.state.blockType} pointing className={"link item"}>
           <Dropdown.Menu>
             {this.BLOCK_TYPES.map(blockType =>
               <Dropdown.Item
                 key={blockType.style}
-                onMouseDown={(e: React.SyntheticEvent<HTMLDivElement>) => {
-                e.preventDefault();
-                this.toggleBlockStyle(blockType.style);
-              }}>{blockType.label}</Dropdown.Item>
+                className={blockType.style}
+                onMouseDown={(event: React.SyntheticEvent<HTMLDivElement>) => this.handleMouseDownOnBlockTypeDropdown.call(this, event, blockType)}>{blockType.label}</Dropdown.Item>
             )}
           </Dropdown.Menu>
         </Dropdown>
@@ -117,6 +120,13 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
         style
       )
     );
+  };
+  private handleMouseDownOnBlockTypeDropdown = (event: React.SyntheticEvent<HTMLDivElement>, blockType: {label: string, style: string}): void => {
+    event.preventDefault();
+    this.toggleBlockStyle(blockType.style);
+    this.setState({
+      blockType: blockType.label
+    });
   };
 }
 

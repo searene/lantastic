@@ -1,6 +1,21 @@
 .ui.icon.menu.toolbar-container {
   margin-right: 0;
   border-radius: 0;
+  .menu {
+    & > .item {
+      padding: 20px !important;
+      &.header-one {
+        font-size: 30px !important;
+        font-weight: 700 !important;
+      }
+      &.header-two {
+        font-size: 26px !important;
+      }
+      &.header-three {
+        font-size: 22px !important;
+      }
+    }
+  }
 }
 .ui.icon.menu .item.toolbar-icon {
   padding: 5px 8px;
@@ -9,4 +24,7 @@
     cursor: pointer;
     background-color: #F7F7F7;
   }
+}
+.ui.menu .ui.dropdown .menu > .item.header-one {
+
 }
