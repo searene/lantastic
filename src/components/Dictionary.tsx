@@ -3,7 +3,7 @@ import * as React from 'react';
 import {actions} from '../actions'
 import {bindActionCreators, Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import {Input, Segment, Ref} from 'semantic-ui-react';
+import {Input, Segment, Ref, Icon} from 'semantic-ui-react';
 
 import '../stylesheets/components/Dictionary.scss';
 import '../stylesheets/dictionaries/common.scss';
@@ -32,6 +32,7 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
 
 class ConnectedDictionary extends React.Component<DictionaryProps, DictionaryStates> {
 
+  private inputComponent: HTMLElement;
   private definitionSegment: HTMLElement;
   constructor(props: DictionaryProps) {
     super(props);
@@ -58,28 +59,32 @@ class ConnectedDictionary extends React.Component<DictionaryProps, DictionarySta
     };
     return (
       <div style={styles.container}>
-        <Input
-          icon="search"
-          placeholder="Search in dictionaries..."
-          value={this.props.word}
-          className="search-input"
-          onKeyDown={this.handleOnKeyDown}
-          onChange={(evt) => this.props.setWord((evt.target as HTMLInputElement).value)}/>
+        <button id={'refer-word-search-button'}
+                onClick={(event: React.SyntheticEvent<HTMLButtonElement>) => this.search((event.target as HTMLButtonElement).innerHTML)}>
+        </button>
+        <Ref innerRef={ref => this.inputComponent = ref}>
+          <Input
+            icon={<Icon name={'search'} inverted circular link id={"search-word-icon"} onClick={() => this.search(this.props.word)}/>}
+            placeholder="Search in dictionaries..."
+            value={this.props.word}
+            className="search-input"
+            onKeyDown={this.handleOnKeyDown}
+            onChange={(evt: React.SyntheticEvent<HTMLInputElement>) => this.props.setWord((evt.target as HTMLInputElement).value)}/>
+        </Ref>
         <Ref innerRef={ref => this.definitionSegment = ref}>
           <Segment className="definition"/>
         </Ref>
       </div>
     )
   }
-
-  private search = async () => {
-    const wordDefinitions = await dictParser.getWordDefinitions(this.props.word);
+  private search = async (word: string) => {
+    const wordDefinitions = await dictParser.getWordDefinitions(word);
     this.props.setWordDefinitions(wordDefinitions);
     this.definitionSegment.scrollTop = 0;
   };
   private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      await this.search();
+      await this.search(this.props.word);
     }
   };
   private populateDefinition = () => {

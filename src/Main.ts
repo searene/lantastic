@@ -4,6 +4,8 @@ import * as url from 'url';
 import {ZipReader} from './ZipReader';
 import {Configuration} from "./Configuration";
 import * as fse from 'fs-extra';
+import MimeTypedBuffer = Electron.MimeTypedBuffer;
+import RegisterBufferProtocolRequest = Electron.RegisterBufferProtocolRequest;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,21 +35,30 @@ function createWindow () {
 
   protocol.registerBufferProtocol('dictp',async (request, callback) => {
     const urlContents = request.url.substr(8).split(':');
-    const resourceType = urlContents[0]; // image or audio
-    const resourceHolderType = urlContents[1]; // zip
-    const resourceHolderPath = urlContents[2];
-    const resourceFileName = urlContents[3];
-    if(resourceHolderType !== 'zip') {
-      throw new Error(`${resourceHolderType} is not supported`);
+    const type = urlContents[0]; // image/audio/lookup
+    if(type === 'image' || type === 'audio') {
+      await loadResources(request, callback);
+    } else if(type === 'lookup') {
+
     }
-    const buffer = await ZipReader.extractFileFromZip(resourceHolderPath, resourceFileName);
-    callback({
-      mimeType: resourceType,
-      data: buffer
-    });
   });
 }
 
+const loadResources = async (request: RegisterBufferProtocolRequest, callback: (buffer?: Buffer | MimeTypedBuffer) => void) => {
+  const urlContents = request.url.substr(8).split(':');
+  const resourceType = urlContents[0]; // image/audio/lookup
+  const resourceHolderType = urlContents[1]; // zip
+  const resourceHolderPath = urlContents[2];
+  const resourceFileName = urlContents[3];
+  if(resourceHolderType !== 'zip') {
+    throw new Error(`${resourceHolderType} is not supported`);
+  }
+  const buffer = await ZipReader.extractFileFromZip(resourceHolderPath, resourceFileName);
+  callback({
+    mimeType: resourceType,
+    data: buffer
+  });
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -72,38 +83,7 @@ app.on('activate', () => {
 });
 
 // for hot reload
+// TODO remove it in production
 fse.watch(path.join(__dirname), (event, fileName) => {
   win.webContents.reloadIgnoringCache();
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-// const template = [{
-//   label: 'File',
-//   submenu: [
-//     {
-//       label: 'Preferences',
-//       click: () => {
-
-//       }
-//     }, {
-//       type: 'separator' as 'separator'
-//     }, {
-//       role: 'quit'
-//     }
-//   ]
-// }, {
-//   label: 'View',
-//   submenu: [
-//     {
-//       label: 'Toggle Developer Tools',
-//       accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-//       click: (menuItem: MenuItem, browserWindow: BrowserWindow, event: Event) => {
-//         browserWindow.webContents.toggleDevTools();
-//       }
-//     }
-//   ]
-// }];
-// const menu = Menu.buildFromTemplate(template);
-// Menu.setApplicationMenu(menu);

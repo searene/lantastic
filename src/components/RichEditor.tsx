@@ -37,6 +37,10 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
       <Editor
         editorState={this.props.editorStateList[this.props.editorIndex]}
         handleKeyCommand={this.handleKeyCommand}
+        onTab={(e: React.KeyboardEvent<{}>) => {
+          e.preventDefault();
+          this.onChange(RichUtils.onTab(e, this.getEditorState(), 4))
+        }}
         onFocus={this.onFocus}
         onChange={this.onChange}/>
     );
@@ -46,6 +50,9 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
     const newEditorStateList = this.props.editorStateList.concat();
     newEditorStateList[this.props.editorIndex] = editorState;
     this.props.setEditorStateList(newEditorStateList);
+  };
+  private getEditorState = (): EditorState => {
+    return this.props.editorStateList[this.props.editorIndex];
   };
   private onFocus = (): void => {
     this.props.setFocusedEditorIndex(this.props.editorIndex);

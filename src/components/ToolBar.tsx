@@ -3,15 +3,14 @@ import {connect, Dispatch} from "react-redux";
 import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
-import {Icon, Menu, SemanticICONS} from 'semantic-ui-react';
+import {Icon, Menu, SemanticICONS, Dropdown} from 'semantic-ui-react';
 import {CharacterMetadata, EditorState, ContentState, ContentBlock, RichUtils, SelectionState, Modifier} from 'draft-js';
+import Select from 'react-select';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
-  DRAFT_INLINE_STYLE_BOLD, DRAFT_INLINE_STYLE_ITALIC, DRAFT_INLINE_STYLE_UNDERLINE, getSelectedCharacterStyles,
-  getSelectedContentBlocksAsOrderedMap, isInSelection
+  DRAFT_INLINE_STYLE_BOLD, DRAFT_INLINE_STYLE_ITALIC, DRAFT_INLINE_STYLE_UNDERLINE,
 } from "../Utils/DraftJsUtils";
-import {List, OrderedMap} from "immutable";
 
 interface ToolBarProps {
   editorStateList: EditorState[];
@@ -39,7 +38,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     super(props);
   }
 
-  private styleIcons = [{
+  private INLINE_ICONS = [{
     style: DRAFT_INLINE_STYLE_BOLD,
     icon: 'bold',
   }, {
@@ -50,19 +49,42 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     icon: 'underline',
   }];
 
+  private BLOCK_TYPES = [
+    {label: 'Normal', style: 'unstyled'},
+    {label: 'H1', style: 'header-one'},
+    {label: 'H2', style: 'header-two'},
+    {label: 'H3', style: 'header-three'},
+    {label: 'H4', style: 'header-four'},
+    {label: 'H5', style: 'header-five'},
+    {label: 'H6', style: 'header-six'},
+    {label: 'Blockquote', style: 'blockquote'},
+  ];
+
   render() {
     return (
       <Menu icon className={"toolbar-container borderless"}>
-        {this.styleIcons.map(styleIcon =>
+        <Dropdown text={"type"} pointing className={"link item"}>
+          <Dropdown.Menu>
+            {this.BLOCK_TYPES.map(blockType =>
+              <Dropdown.Item
+                key={blockType.style}
+                onMouseDown={(e: React.SyntheticEvent<HTMLDivElement>) => {
+                e.preventDefault();
+                this.toggleBlockStyle(blockType.style);
+              }}>{blockType.label}</Dropdown.Item>
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+        {this.INLINE_ICONS.map(inlineIcon =>
           <Menu.Item
-            key={styleIcon.style}
+            key={inlineIcon.style}
             className={"toolbar-icon"}
-            active={this.isStyleActive(styleIcon.style)}
-            onMouseDown={(event: React.SyntheticEvent<HTMLDivElement>) => {
-              event.preventDefault();
-              this.toggleInlineStyle(styleIcon.style)
+            active={this.isStyleActive(inlineIcon.style)}
+            onMouseDown={(e: React.SyntheticEvent<HTMLDivElement>) => {
+              e.preventDefault();
+              this.toggleInlineStyle(inlineIcon.style);
             }}>
-            <Icon name={styleIcon.icon as SemanticICONS} />
+            <Icon name={inlineIcon.icon as SemanticICONS} />
           </Menu.Item>
         )}
       </Menu>
@@ -85,6 +107,14 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
       RichUtils.toggleInlineStyle(
         this.getEditorState(),
         style,
+      )
+    );
+  };
+  private toggleBlockStyle = (style: string): void => {
+    this.applyEditorState(
+      RichUtils.toggleBlockType(
+        this.getEditorState(),
+        style
       )
     );
   };

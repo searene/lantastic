@@ -19,7 +19,6 @@ import {CardBrowser} from "./components/CardBrowser";
 import {ConnectedTestComponent, TestComponent} from "./components/TestComponent";
 import {ToolBar} from "./components/ToolBar";
 import {RichEditorExample} from "./components/RichEditorExample";
-import {RichEditorExampleCopy} from "./components/RichEditorExampleCopy";
 
 export interface AppProps {
   activeTab: Tab;
