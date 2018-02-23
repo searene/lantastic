@@ -19,6 +19,7 @@ import {CardBrowser} from "./components/CardBrowser";
 import {ConnectedTestComponent, TestComponent} from "./components/TestComponent";
 import {ToolBar} from "./components/ToolBar";
 import {RichEditorExample} from "./components/RichEditorExample";
+import {Parser} from "./Parser";
 
 export interface AppProps {
   activeTab: Tab;
@@ -47,6 +48,7 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
   init = async (): Promise<void> => {
     await Sqlite.init();
     await Configuration.init();
+    await Parser.init();
     await this.setUpDecks();
     await this.setUpChosenDeckName();
     await this.setUpDefaultDeck();
@@ -95,7 +97,7 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
     return (
 
       <div className="app-container">
-        {this.props.isLoading ? <div></div> :
+        {this.props.isLoading ? <div/> :
           <div style={styles.container}>
 
             <div style={{

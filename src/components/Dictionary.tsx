@@ -8,7 +8,6 @@ import {Input, Segment, Ref, Icon} from 'semantic-ui-react';
 import '../stylesheets/components/Dictionary.scss';
 import '../stylesheets/dictionaries/common.scss';
 import '../stylesheets/dictionaries/dsl.scss';
-import {dictParser} from "../Parser";
 import {AutoSuggestInput} from "./AutoSuggestInput";
 
 interface DictionaryStates {

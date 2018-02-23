@@ -1,5 +1,4 @@
 import * as electron from 'electron';
-import {dictParser} from "../Parser";
 import {ZipReader} from "../ZipReader";
 import * as fse from 'fs-extra';
 import * as React from 'react';
@@ -16,6 +15,7 @@ import {BaseButton} from "./BaseButton";
 import {Title} from "./Title";
 import {Configuration} from "../Configuration";
 import Config = Electron.Config;
+import {Parser} from "../Parser";
 
 
 export interface ScanProps {
@@ -121,13 +121,13 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
   };
 
   private async handleClickOnScan() {
-    dictParser.on('name', (dictionaryName: string) => {
+    Parser.getDictParser().on('name', (dictionaryName: string) => {
       this.setState({
         scanMessage: `Scanning ${dictionaryName}`,
       });
     });
     await createDirIfNotExists(getPathToLantastic());
-    const dictMapList = await dictParser.scan(this.state.scanPaths);
+    const dictMapList = await Parser.getDictParser().scan(this.state.scanPaths);
 
     // build zip entries for each zip file
     const resourceHolderList = await this.getZippedResourceHolders(dictMapList);

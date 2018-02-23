@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack --watch && electron dist/main.js",
     "test": "mocha lib/test",
-    "postinstall": "install-app-deps"
+    "postinstallComments": "install-app-deps"
   },
   "repository": {
     "type": "git",

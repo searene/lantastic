@@ -3,9 +3,9 @@ import {bindActionCreators} from "redux";
 import {connect, Dispatch} from "react-redux";
 import {Ref, Input, Icon} from 'semantic-ui-react';
 import {actions} from "../actions";
-import {dictParser} from "../Parser";
 import {WordDefinition} from "dict-parser";
 import '../stylesheets/components/AutoSuggestInput.scss';
+import {Parser} from "../Parser";
 
 interface AutoSuggestInputStates {
   suggestions: string[];
@@ -37,9 +37,6 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
     }
   }
   render() {
-    if(this.props.word === 'dictionaries') {
-      debugger;
-    }
     return (
       <div>
         <button id={'refer-word-search-button'}
@@ -72,7 +69,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
     }
   };
   private search = async (word: string) => {
-    const wordDefinitions = await dictParser.getWordDefinitions(word);
+    const wordDefinitions = await Parser.getDictParser().getWordDefinitions(word);
     this.setState({
       suggestions: [],
     });
@@ -82,7 +79,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
   private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
     const input = (event.target as HTMLInputElement).value;
     this.props.setWord(input);
-    const wordCandidates = await dictParser.getWordCandidates(input);
+    const wordCandidates = await Parser.getDictParser().getWordCandidates(input);
     this.setState({
       suggestions: wordCandidates.map(wordCandidate => wordCandidate.word),
     });
