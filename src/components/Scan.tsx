@@ -108,7 +108,7 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
   private removeDuplicates = (addedPaths: string[], previousPaths: string[]) => {
     const normalizedPaths = addedPaths.concat(previousPaths)
       .map(p => path.normalize(p));
-    return normalizedPaths.filter((value, index) => normalizedPaths.indexOf(value) === index);
+    return normalizedPaths.removeDuplicates();
   };
   private handleClickOnRemove = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
     const target = event.target as HTMLButtonElement;

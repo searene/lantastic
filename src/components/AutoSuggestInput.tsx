@@ -8,7 +8,6 @@ import {WordDefinition} from "dict-parser";
 import '../stylesheets/components/AutoSuggestInput.scss';
 
 interface AutoSuggestInputStates {
-  isSuggestionsVisible: boolean;
   suggestions: string[];
 }
 
@@ -34,11 +33,13 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
   constructor(props: AutoSuggestInputProps) {
     super(props);
     this.state = {
-      isSuggestionsVisible: false,
       suggestions: [],
     }
   }
   render() {
+    if(this.props.word === 'dictionaries') {
+      debugger;
+    }
     return (
       <div>
         <button id={'refer-word-search-button'}
@@ -54,7 +55,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
               onKeyDown={this.handleOnKeyDown}
               onChange={this.handleChangeOnInput}/>
           </Ref>
-          {this.state.isSuggestionsVisible ?
+          {this.state.suggestions.length !== 0 ?
           <div className={"suggestions"}>
             {this.state.suggestions.map(suggestion =>
               <div key={suggestion} className={"suggestion-item"}>{suggestion}</div>
@@ -72,6 +73,9 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
   };
   private search = async (word: string) => {
     const wordDefinitions = await dictParser.getWordDefinitions(word);
+    this.setState({
+      suggestions: [],
+    });
     this.props.setWordDefinitions(wordDefinitions);
     this.props.onSearchCompleted();
   };
@@ -79,9 +83,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
     const input = (event.target as HTMLInputElement).value;
     this.props.setWord(input);
     const wordCandidates = await dictParser.getWordCandidates(input);
-    console.log(wordCandidates);
     this.setState({
-      isSuggestionsVisible: input !== '',
       suggestions: wordCandidates.map(wordCandidate => wordCandidate.word),
     });
   };

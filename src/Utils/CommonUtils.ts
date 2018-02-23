@@ -12,7 +12,8 @@ export function getPathToDocuments() {
   return path.join(getPathToUserHome(), 'Documents');
 }
 export function getPathToLantastic() {
-  return path.join(getPathToDocuments(), 'lantastic');
+  // return path.join(getPathToDocuments(), 'lantastic');
+  return '/mnt/HDD/lantastic-config-dir'
 }
 export function getPathToDictParserDbFile() {
   return path.join(getPathToLantastic(), 'dict-parser.db');
@@ -53,6 +54,9 @@ Array.prototype.remove = function<T>(o: T): T[] {
     }
   }
   return this;
+};
+Array.prototype.removeDuplicates = function<T>(): T[] {
+  return this.filter((value: T, index: number) => this.indexOf(value) === index);
 };
 export const range = (start: number, end: number): number[] => {
   return new Array(end - start).fill(1).map((d, i) => i + start);
