@@ -4,7 +4,7 @@ import {Sqlite} from '../Sqlite';
 import * as React from 'react';
 import {bindActionCreators, Dispatch} from 'redux';
 import { connect } from 'react-redux';
-import {Form, TextArea} from 'semantic-ui-react';
+import {Form} from 'semantic-ui-react';
 import {actions} from "../actions";
 import {BaseButton} from "./BaseButton";
 import {stateToHTML} from 'draft-js-export-html';
@@ -14,9 +14,11 @@ import {
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
-import {EditorState, Editor, ContentState} from "draft-js";
+import {EditorState, ContentState} from "draft-js";
 import {RichEditor} from "./RichEditor";
 import {ToolBar} from "./ToolBar";
+import '../stylesheets/dictionaries/common.scss';
+import '../stylesheets/dictionaries/dsl.scss';
 
 export interface AddCardStates {
 }

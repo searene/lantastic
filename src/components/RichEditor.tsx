@@ -3,11 +3,9 @@ import {connect, Dispatch} from "react-redux";
 import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
-import * as fse from 'fs-extra';
-import {Segment} from 'semantic-ui-react';
-import {Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue} from 'draft-js';
+import {Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier} from 'draft-js';
 import '../stylesheets/components/RichEditor.scss';
-import {getSelectedCharacterStyles} from "../Utils/DraftJsUtils";
+import {stateFromHTML} from 'draft-js-import-html';
 
 interface RichEditorProps {
   editorIndex: number;
@@ -37,6 +35,7 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
       <Editor
         editorState={this.props.editorStateList[this.props.editorIndex]}
         handleKeyCommand={this.handleKeyCommand}
+        handlePastedText={this.handlePastedText}
         onTab={(e: React.KeyboardEvent<{}>) => {
           e.preventDefault();
           this.onChange(RichUtils.onTab(e, this.getEditorState(), 4))
@@ -59,11 +58,18 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
   };
   private handleKeyCommand = (command: DraftEditorCommand | string, editorState: EditorState): DraftHandleValue => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
-    if(newState) {
+    if (newState) {
       this.onChange(newState);
       return 'handled';
     }
     return 'not-handled';
+  };
+  private handlePastedText = (text: string, html: string | undefined, editorState: EditorState): DraftHandleValue => {
+    const blockMap = stateFromHTML(html).getBlockMap();
+    stateFromHTML(html).getFirstBlock().getCharacterList().map(character => character.getStyle().map(s => console.log(s)));
+    const newState = Modifier.replaceWithFragment(editorState.getCurrentContent(), editorState.getSelection(), blockMap);
+    this.onChange(EditorState.push(editorState, newState, 'insert-fragment'));
+    return 'handled';
   };
 }
 

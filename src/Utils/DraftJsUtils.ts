@@ -1,4 +1,4 @@
-import {CharacterMetadata, EditorState, ContentBlock} from "draft-js";
+import {CharacterMetadata, EditorState, ContentBlock, ContentState} from "draft-js";
 import {List, OrderedMap, OrderedSet} from "immutable";
 import {range} from "./CommonUtils";
 
@@ -59,4 +59,9 @@ export const getSelectedCharacterStyles = (editorState: EditorState): List<Order
 export const isInSelection = (editorState: EditorState): boolean => {
   const selectionState = editorState.getSelection();
   return !selectionState.isCollapsed();
+};
+
+export const getContentStateFromHTML = (html: string): ContentState => {
+  const dom = new DOMParser().parseFromString(html, 'text/html');
+  return EditorState.createEmpty().getCurrentContent();
 };

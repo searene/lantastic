@@ -74,6 +74,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, A
   private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
+      this.props.setWordDefinitions([]);
       await this.search(currentActiveSuggestion === undefined ? this.props.word : currentActiveSuggestion.innerHTML);
     } else if(['ArrowUp', 'ArrowDown'].indexOf(event.key) > -1 && !isNullOrUndefined(this.suggestionsComponent)) {
       event.preventDefault();
