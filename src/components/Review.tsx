@@ -10,7 +10,7 @@ import {
 } from "../Constants";
 
 import * as React from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
 import {Container} from "semantic-ui-react";
 import '../stylesheets/components/Review.scss';
@@ -20,35 +20,44 @@ import moment = require("moment");
 interface ReviewProps {
   chosenDeckName: string;
 }
+
 interface ReviewStates {
   isAnswerShown: boolean;
   card: any;
 }
+
 const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
-}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({}, dispatch);
+
 export enum Level {
   AGAIN, HARD, GOOD, EASY
 }
+
 const INITIAL_CARD = 'initial_card';
+
 class Interval {
 }
+
 class MinutesInterval extends Interval {
   minutes: number;
+
   constructor(minutes: number) {
     super();
     this.minutes = minutes;
-   }
+  }
 }
+
 class DaysInterval extends Interval {
   days: number;
+
   constructor(days: number) {
     super();
     this.days = days;
   }
 }
+
 class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
   constructor(props: ReviewProps) {
     super(props);
@@ -57,53 +66,62 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
       card: INITIAL_CARD
     };
   }
+
   async componentWillMount() {
-    if(this.state.card === INITIAL_CARD) {
+    if (this.state.card === INITIAL_CARD) {
       const card = await this.getReviewCard();
       this.setState({
         card: card
       });
     }
   }
+
   render() {
+    if (this.state.card === INITIAL_CARD) {
+      return <div>Loading Data...</div>;
+    } else if (this.state.card === undefined) {
+      return <div className="congrat-div">
+        <h1>Congratulations!</h1>
+        <div>You have finished reviewing cards in this deck.</div>
+      </div>;
+    }
+    const againInterval = this.getInterval(Level.AGAIN);
+    const easyInterval = this.getInterval(Level.EASY);
+    const goodInterval = this.getInterval(Level.GOOD);
+    const hardInterval = this.getInterval(Level.HARD);
     return (
       <Container>
-        {this.state.card === INITIAL_CARD ?
-          <div></div>
-        :
-         this.state.card === undefined ?
-          <div className="congrat-div">
-            <h1>Congratulations!</h1>
-            <div>You have finished reviewing cards in this deck.</div>
-          </div>
-        :
-          <div className="review-div">
-            <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}} />
-            {this.state.isAnswerShown ?
-              <div className="review-answer">
-                <hr className="answer-hr"/>
-                <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}} />
-              </div>
-              : ''
-            }
-            <div className="review-bottom">
-              <hr className="hr"/>
-              <div className="bottom-buttons">
-                {this.state.isAnswerShown ?
-                  [<BaseButton onClick={() => this.review(Level.AGAIN)} key={Level.AGAIN}><b>AGAIN</b><br/> ({this.getIntervalDescription(this.getInterval(Level.AGAIN))})</BaseButton>,
-                   <BaseButton onClick={() => this.review(Level.HARD)} key={Level.HARD}><b>HARD</b><br/> ({this.getIntervalDescription(this.getInterval(Level.HARD))})</BaseButton>,
-                   <BaseButton onClick={() => this.review(Level.GOOD)} key={Level.GOOD}><b>GOOD</b><br/> ({this.getIntervalDescription(this.getInterval(Level.GOOD))})</BaseButton>,
-                   <BaseButton onClick={() => this.review(Level.EASY)} key={Level.EASY}><b>EASY</b><br/> ({this.getIntervalDescription(this.getInterval(Level.EASY))})</BaseButton>]
-                  :
-                   <BaseButton onClick={() => this.setState({isAnswerShown: true})}>Show Answer</BaseButton>
-                }
-              </div>
+        <div className="review-div">
+          <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}}/>
+          {this.state.isAnswerShown ?
+            <div className="review-answer">
+              <hr className="answer-hr"/>
+              <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}}/>
+            </div>
+            : ''
+          }
+          <div className="review-bottom">
+            <hr className="hr"/>
+            <div className="bottom-buttons">
+              {this.state.isAnswerShown ?
+                [<BaseButton onClick={() => this.review(againInterval)}
+                             key={Level.AGAIN}><b>AGAIN</b><br/> ({this.getIntervalDescription(againInterval)})</BaseButton>,
+                  <BaseButton onClick={() => this.review(hardInterval)}
+                              key={Level.HARD}><b>HARD</b><br/> ({this.getIntervalDescription(hardInterval)})</BaseButton>,
+                  <BaseButton onClick={() => this.review(goodInterval)}
+                              key={Level.GOOD}><b>GOOD</b><br/> ({this.getIntervalDescription(goodInterval)})</BaseButton>,
+                  <BaseButton onClick={() => this.review(easyInterval)}
+                              key={Level.EASY}><b>EASY</b><br/> ({this.getIntervalDescription(easyInterval)})</BaseButton>]
+                :
+                <BaseButton onClick={() => this.setState({isAnswerShown: true})}>Show Answer</BaseButton>
+              }
             </div>
           </div>
-        }
+        </div>
       </Container>
     )
   }
+
   private getReviewCard = async (): Promise<any> => {
     const db = await Sqlite.getDb();
     const sql = `
@@ -123,36 +141,36 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     return reviewCard;
   };
   private getInterval = (level: Level): Interval => {
-    if(this.state.card[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`] === '') {
+    if (this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST] === '') {
       return this.getInitialInterval(level);
     }
-    const previousReviewTimeList = this.state.card[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`].split(',');
+    const previousReviewTimeList = this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST].split(',');
     const lastReviewTime = moment(previousReviewTimeList[previousReviewTimeList.length - 1], DATE_FORMAT);
     const duration = ~~moment.duration(moment().diff(lastReviewTime)).asDays();
-    if(duration === 0) {
+    if (duration === 0) {
       // last level is AGAIN
       return this.getInitialInterval(level);
     }
-    if(level === Level.AGAIN) {
+    if (level === Level.AGAIN) {
       return new MinutesInterval(AGAIN_DURATION_MINUTES);
-    } else if(level === Level.HARD) {
-      return new DaysInterval(~~(duration * 1.2 + 1));
-    } else if(level === Level.GOOD) {
-      return new DaysInterval(~~(duration * 1.3 + 2));
-    } else if(level === Level.EASY) {
-      return new DaysInterval(~~(duration * 1.4 + 3));
+    } else if (level === Level.HARD) {
+      return new DaysInterval(~~(duration * 0.8 + 1));
+    } else if (level === Level.GOOD) {
+      return new DaysInterval(~~(duration * 0.9 + 2));
+    } else if (level === Level.EASY) {
+      return new DaysInterval(~~(duration * 1.1 + 3));
     }
   };
   private getIntervalDescription = (interval: Interval): string => {
-    if(interval instanceof MinutesInterval) {
+    if (interval instanceof MinutesInterval) {
       return interval.minutes + (interval.minutes === 1 ? ' min' : ' mins');
-    } else if(interval instanceof DaysInterval) {
+    } else if (interval instanceof DaysInterval) {
       return interval.days + (interval.days === 1 ? ' day' : ' days');
     }
   };
-  private review = async (level: Level): Promise<void> => {
-    const nextReviewTime = this.getNextReviewTime(this.getInterval(level));
-    await this.adjustReviewTime(this.state.card[`${CARD_COLUMN_ID}`], nextReviewTime);
+  private review = async (interval: Interval): Promise<void> => {
+    const nextReviewTime = this.getNextReviewTime(interval);
+    await this.adjustReviewTime(this.state.card[CARD_COLUMN_ID], nextReviewTime);
     this.setState({
       isAnswerShown: false,
       card: await this.getReviewCard(),
@@ -179,9 +197,9 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     `, updatedReviewTimeList);
   };
   private getNextReviewTime = (interval: Interval): moment.Moment => {
-    if(interval instanceof MinutesInterval) {
+    if (interval instanceof MinutesInterval) {
       return moment().add(interval.minutes, 'minutes');
-    } else if(interval instanceof DaysInterval) {
+    } else if (interval instanceof DaysInterval) {
       const nextReviewTime = moment();
       nextReviewTime.add(interval.days, 'days');
       nextReviewTime.set({
@@ -194,13 +212,13 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     }
   };
   private getInitialInterval = (level: Level): Interval => {
-    if(level === Level.AGAIN) {
+    if (level === Level.AGAIN) {
       return new MinutesInterval(AGAIN_DURATION_MINUTES);
-    } else if(level === Level.HARD) {
+    } else if (level === Level.HARD) {
       return new DaysInterval(2);
-    } else if(level === Level.GOOD) {
+    } else if (level === Level.GOOD) {
       return new DaysInterval(3);
-    } else if(level === Level.EASY) {
+    } else if (level === Level.EASY) {
       return new DaysInterval(4);
     }
   }

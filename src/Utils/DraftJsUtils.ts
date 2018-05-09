@@ -61,7 +61,3 @@ export const isInSelection = (editorState: EditorState): boolean => {
   return !selectionState.isCollapsed();
 };
 
-export const getContentStateFromHTML = (html: string): ContentState => {
-  const dom = new DOMParser().parseFromString(html, 'text/html');
-  return EditorState.createEmpty().getCurrentContent();
-};

@@ -6,6 +6,7 @@ import {actions} from "../actions";
 import {Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier} from 'draft-js';
 import '../stylesheets/components/RichEditor.scss';
 import {stateFromHTML} from 'draft-js-import-html';
+import {RichEditorPasteHandler} from "../RichEditorPasteHandler";
 
 interface RichEditorProps {
   editorIndex: number;
@@ -65,10 +66,8 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
     return 'not-handled';
   };
   private handlePastedText = (text: string, html: string | undefined, editorState: EditorState): DraftHandleValue => {
-    const blockMap = stateFromHTML(html).getBlockMap();
-    stateFromHTML(html).getFirstBlock().getCharacterList().map(character => character.getStyle().map(s => console.log(s)));
-    const newState = Modifier.replaceWithFragment(editorState.getCurrentContent(), editorState.getSelection(), blockMap);
-    this.onChange(EditorState.push(editorState, newState, 'insert-fragment'));
+    const newEditorState = new RichEditorPasteHandler().getEditorStateFromHTML(html);
+    this.onChange(newEditorState);
     return 'handled';
   };
 }
