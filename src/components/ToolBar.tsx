@@ -4,8 +4,8 @@ import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import {Icon, Menu, SemanticICONS, Dropdown} from 'semantic-ui-react';
-import {CharacterMetadata, EditorState, ContentState, ContentBlock, RichUtils, SelectionState, Modifier} from 'draft-js';
-import Select from 'react-select';
+import {EditorState, RichUtils} from 'draft-js';
+import * as electron from 'electron';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
@@ -58,6 +58,11 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     icon: 'underline',
   }];
 
+  private miscellaneousIcons = [{
+    icon: 'image',
+    onClick: this.showChooseImageDialog,
+  }];
+
   private BLOCK_TYPES = [
     {label: this.BLOCK_TYPE_LABEL_HEADING1, style: 'header-one'},
     {label: this.BLOCK_TYPE_LABEL_HEADING2, style: 'header-two'},
@@ -88,6 +93,14 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
               this.toggleInlineStyle(inlineIcon.style);
             }}>
             <Icon name={inlineIcon.icon as SemanticICONS} />
+          </Menu.Item>
+        )}
+        {this.miscellaneousIcons.map(icon =>
+          <Menu.Item
+            key={icon.icon}
+            className={"toolbar-icon"}
+            onClick={icon.onClick}>
+            <Icon name={"image"} />
           </Menu.Item>
         )}
       </Menu>
@@ -126,6 +139,18 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     this.toggleBlockStyle(blockType.style);
     this.setState({
       blockType: blockType.label
+    });
+  };
+  private showChooseImageDialog() {
+    const extensions = ["jpg", "jpeg", "png", "tif", "tiff", "gif", "svg", "webp"];
+    const options = {
+      filters: [{
+        name: `image (${extensions.join(",")})`,
+        extensions: ["jpg", "jpeg", "png", "tif", "tiff", "gif", "svg", "webp"],
+      }]
+    };
+    electron.remote.dialog.showOpenDialog(options, fileName => {
+      console.log(fileName);
     });
   };
 }
