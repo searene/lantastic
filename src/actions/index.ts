@@ -1,4 +1,3 @@
-import { $call } from 'utility-types';
 import { createAction } from 'typesafe-actions';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
@@ -17,7 +16,18 @@ export const actions = {
   setEditorStateList: createAction('SET_EDITOR_STATE_LIST', (editorStateList: EditorState[]) => ({ type: 'SET_EDITOR_STATE_LIST', editorStateList: editorStateList })),
 };
 
-const returnsOfActions = Object.values(actions).map($call);
-type AppAction = typeof returnsOfActions[number];
+export type RootAction = ReturnType<typeof actions.setWord>
+    | ReturnType<typeof actions.setWordDefinitions>
+    | ReturnType<typeof actions.setActiveTab>
+    | ReturnType<typeof actions.setChosenDeckName>
+    | ReturnType<typeof actions.setDecks>
+    | ReturnType<typeof actions.setLoading>
+    | ReturnType<typeof actions.setMoreDeckName>
+    | ReturnType<typeof actions.setDefaultDeckName>
+    | ReturnType<typeof actions.setFocusedEditorIndex>
+    | ReturnType<typeof actions.setEditorStateList>
 
-export type RootAction = AppAction;
+// const returnsOfActions = Object.values(actions).map(action => $Call<typeof action>);
+// type AppAction = typeof returnsOfActions[number];
+
+// export type RootAction = AppAction;

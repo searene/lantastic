@@ -20,7 +20,7 @@ interface DictionaryProps {
 const mapStateToProps = (state: DictionaryProps) => ({
   wordDefinitions: state.wordDefinitions,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
 class ConnectedDictionary extends React.Component<DictionaryProps, DictionaryStates> {
@@ -36,10 +36,6 @@ class ConnectedDictionary extends React.Component<DictionaryProps, DictionarySta
   }
 
   render() {
-    const styles: React.CSSProperties = {
-      container: {
-      },
-    };
     return (
       <div className={"dictionary-container"}>
         <AutoSuggestInput

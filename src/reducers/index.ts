@@ -1,6 +1,5 @@
-import {RootAction} from '../actions';
 import {getType} from 'typesafe-actions';
-import {actions} from '../actions';
+import {actions, RootAction} from '../actions';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
 import {EditorState} from 'draft-js';

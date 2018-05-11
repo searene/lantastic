@@ -26,7 +26,7 @@ const mapStateToProps = (state: RootState) => ({
   decks: state.decks,
   moreDeckName: state.moreDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setDecks: actions.setDecks,
   setMoreDeckName: actions.setMoreDeckName,
   setChosenDeckName: actions.setChosenDeckName,

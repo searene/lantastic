@@ -31,7 +31,7 @@ interface CardBrowserStates {
 
 const mapStateToProps = (state: RootState) => ({
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
 

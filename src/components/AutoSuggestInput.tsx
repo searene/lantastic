@@ -24,7 +24,7 @@ const mapStateToProps = (state: AutoSuggestInputProps) => ({
   word: state.word,
   wordDefinitions: state.wordDefinitions,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setWord: actions.setWord,
   setWordDefinitions: actions.setWordDefinitions,
 }, dispatch);

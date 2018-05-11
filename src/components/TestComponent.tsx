@@ -18,7 +18,7 @@ interface TestComponentStates {
 }
 
 const mapStateToProps = (state: RootState) => ({});
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
 
 export class ConnectedTestComponent extends React.Component<TestComponentProps, TestComponentStates> {

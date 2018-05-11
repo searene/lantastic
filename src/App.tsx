@@ -6,7 +6,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Footer} from './components/Footer';
 import {Preferences} from './components/Preferences';
-import {connect, Dispatch, Provider} from 'react-redux';
+import {connect, Dispatch, Provider, MapDispatchToProps} from 'react-redux';
 import {store} from './store';
 
 import './stylesheets/App.scss';
@@ -36,7 +36,8 @@ const mapStateToProps = (state: AppProps) => ({
   isLoading: state.isLoading,
   decks: state.decks,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading)),
   setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
   setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
@@ -60,27 +61,6 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
   }
 
   render() {
-    const styles: React.CSSProperties = {
-      typeButton: {
-        width: "40%",
-      },
-      buttonGroup: {
-        width: "50%",
-        paddingRight: "5px",
-      },
-      container: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexWrap: "wrap",
-        flexDirection: "column",
-      },
-      row1: {
-        width: '100%',
-        display: "flex",
-        flex: "1",
-      },
-    };
     let tabContents: React.ReactNode;
 
     if (this.props.activeTab === Tab.SEARCH_AND_ADD) {
@@ -98,7 +78,13 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
 
       <div className="app-container">
         {this.props.isLoading ? <div/> :
-          <div style={styles.container}>
+          <div style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexWrap: "wrap",
+            flexDirection: "column",
+          }}>
 
             <div style={{
               width: '100%',

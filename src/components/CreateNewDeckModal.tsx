@@ -25,7 +25,7 @@ interface CreateNewDeckModalProps {
 const mapStateToProps = (state: CreateNewDeckModalProps) => ({
   decks: state.decks,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setDecks: actions.setDecks,
 }, dispatch);
 

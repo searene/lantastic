@@ -10,7 +10,7 @@ const appConfig = {
     filename: 'bundle.js',
     devtoolModuleFilenameTemplate: '../[resource-path]',
   },
-  target: 'electron',
+  target: 'electron-main',
   node: {
     __dirname: false,
     __filename: false,
@@ -78,7 +78,7 @@ const electronConfig = {
     filename: 'main.js',
     devtoolModuleFilenameTemplate: '../[resource-path]',
   },
-  target: 'electron',
+  target: 'electron-main',
   node: {
     __dirname: false,
     __filename: false,
@@ -108,7 +108,7 @@ const testConfig = {
     filename: 'Test.js',
     devtoolModuleFilenameTemplate: '../[resource-path]',
   },
-  target: 'electron',
+  target: 'electron-main',
   node: {
     __dirname: false,
     __filename: false,

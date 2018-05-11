@@ -13,7 +13,7 @@ interface TitleStates {
 }
 const mapStateToProps = (state: RootState) => ({
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
 class ConnectedTitle extends React.Component<TitleProps, TitleStates> {

@@ -32,7 +32,7 @@ const mapStateToProps = (state: RootState) => ({
   editorStateList: state.editorStateList,
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setEditorStateList: actions.setEditorStateList,
 }, dispatch);
 
@@ -42,42 +42,32 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
     this.props.setEditorStateList([EditorState.createEmpty(), EditorState.createEmpty()]);
   }
   render() {
-    const style: React.CSSProperties = {
-      container: {
+    return (
+      <div style={{
         display: "flex",
         flexDirection: "column",
         justifyContent: 'space-between',
         height: '100%',
-      },
-      addButton: {
-        marginRight: 0,
-        borderRadius: 0,
-        float: "right",
-      },
-      textarea: {
-        borderRadius: 0,
-        marginBottom: "5px",
-        overflow: "hidden",
-      },
-      buttonContainer: {
-        paddingTop: "10px",
-        borderTop: "1px solid #BEBEBE",
-      }
-    };
-    return (
-      <div style={style.container}>
-        <Form style={style.form}>
+      }}>
+        <Form>
           <ToolBar/>
           <RichEditor editorIndex={0}/>
           <RichEditor editorIndex={1}/>
         </Form>
-        <div style={style.buttonContainer}>
+        <div style={{
+          paddingTop: "10px",
+          borderTop: "1px solid #BEBEBE",
+        }}>
           <BaseButton
             content='Add'
             icon='add'
             labelPosition='left'
             onClick={this._add}
-            style={style.addButton} />
+            style={{
+              marginRight: 0,
+              borderRadius: 0,
+              float: "right",
+            }} />
         </div>
       </div>
     );

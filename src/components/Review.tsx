@@ -29,7 +29,7 @@ interface ReviewStates {
 const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
 export enum Level {
   AGAIN, HARD, GOOD, EASY

@@ -27,7 +27,7 @@ const mapStateToProps = (state: RootState) => ({
   editorStateList: state.editorStateList,
   focusedEditorIndex: state.focusedEditorIndex,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setEditorStateList: actions.setEditorStateList,
   setFocusedEditorIndex: actions.setFocusedEditorIndex,
 }, dispatch);
@@ -146,11 +146,16 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     const options = {
       filters: [{
         name: `image (${extensions.join(",")})`,
-        extensions: ["jpg", "jpeg", "png", "tif", "tiff", "gif", "svg", "webp"],
+        extensions: extensions
       }]
     };
     electron.remote.dialog.showOpenDialog(options, fileName => {
-      console.log(fileName);
+      const contentState = this.getEditorState();
+      // const contentStateWithEntity = contentState.createEntity(
+      //   'PHOTO',
+      //   'IMMUTABLE',
+      //   { src: 'https://www.baidu.com/img/bd_logo1.png?where=super' }
+      // )
     });
   };
 }

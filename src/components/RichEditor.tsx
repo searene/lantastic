@@ -23,7 +23,7 @@ const mapStateToProps = (state: RootState) => ({
   editorStateList: state.editorStateList,
   focusedEditorIndex: state.focusedEditorIndex,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setEditorStateList: actions.setEditorStateList,
   setFocusedEditorIndex: actions.setFocusedEditorIndex,
 }, dispatch);

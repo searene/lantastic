@@ -17,7 +17,7 @@ export interface PreferencesProps {
 }
 
 const mapStateToProps = (state: PreferencesProps) => ({});
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
 class ConnectPreferences extends React.Component<PreferencesProps> {

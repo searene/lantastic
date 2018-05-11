@@ -18,7 +18,7 @@ export interface NavBarProps {
 const mapStateToProps = (state: RootState) => ({
   activeTab: state.activeTab
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setActiveTab: actions.setActiveTab,
 }, dispatch);
 

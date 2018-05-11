@@ -35,7 +35,7 @@ const mapStateToProps = (state: RootState) => ({
   defaultDeckName: state.defaultDeckName,
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setMoreDeckName: actions.setMoreDeckName,
   setDecks: actions.setDecks,
   setDefaultDeckName: actions.setDefaultDeckName,

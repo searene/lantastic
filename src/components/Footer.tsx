@@ -12,14 +12,14 @@ interface FooterProps {
 const mapStateToProps = (state: FooterProps) => ({
   chosenDeckName: state.chosenDeckName,
 });
-const mapDispatchToProps = (dispatch: Dispatch<any>) => bindActionCreators({
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
 export class ConnectedFooter extends React.Component<FooterProps, FooterStates> {
 
   render() {
-    const styles: React.CSSProperties = {
-      container: {
+    return (
+      <footer style={{
         display: "flex",
         backgroundColor: "#F1F1F1",
         height: "30px",
@@ -27,14 +27,10 @@ export class ConnectedFooter extends React.Component<FooterProps, FooterStates> 
         width: "100%",
         marginTop: "auto",
         alignItems: "center",
-      },
-      iconContainer: {
-        marginRight: "15px",
-      },
-    };
-    return (
-      <footer style={styles.container}>
-        <div style={styles.iconContainer}><i className="book icon"></i>Deck: <b>{this.props.chosenDeckName}</b></div>
+      }}>
+        <div style={{
+          marginRight: "15px",
+        }}><i className="book icon"></i>Deck: <b>{this.props.chosenDeckName}</b></div>
       </footer>
     );
   }
