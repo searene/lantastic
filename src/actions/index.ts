@@ -1,4 +1,4 @@
-import { createAction } from 'typesafe-actions';
+import { createAction, TypeGetter } from 'typesafe-actions';
 import {WordDefinition} from "dict-parser";
 import {Tab} from "../components/NavBar";
 import {EditorState} from "draft-js";
@@ -16,16 +16,9 @@ export const actions = {
   setEditorStateList: createAction('SET_EDITOR_STATE_LIST', (editorStateList: EditorState[]) => ({ type: 'SET_EDITOR_STATE_LIST', editorStateList: editorStateList })),
 };
 
-export type RootAction = ReturnType<typeof actions.setWord>
-    | ReturnType<typeof actions.setWordDefinitions>
-    | ReturnType<typeof actions.setActiveTab>
-    | ReturnType<typeof actions.setChosenDeckName>
-    | ReturnType<typeof actions.setDecks>
-    | ReturnType<typeof actions.setLoading>
-    | ReturnType<typeof actions.setMoreDeckName>
-    | ReturnType<typeof actions.setDefaultDeckName>
-    | ReturnType<typeof actions.setFocusedEditorIndex>
-    | ReturnType<typeof actions.setEditorStateList>
+type FunctionType = (...args: any[]) => any;
+type ActionsType = { [index: string]: FunctionType & TypeGetter<string> }
+export type RootAction = ReturnType<typeof actions[keyof typeof actions]>
 
 // const returnsOfActions = Object.values(actions).map(action => $Call<typeof action>);
 // type AppAction = typeof returnsOfActions[number];
