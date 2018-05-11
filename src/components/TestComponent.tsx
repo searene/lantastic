@@ -10,15 +10,14 @@ import {BaseButton} from "./BaseButton";
 import {Input, Icon} from 'semantic-ui-react';
 import {emptyDir} from "fs-extra";
 
-interface TestComponentProps {
-}
-
 interface TestComponentStates {
   editorState: EditorState,
 }
 
 const mapStateToProps = (state: RootState) => ({});
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
+
+type TestComponentProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 
 export class ConnectedTestComponent extends React.Component<TestComponentProps, TestComponentStates> {

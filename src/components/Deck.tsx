@@ -12,15 +12,6 @@ import {bindActionCreators} from "redux";
 interface DeckStates {
 }
 
-interface DeckProps {
-  decks: any[];
-  setDecks: (decks: any[]) => any;
-  chosenDeckName: string;
-  moreDeckName: string;
-  setMoreDeckName: (moreDeckName: string) => any;
-  setChosenDeckName: (deckName: string) => any;
-}
-
 const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
   decks: state.decks,
@@ -31,6 +22,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setMoreDeckName: actions.setMoreDeckName,
   setChosenDeckName: actions.setChosenDeckName,
 }, dispatch);
+
+type DeckProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export class ConnectedDeck extends React.Component<DeckProps, DeckStates> {
 

@@ -11,16 +11,14 @@ export enum Tab {
   DECK, SEARCH_AND_ADD, REVIEW, CARD_BROWSER, PREFERENCES
 }
 
-export interface NavBarProps {
-  activeTab: Tab;
-  setActiveTab: (activeTab: Tab) => any;
-}
 const mapStateToProps = (state: RootState) => ({
   activeTab: state.activeTab
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setActiveTab: actions.setActiveTab,
 }, dispatch);
+
+export type NavBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>
 
 export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
   render() {

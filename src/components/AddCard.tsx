@@ -23,11 +23,6 @@ import '../stylesheets/dictionaries/dsl.scss';
 export interface AddCardStates {
 }
 
-export interface AddCardProps {
-  chosenDeckName: string
-  setEditorStateList: (editorStateList: EditorState[]) => any;
-  editorStateList: EditorState[];
-}
 const mapStateToProps = (state: RootState) => ({
   editorStateList: state.editorStateList,
   chosenDeckName: state.chosenDeckName,
@@ -35,6 +30,8 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setEditorStateList: actions.setEditorStateList,
 }, dispatch);
+
+export type AddCardProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
   constructor(props: AddCardProps) {

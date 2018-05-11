@@ -8,14 +8,6 @@ import '../stylesheets/components/RichEditor.scss';
 import {stateFromHTML} from 'draft-js-import-html';
 import {RichEditorPasteHandler} from "../RichEditorPasteHandler";
 
-interface RichEditorProps {
-  editorIndex: number;
-  editorStateList: EditorState[];
-  focusedEditorIndex: number;
-  setEditorStateList: (editorStateList: EditorState[]) => any;
-  setFocusedEditorIndex: (focusedEditorIndex: number) => any;
-}
-
 interface RichEditorStates {
 }
 
@@ -28,6 +20,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setFocusedEditorIndex: actions.setFocusedEditorIndex,
 }, dispatch);
 
+type RichEditorProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
+  editorIndex: number;
+}
 
 export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEditorStates> {
 

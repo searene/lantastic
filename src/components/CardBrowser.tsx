@@ -16,9 +16,6 @@ import {
 import moment = require("moment");
 import {actions} from "../actions";
 
-interface CardBrowserProps {
-}
-
 interface CardBrowserStates {
   totalPageNum: number;
   searchInputValue: string;
@@ -33,6 +30,8 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
+
+type CardBrowserProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 
 const PAGE_SIZE = 10;

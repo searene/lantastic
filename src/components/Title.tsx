@@ -4,10 +4,6 @@ import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
 import '../stylesheets/components/Title.scss'
 
-interface TitleProps {
-  className?: string;
-  name: string;
-}
 interface TitleStates {
 
 }
@@ -15,6 +11,11 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
+
+type TitleProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
+  className?: string;
+  name: string;
+}
 
 class ConnectedTitle extends React.Component<TitleProps, TitleStates> {
   render() {

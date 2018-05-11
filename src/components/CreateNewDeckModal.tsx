@@ -10,6 +10,7 @@ import '../stylesheets/components/CreateNewDeckModal.scss'
 import {BaseInput} from "./BaseInput";
 import {bindActionCreators} from "redux";
 import {Sqlite} from "../Sqlite";
+import { RootState } from "../reducers";
 
 interface CreateNewDeckModalStates {
   message: string;
@@ -17,17 +18,14 @@ interface CreateNewDeckModalStates {
   isShown: boolean;
 }
 
-interface CreateNewDeckModalProps {
-  decks: any[];
-  setDecks: (decks: any[]) => any;
-}
-
-const mapStateToProps = (state: CreateNewDeckModalProps) => ({
+const mapStateToProps = (state: RootState) => ({
   decks: state.decks,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setDecks: actions.setDecks,
 }, dispatch);
+
+type CreateNewDeckModalProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export class ConnectedCreateNewDeckModal extends React.Component<CreateNewDeckModalProps, CreateNewDeckModalStates> {
   constructor(props: CreateNewDeckModalProps) {

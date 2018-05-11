@@ -1,26 +1,19 @@
 import * as React from 'react';
 import {bindActionCreators} from "redux";
-import {connect, Dispatch} from "react-redux";
+import {connect, Dispatch, MapStateToProps} from "react-redux";
 import {Ref, Input, Icon} from 'semantic-ui-react';
 import {actions} from "../actions";
 import {WordDefinition} from "dict-parser";
 import '../stylesheets/components/AutoSuggestInput.scss';
 import {Parser} from "../Parser";
 import {isNullOrUndefined} from "util";
+import { RootState } from '../reducers';
 
 interface AutoSuggestInputStates {
   suggestions: string[];
 }
 
-interface AutoSuggestInputProps {
-  word: string;
-  onSearchCompleted: () => void;
-  wordDefinitions: WordDefinition[]
-  setWord: (word: string) => any
-  setWordDefinitions: (wordDefinitions: WordDefinition[]) => any
-}
-
-const mapStateToProps = (state: AutoSuggestInputProps) => ({
+const mapStateToProps = (state: RootState) => ({
   word: state.word,
   wordDefinitions: state.wordDefinitions,
 });
@@ -28,6 +21,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setWord: actions.setWord,
   setWordDefinitions: actions.setWordDefinitions,
 }, dispatch);
+
+type AutoSuggestInputProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
+  onSearchCompleted: () => void;
+}
 
 class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, AutoSuggestInputStates> {
   private inputComponent: HTMLElement;

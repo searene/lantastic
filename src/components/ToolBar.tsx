@@ -12,13 +12,6 @@ import {
   DRAFT_INLINE_STYLE_BOLD, DRAFT_INLINE_STYLE_ITALIC, DRAFT_INLINE_STYLE_UNDERLINE,
 } from "../Utils/DraftJsUtils";
 
-interface ToolBarProps {
-  editorStateList: EditorState[];
-  focusedEditorIndex: number;
-  setEditorStateList: (editorStateList: EditorState[]) => any;
-  setFocusedEditorIndex: (focusedEditorIndex: number) => any;
-}
-
 interface ToolBarStates {
   blockType: string;
 }
@@ -32,6 +25,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setFocusedEditorIndex: actions.setFocusedEditorIndex,
 }, dispatch);
 
+type ToolBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarStates> {
 

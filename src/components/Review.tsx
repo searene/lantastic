@@ -17,10 +17,6 @@ import '../stylesheets/components/Review.scss';
 import {BaseButton} from "./BaseButton";
 import moment = require("moment");
 
-interface ReviewProps {
-  chosenDeckName: string;
-}
-
 interface ReviewStates {
   isAnswerShown: boolean;
   card: any;
@@ -30,6 +26,8 @@ const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
+
+type ReviewProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export enum Level {
   AGAIN, HARD, GOOD, EASY

@@ -18,9 +18,6 @@ import Config = Electron.Config;
 import {Parser} from "../Parser";
 
 
-export interface ScanProps {
-}
-
 interface ScanStates {
   scanPaths: string[];
   scanMessage: string;
@@ -30,6 +27,8 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
+
+export type ScanProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 class ConnectedScan extends React.Component<ScanProps, ScanStates> {
 

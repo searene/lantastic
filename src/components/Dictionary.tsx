@@ -9,19 +9,18 @@ import '../stylesheets/components/Dictionary.scss';
 import '../stylesheets/dictionaries/common.scss';
 import '../stylesheets/dictionaries/dsl.scss';
 import {AutoSuggestInput} from "./AutoSuggestInput";
+import { RootState } from "../reducers";
 
 interface DictionaryStates {
 }
 
-interface DictionaryProps {
-  wordDefinitions: WordDefinition[]
-}
-
-const mapStateToProps = (state: DictionaryProps) => ({
+const mapStateToProps = (state: RootState) => ({
   wordDefinitions: state.wordDefinitions,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
+
+type DictionaryProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 class ConnectedDictionary extends React.Component<DictionaryProps, DictionaryStates> {
 

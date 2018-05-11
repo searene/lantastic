@@ -12,13 +12,13 @@ import {connect} from 'react-redux';
 import * as electron from 'electron';
 
 import '../stylesheets/components/Preferences.scss';
+import { RootState } from '../reducers';
 
-export interface PreferencesProps {
-}
-
-const mapStateToProps = (state: PreferencesProps) => ({});
+const mapStateToProps = (state: RootState) => ({});
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
+
+export type PreferencesProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 class ConnectPreferences extends React.Component<PreferencesProps> {
 

@@ -12,17 +12,6 @@ import {Sqlite} from "../Sqlite";
 import {Configuration} from "../Configuration";
 import {Title} from './Title';
 
-interface DeckDetailsProps {
-  decks: any[];
-  moreDeckName: string;
-  defaultDeckName: string;
-  chosenDeckName: string;
-  setMoreDeckName: (deckName: string) => any;
-  setDecks: (decks: any[]) => any;
-  setDefaultDeckName: (deckName: string) => any;
-  setChosenDeckName: (deckName: string) => any;
-}
-
 interface DeckDetailsStates {
   isDeleteDeckModalShown: boolean;
   deckNameInputValue: string;
@@ -41,6 +30,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setDefaultDeckName: actions.setDefaultDeckName,
   setChosenDeckName: actions.setChosenDeckName,
 }, dispatch);
+
+type DeckDetailsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, DeckDetailsStates> {
   constructor(props: DeckDetailsProps) {

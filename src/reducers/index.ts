@@ -5,6 +5,7 @@ import {Tab} from "../components/NavBar";
 import {EditorState} from 'draft-js';
 
 export type RootState = {
+  [index: string]: any;
   readonly wordDefinitions: WordDefinition[];
   readonly word: string;
   readonly activeTab: Tab;
