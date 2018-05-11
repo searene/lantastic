@@ -19,8 +19,3 @@ export const actions = {
 type FunctionType = (...args: any[]) => any;
 type ActionsType = { [index: string]: FunctionType & TypeGetter<string> }
 export type RootAction = ReturnType<typeof actions[keyof typeof actions]>
-
-// const returnsOfActions = Object.values(actions).map(action => $Call<typeof action>);
-// type AppAction = typeof returnsOfActions[number];
-
-// export type RootAction = AppAction;
