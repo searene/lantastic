@@ -8,7 +8,8 @@
     "start": "electron dist/main.js --force-device-scale-factor=1.5",
     "test": "mocha lib/test",
     "dev": "webpack-dev-server --hot --inline",
-    "rebuild": "electron-rebuild -f -w sqlite3"
+    "rebuild": "electron-rebuild -f -w sqlite3",
+    "postinstall": "yarn run rebuild"
   },
   "repository": {
     "type": "git",
