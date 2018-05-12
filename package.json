@@ -8,7 +8,6 @@
     "start": "electron dist/main.js --force-device-scale-factor=1.5",
     "test": "mocha lib/test",
     "dev": "webpack-dev-server --hot --inline",
-    "postinstallComments": "electron-rebuild -f -w sqlite3",
     "rebuild": "electron-rebuild -f -w sqlite3"
   },
   "repository": {
@@ -24,9 +23,7 @@
   "dependencies": {
     "draft-js": "0.10.5",
     "draft-js-export-html": "1.2.0",
-    "draft-js-image-plugin": "^2.0.5",
     "draft-js-import-html": "1.2.1",
-    "draft-js-plugins-editor": "^2.0.8",
     "fs-extra": "6.0.1",
     "immutable": "3.8.2",
     "moment": "2.22.1",
@@ -48,7 +45,6 @@
     "@types/react-redux": "6.0.0",
     "@types/react-select": "1.2.6",
     "@types/react-split-pane": "0.1.10",
-    "awesome-typescript-loader": "5.0.0",
     "clean-webpack-plugin": "0.1.19",
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
@@ -70,10 +66,11 @@
     "source-map-loader": "0.2.3",
     "style-loader": "0.21.0",
     "sugarss": "1.0.1",
+    "ts-loader": "^4.3.0",
     "typesafe-actions": "1.1.3",
     "typescript": "2.8.3",
     "utility-types": "2.0.0",
-    "webpack": "4.8.1",
+    "webpack": "4.8.2",
     "webpack-cli": "^2.1.3"
   }
 }

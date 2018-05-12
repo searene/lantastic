@@ -9,8 +9,10 @@ const appConfig = {
     path: __dirname + '/dist',
     filename: 'bundle.js',
     devtoolModuleFilenameTemplate: '../[resource-path]',
+    pathinfo: false,
   },
   target: 'electron-main',
+  mode: 'development',
   node: {
     __dirname: false,
     __filename: false,
@@ -31,8 +33,16 @@ const appConfig = {
   module: {
     rules: [
 
-      // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      {test: /\.tsx?$/, loader: "awesome-typescript-loader"},
+      {
+        test: /\.tsx?$/,
+        use: [{
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+            experimentalWatchApi: true,
+          }
+        }],
+      },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {enforce: "pre", test: /\.js$/, loader: "source-map-loader"},
@@ -77,20 +87,30 @@ const electronConfig = {
     path: __dirname + '/dist',
     filename: 'main.js',
     devtoolModuleFilenameTemplate: '../[resource-path]',
+    pathinfo: false,
   },
   target: 'electron-main',
+  mode: 'development',
   node: {
     __dirname: false,
     __filename: false,
   },
   devtool: 'source-map',
   resolve: {
-    extensions: ['.ts', '.js', 'tsx'],
+    extensions: ['.ts', '.js', '.tsx'],
   },
   module: {
     rules: [
-      // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      {test: /\.tsx?$/, loader: "awesome-typescript-loader"},
+      {
+        test: /\.tsx?$/,
+        use: [{
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+            experimentalWatchApi: true,
+          }
+        }],
+      },
 
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       {enforce: "pre", test: /\.js$/, loader: "source-map-loader"},

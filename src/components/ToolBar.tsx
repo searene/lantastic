@@ -4,8 +4,9 @@ import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
 import {Icon, Menu, SemanticICONS, Dropdown} from 'semantic-ui-react';
-import {EditorState, RichUtils} from 'draft-js';
+import {EditorState, RichUtils, AtomicBlockUtils} from 'draft-js';
 import * as electron from 'electron';
+import * as fse from 'fs-extra';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
@@ -93,7 +94,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
           <Menu.Item
             key={icon.icon}
             className={"toolbar-icon"}
-            onClick={icon.onClick}>
+            onClick={icon.onClick.bind(this)}>
             <Icon name={"image"} />
           </Menu.Item>
         )}
@@ -143,15 +144,29 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
         extensions: extensions
       }]
     };
-    electron.remote.dialog.showOpenDialog(options, fileName => {
-      const contentState = this.getEditorState();
-      // const contentStateWithEntity = contentState.createEntity(
-      //   'PHOTO',
-      //   'IMMUTABLE',
-      //   { src: 'https://www.baidu.com/img/bd_logo1.png?where=super' }
-      // )
+    electron.remote.dialog.showOpenDialog(options, async (fileNames) => {
+      for(const fileName of fileNames) {
+        const newEditorState = await this.getEditorStateWithImage(fileName);
+        await this.applyEditorState(newEditorState);
+      }
     });
   };
+  private async getEditorStateWithImage(fileName: string): Promise<EditorState> {
+    const editorState = this.getEditorState();
+    const contentState = editorState.getCurrentContent();
+    const imageAsBase64 = await fse.readFile(fileName, 'base64');
+    const contentStateWithEntity = contentState.createEntity(
+      'PHOTO',
+      'IMMUTABLE',
+      { src: imageAsBase64 }
+    );
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+    const newEditorState = EditorState.set(
+      editorState,
+      { currentContent: contentStateWithEntity },
+    );
+    return AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, ' ');
+  }
 }
 
 export const ToolBar = connect(mapStateToProps, mapDispatchToProps)(ConnectedToolBar);
