@@ -101,42 +101,43 @@ const electronConfig = {
   }
 };
 
-const testConfig = {
-  entry: ['./src/Test.ts',],
-  output: {
-    path: __dirname + '/dist',
-    filename: 'Test.js',
-    devtoolModuleFilenameTemplate: '../[resource-path]',
-  },
-  target: 'electron-main',
-  node: {
-    __dirname: false,
-    __filename: false,
-  },
+// const testConfig = {
+//   entry: ['./src/Test.ts',],
+//   output: {
+//     path: __dirname + '/dist',
+//     filename: 'Test.js',
+//     devtoolModuleFilenameTemplate: '../[resource-path]',
+//   },
+//   target: 'electron-main',
+//   node: {
+//     __dirname: false,
+//     __filename: false,
+//   },
 
-  // Enable sourcemaps for debugging webpack's output.
-  devtool: 'source-map',
+//   // Enable sourcemaps for debugging webpack's output.
+//   devtool: 'source-map',
 
-  resolve: {
-    // Add '.ts' and '.tsx' as resolvable extensions.
-    extensions: ['.ts', '.tsx', '.js', '.json']
-  },
+//   resolve: {
+//     // Add '.ts' and '.tsx' as resolvable extensions.
+//     extensions: ['.ts', '.tsx', '.js', '.json']
+//   },
 
-  devServer: {
-    hot: true
-  },
+//   devServer: {
+//     hot: true
+//   },
 
-  module: {
-    rules: [
+//   module: {
+//     rules: [
 
-      // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-      {test: /\.tsx?$/, loader: "awesome-typescript-loader"},
+//       // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
+//       {test: /\.tsx?$/, loader: "awesome-typescript-loader"},
 
-    ]
-  },
-  externals: {
-    sqlite: 'commonjs sqlite'
-  }
-};
+//     ]
+//   },
+//   externals: {
+//     sqlite: 'commonjs sqlite'
+//   }
+// };
 
-module.exports = [appConfig, electronConfig, testConfig];
+// module.exports = [appConfig, electronConfig, testConfig];
+module.exports = [appConfig, electronConfig];

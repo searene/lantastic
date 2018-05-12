@@ -5,7 +5,7 @@
   "main": "lib/main.js",
   "scripts": {
     "watch": "webpack --watch",
-    "start": "electron dist/main.js",
+    "start": "electron dist/main.js --force-device-scale-factor=1.5",
     "test": "mocha lib/test",
     "dev": "webpack-dev-server --hot --inline",
     "postinstallComments": "electron-rebuild -f -w sqlite3",
@@ -24,7 +24,9 @@
   "dependencies": {
     "draft-js": "0.10.5",
     "draft-js-export-html": "1.2.0",
+    "draft-js-image-plugin": "^2.0.5",
     "draft-js-import-html": "1.2.1",
+    "draft-js-plugins-editor": "^2.0.8",
     "fs-extra": "6.0.1",
     "immutable": "3.8.2",
     "moment": "2.22.1",
