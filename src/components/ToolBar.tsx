@@ -7,6 +7,7 @@ import {Icon, Menu, SemanticICONS, Dropdown} from 'semantic-ui-react';
 import {EditorState, RichUtils, AtomicBlockUtils} from 'draft-js';
 import * as electron from 'electron';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
@@ -101,6 +102,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
       </Menu>
     );
   }
+
   private applyEditorState = (editorState: EditorState): void => {
     const newEditorStateList = this.props.editorStateList.concat();
     newEditorStateList[this.props.focusedEditorIndex] = editorState;
@@ -137,7 +139,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     });
   };
   private showChooseImageDialog() {
-    const extensions = ["jpg", "jpeg", "png", "tif", "tiff", "gif", "svg", "webp"];
+    const extensions = ["jpg", "jpeg", "png", "gif", "svg", "webp"];
     const options = {
       filters: [{
         name: `image (${extensions.join(",")})`,
@@ -154,11 +156,10 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
   private async getEditorStateWithImage(fileName: string): Promise<EditorState> {
     const editorState = this.getEditorState();
     const contentState = editorState.getCurrentContent();
-    const imageAsBase64 = await fse.readFile(fileName, 'base64');
     const contentStateWithEntity = contentState.createEntity(
-      'PHOTO',
+      'image',
       'IMMUTABLE',
-      { src: imageAsBase64 }
+      { src: fileName }
     );
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
     const newEditorState = EditorState.set(

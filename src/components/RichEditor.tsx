@@ -3,9 +3,10 @@ import {connect, Dispatch} from "react-redux";
 import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
-import {Editor, EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier} from 'draft-js';
+import {EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier} from 'draft-js';
+import Editor from 'draft-js-plugins-editor';
+import createImagePlugin from 'draft-js-image-plugin';
 import '../stylesheets/components/RichEditor.scss';
-import {stateFromHTML} from 'draft-js-import-html';
 import {RichEditorPasteHandler} from "../RichEditorPasteHandler";
 
 interface RichEditorStates {
@@ -26,6 +27,8 @@ type RichEditorProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof ma
 
 export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEditorStates> {
 
+  private imagePlugin = createImagePlugin();
+
   render() {
     return (
       <Editor
@@ -36,6 +39,7 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
           e.preventDefault();
           this.onChange(RichUtils.onTab(e, this.getEditorState(), 4))
         }}
+        plugins={[this.imagePlugin]}
         onFocus={this.onFocus}
         onChange={this.onChange}/>
     );
