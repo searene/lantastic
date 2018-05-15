@@ -2,6 +2,7 @@ import {ContentState, EditorState, Modifier} from "draft-js";
 
 export class RichEditorPasteHandler {
   getEditorStateFromHTML = (html: string): EditorState => {
+    debugger;
     const dom = new DOMParser().parseFromString(html, 'text/html');
     const body = dom.getElementsByTagName('body')[0];
     const editorState = EditorState.createEmpty();

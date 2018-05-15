@@ -6,8 +6,6 @@ import {actions} from "../actions";
 import {Icon, Menu, SemanticICONS, Dropdown} from 'semantic-ui-react';
 import {EditorState, RichUtils, AtomicBlockUtils} from 'draft-js';
 import * as electron from 'electron';
-import * as fse from 'fs-extra';
-import * as path from 'path';
 
 import '../stylesheets/components/ToolBar.scss'
 import {
@@ -157,7 +155,7 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, ToolBarState
     const editorState = this.getEditorState();
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity(
-      'image',
+      'atomic',
       'IMMUTABLE',
       { src: fileName }
     );

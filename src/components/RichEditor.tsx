@@ -3,11 +3,17 @@ import {connect, Dispatch} from "react-redux";
 import {RootState} from "../reducers";
 import {bindActionCreators} from "redux";
 import {actions} from "../actions";
-import {EditorState, RichUtils, DraftEditorCommand, DraftHandleValue, Modifier} from 'draft-js';
-import Editor from 'draft-js-plugins-editor';
-import createImagePlugin from 'draft-js-image-plugin';
+import {
+  EditorState,
+  RichUtils,
+  DraftEditorCommand,
+  DraftHandleValue,
+  Editor,
+  ContentBlock,
+} from 'draft-js';
 import '../stylesheets/components/RichEditor.scss';
 import {RichEditorPasteHandler} from "../RichEditorPasteHandler";
+import {ImageComponent} from "./ImageComponent";
 
 interface RichEditorStates {
 }
@@ -27,19 +33,17 @@ type RichEditorProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof ma
 
 export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEditorStates> {
 
-  private imagePlugin = createImagePlugin();
-
   render() {
     return (
       <Editor
         editorState={this.props.editorStateList[this.props.editorIndex]}
         handleKeyCommand={this.handleKeyCommand}
         handlePastedText={this.handlePastedText}
+        blockRendererFn={this.blockRenderer}
         onTab={(e: React.KeyboardEvent<{}>) => {
           e.preventDefault();
           this.onChange(RichUtils.onTab(e, this.getEditorState(), 4))
         }}
-        plugins={[this.imagePlugin]}
         onFocus={this.onFocus}
         onChange={this.onChange}/>
     );
@@ -65,9 +69,18 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
     return 'not-handled';
   };
   private handlePastedText = (text: string, html: string | undefined, editorState: EditorState): DraftHandleValue => {
+    console.log(html);
     const newEditorState = new RichEditorPasteHandler().getEditorStateFromHTML(html);
     this.onChange(newEditorState);
     return 'handled';
+  };
+  private blockRenderer = (contentBlock: ContentBlock) => {
+    if (contentBlock.getType() === 'atomic') {
+      return {
+        component: ImageComponent,
+        editable: false,
+      }
+    }
   };
 }
 
