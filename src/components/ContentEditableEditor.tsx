@@ -15,9 +15,11 @@ export type ContentEditableEditorProps = ReturnType<typeof mapStateToProps> & Re
 
 export class RawContentEditableEditor extends React.Component<ContentEditableEditorProps> {
   private editor: HTMLDivElement;
+
   constructor(props: ContentEditableEditorProps) {
     super(props);
   }
+
   public render() {
     return (
       <div
@@ -29,16 +31,25 @@ export class RawContentEditableEditor extends React.Component<ContentEditableEdi
           padding: ".67857143em 1em",
         }}
         contentEditable={true}
-        ref={ (ref) => { this.editor = ref; } }>
+        onPaste={this.handlePaste}
+        ref={(ref) => {
+          this.editor = ref;
+        }}>
 
       </div>
     );
   }
+
   public clear = () => {
     this.editor.innerHTML = "";
   }
   public getContents = () => {
     return this.editor.innerHTML;
+  }
+  private handlePaste = (event: React.ClipboardEvent<HTMLDivElement>): void => {
+    const html = event.clipboardData.getData("text/html");
+    document.execCommand("insertHTML", false, html);
+    event.preventDefault();
   }
 }
 

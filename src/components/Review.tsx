@@ -13,12 +13,12 @@ import moment = require("moment");
 import * as React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {Container} from "semantic-ui-react";
+import {Container, Ref} from "semantic-ui-react";
 import "../stylesheets/components/Review.scss";
 import {BaseButton} from "./BaseButton";
 
 interface IReviewStates {
-  isAnswerShown: boolean;
+  showAnswer: boolean;
   card: any;
 }
 
@@ -56,12 +56,15 @@ class DaysInterval extends Interval {
   }
 }
 
-class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
+class InternalReview extends React.Component<ReviewProps, IReviewStates> {
+
+  private container: HTMLDivElement;
+
   constructor(props: ReviewProps) {
     super(props);
     this.state = {
-      isAnswerShown: false,
       card: INITIAL_CARD,
+      showAnswer: false,
     };
   }
 
@@ -88,36 +91,52 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
     const goodInterval = this.getInterval(Level.GOOD);
     const hardInterval = this.getInterval(Level.HARD);
     return (
-      <Container>
-        <div className="review-div">
-          <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}}/>
-          {this.state.isAnswerShown ?
-            <div className="review-answer">
-              <hr className="answer-hr"/>
-              <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}}/>
-            </div>
-            : ""
-          }
-          <div className="review-bottom">
-            <hr className="hr"/>
-            <div className="bottom-buttons">
-              {this.state.isAnswerShown ?
-                [<BaseButton onClick={() => this.review(againInterval)}
-                             key={Level.AGAIN}><b>AGAIN</b><br/> ({this.getIntervalDescription(againInterval)})</BaseButton>,
-                  <BaseButton onClick={() => this.review(hardInterval)}
-                              key={Level.HARD}><b>HARD</b><br/> ({this.getIntervalDescription(hardInterval)})</BaseButton>,
-                  <BaseButton onClick={() => this.review(goodInterval)}
-                              key={Level.GOOD}><b>GOOD</b><br/> ({this.getIntervalDescription(goodInterval)})</BaseButton>,
-                  <BaseButton onClick={() => this.review(easyInterval)}
-                              key={Level.EASY}><b>EASY</b><br/> ({this.getIntervalDescription(easyInterval)})</BaseButton>]
-                :
-                <BaseButton onClick={() => this.setState({isAnswerShown: true})}>Show Answer</BaseButton>
-              }
+      <Ref innerRef={ (ref) => this.container = ref as HTMLDivElement }>
+        <Container
+          style={{ overflow: "auto" }}>
+          <div className="review-div">
+            <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}}/>
+            {this.state.showAnswer ?
+              <div className="review-answer">
+                <hr className="answer-hr"/>
+                <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}}/>
+              </div>
+              : ""
+            }
+            <div className="review-bottom">
+              <hr className="hr"/>
+              <div className="bottom-buttons">
+                {this.state.showAnswer ?
+                  [<BaseButton onClick={() => this.review(againInterval)}
+                               key={Level.AGAIN}><b>AGAIN</b><br/> ({this.getIntervalDescription(againInterval)})
+                   </BaseButton>,
+                   <BaseButton onClick={() => this.review(hardInterval)}
+                               key={Level.HARD}><b>HARD</b><br/> ({this.getIntervalDescription(hardInterval)})
+                   </BaseButton>,
+                   <BaseButton onClick={() => this.review(goodInterval)}
+                               key={Level.GOOD}><b>GOOD</b><br/> ({this.getIntervalDescription(goodInterval)})
+                   </BaseButton>,
+                   <BaseButton onClick={() => this.review(easyInterval)}
+                               key={Level.EASY}><b>EASY</b><br/> ({this.getIntervalDescription(easyInterval)})
+                   </BaseButton>]
+                  :
+                  <BaseButton onClick={this.showAnswer}>Show Answer</BaseButton>
+                }
+              </div>
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </Ref>
     );
+  }
+
+  private showAnswer = () => {
+    this.setState({
+      showAnswer: true,
+    });
+    setTimeout(() => {
+      this.container.scrollTop = this.container.scrollHeight;
+    }, 0);
   }
 
   private getReviewCard = async (): Promise<any> => {
@@ -144,7 +163,7 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
     }
     const previousReviewTimeList = this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST].split(",");
     const lastReviewTime = moment(previousReviewTimeList[previousReviewTimeList.length - 1], DATE_FORMAT);
-    const duration = ~~moment.duration(moment().diff(lastReviewTime)).asDays();
+    const duration = Math.floor(moment.duration(moment().diff(lastReviewTime)).asDays());
     if (duration === 0) {
       // last level is AGAIN
       return this.getInitialInterval(level);
@@ -152,11 +171,11 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
     if (level === Level.AGAIN) {
       return new MinutesInterval(AGAIN_DURATION_MINUTES);
     } else if (level === Level.HARD) {
-      return new DaysInterval(~~(duration * 0.8 + 1));
+      return new DaysInterval(Math.floor((duration * 0.8 + 1)));
     } else if (level === Level.GOOD) {
-      return new DaysInterval(~~(duration * 0.9 + 2));
+      return new DaysInterval(Math.floor(duration * 0.9 + 2));
     } else if (level === Level.EASY) {
-      return new DaysInterval(~~(duration * 1.1 + 3));
+      return new DaysInterval(Math.floor(duration * 1.1 + 3));
     }
   }
   private getIntervalDescription = (interval: Interval): string => {
@@ -170,8 +189,8 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
     const nextReviewTime = this.getNextReviewTime(interval);
     await this.adjustReviewTime(this.state.card[CARD_COLUMN_ID], nextReviewTime);
     this.setState({
-      isAnswerShown: false,
       card: await this.getReviewCard(),
+      showAnswer: false,
     });
   }
   private adjustReviewTime = async (cardId: number, nextReviewTime: moment.Moment): Promise<void> => {
@@ -184,7 +203,9 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
             WHERE ${CARD_COLUMN_ID} = ${cardId}
     `))[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`];
     const currentReviewTime = moment().format(DATE_FORMAT);
-    const updatedReviewTimeList = previousReviewTimeList === "" ? currentReviewTime : previousReviewTimeList + "," + currentReviewTime;
+    const updatedReviewTimeList = previousReviewTimeList === "" ?
+      currentReviewTime :
+      previousReviewTimeList + "," + currentReviewTime;
     await db.run(`
             UPDATE
               ${CARD_TABLE}
@@ -202,9 +223,9 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
       nextReviewTime.add(interval.days, "days");
       nextReviewTime.set({
         hours: 0,
+        milliseconds: 0,
         minutes: 0,
         seconds: 0,
-        milliseconds: 0,
       });
       return nextReviewTime;
     }
@@ -222,4 +243,4 @@ class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
   }
 }
 
-export const Review = connect(mapStateToProps, mapDispatchToProps)(ConnectedReview);
+export const Review = connect(mapStateToProps, mapDispatchToProps)(InternalReview);

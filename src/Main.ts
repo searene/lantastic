@@ -43,7 +43,8 @@ function createWindow() {
   });
 }
 
-const loadResources = async (request: RegisterBufferProtocolRequest, callback: (buffer?: Buffer | MimeTypedBuffer) => void) => {
+const loadResources = async (request: RegisterBufferProtocolRequest,
+                             callback: (buffer?: Buffer | MimeTypedBuffer) => void) => {
   const urlContents = request.url.substr(8).split(":");
   const resourceType = urlContents[0]; // image/audio/lookup
   const resourceHolderType = urlContents[1]; // zip
@@ -54,8 +55,8 @@ const loadResources = async (request: RegisterBufferProtocolRequest, callback: (
   }
   const buffer = await ZipReader.extractFileFromZip(resourceHolderPath, resourceFileName);
   callback({
-    mimeType: resourceType,
     data: buffer,
+    mimeType: resourceType,
   });
 };
 

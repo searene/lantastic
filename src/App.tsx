@@ -76,18 +76,18 @@ export class ConnectedApp extends React.Component<AppProps, {}> {
       <div className="app-container">
         {this.props.isLoading ? <div/> :
           <div style={{
-            width: "100%",
-            height: "100%",
             display: "flex",
-            flexWrap: "wrap",
             flexDirection: "column",
+            flexWrap: "wrap",
+            height: "100%",
+            width: "100%",
           }}>
 
             <div style={{
-              width: "100%",
               display: "flex",
               flex: 1,
               padding: "10px",
+              width: "100%",
             }}>
               <NavBar/>
               {tabContents}

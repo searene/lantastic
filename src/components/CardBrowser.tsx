@@ -5,7 +5,6 @@ import * as React from "react";
 import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Pagination, PaginationProps, Segment, Table} from "semantic-ui-react";
-import {actions} from "../actions";
 import {
   CARD_COLUMN_BACK,
   CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
@@ -36,7 +35,7 @@ type CardBrowserProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof m
 const PAGE_SIZE = 10;
 const TABLE_DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
-class ConnectedCardBrowser extends React.Component<CardBrowserProps, ICardBrowserStates> {
+class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowserStates> {
 
   constructor(props: CardBrowserProps) {
     super(props);
@@ -150,7 +149,7 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, ICardBrowse
                          OR (${CARD_COLUMN_FRONT} LIKE ? ESCAPE '!')
                          OR (${CARD_COLUMN_BACK} LIKE ? ESCAPE '!'))
     `;
-  };
+  }
   private getSQLParams = () => {
     const keyWord = this.getFilteredKeyWord(this.state.searchInputValue);
     return this.state.searchInputValue === "" ? [] : [keyWord, keyWord, keyWord];
@@ -185,8 +184,8 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, ICardBrowse
     const pageNo = data.activePage as number;
     const cards = await this.getCards(pageNo);
     this.setState({
-      cards,
       activePage: pageNo,
+      cards,
     });
   }
   private handleInputKeyPress = async (event: KeyboardEvent) => {
@@ -196,4 +195,4 @@ class ConnectedCardBrowser extends React.Component<CardBrowserProps, ICardBrowse
   }
 }
 
-export const CardBrowser = connect(mapStateToProps, mapDispatchToProps)(ConnectedCardBrowser);
+export const CardBrowser = connect(mapStateToProps, mapDispatchToProps)(InternalCardBrowser);

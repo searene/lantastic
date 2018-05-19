@@ -15,7 +15,7 @@ export class SearchAndAdd extends React.Component {
           primary={"second"}
           minSize={200}
           maxSize={-100}
-          defaultSize="40%">
+          defaultSize="60%">
           <Dictionary/>
           <AddCard/>
         </SplitPane>
