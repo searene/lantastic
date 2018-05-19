@@ -54,7 +54,9 @@ class ConnectedAddCard extends React.Component<AddCardProps> {
         height: "100%",
         justifyContent: "space-between",
       }}>
-        <Form>
+        <Form style={{
+          overflow: "auto",
+        }}>
         {
           editorList.map((e, i) =>
             <ContentEditableEditor
