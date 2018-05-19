@@ -1,12 +1,12 @@
-import {CharacterMetadata, EditorState, ContentBlock, ContentState} from "draft-js";
+import {CharacterMetadata, ContentBlock, ContentState, EditorState} from "draft-js";
 import {List, OrderedMap, OrderedSet} from "immutable";
 import {range} from "./CommonUtils";
 
-export const DRAFT_INLINE_STYLE_BOLD = 'BOLD';
-export const DRAFT_INLINE_STYLE_ITALIC = 'ITALIC';
-export const DRAFT_INLINE_STYLE_STRIKETHROUGH = 'STRIKETHROUGH';
-export const DRAFT_INLINE_STYLE_CODE = 'CODE';
-export const DRAFT_INLINE_STYLE_UNDERLINE = 'UNDERLINE';
+export const DRAFT_INLINE_STYLE_BOLD = "BOLD";
+export const DRAFT_INLINE_STYLE_ITALIC = "ITALIC";
+export const DRAFT_INLINE_STYLE_STRIKETHROUGH = "STRIKETHROUGH";
+export const DRAFT_INLINE_STYLE_CODE = "CODE";
+export const DRAFT_INLINE_STYLE_UNDERLINE = "UNDERLINE";
 
 export const getSelectedContentBlocksAsOrderedMap = (editorState: EditorState): OrderedMap<string, ContentBlock> => {
   const selectionState = editorState.getSelection();
@@ -33,24 +33,24 @@ export const getSelectedCharacterStyles = (editorState: EditorState): List<Order
 
   // we don't need to consider the situation when selectedContentBlocks.size === 0,
   // because it just wouldn't happen, there's still an empty ContentBlock when no text is selected.
-  if(selectedContentBlocks.size === 1) {
+  if (selectedContentBlocks.size === 1) {
     const contentBlock = selectedContentBlocks.get(0);
     return List(range(startOffset, endOffset))
-      .map(offset => contentBlock.getInlineStyleAt(offset))
+      .map((offset) => contentBlock.getInlineStyleAt(offset))
       .toList();
   } else {
     return selectedContentBlocks.flatMap((contentBlock, index) => {
-      if(index === 0) {
+      if (index === 0) {
         return List(range(startOffset, contentBlock.getCharacterList().size))
-          .map(offset => contentBlock.getInlineStyleAt(offset))
+          .map((offset) => contentBlock.getInlineStyleAt(offset))
           .toList();
-      } else if(index === selectedContentBlocks.size - 1) {
+      } else if (index === selectedContentBlocks.size - 1) {
         return List(range(0, endOffset))
-          .map(offset => contentBlock.getInlineStyleAt(offset))
+          .map((offset) => contentBlock.getInlineStyleAt(offset))
           .toList();
       } else {
         return List(range(0, contentBlock.getCharacterList().size))
-          .map(offset => contentBlock.getInlineStyleAt(offset))
+          .map((offset) => contentBlock.getInlineStyleAt(offset))
           .toList();
       }
     }).toList();
@@ -60,4 +60,3 @@ export const isInSelection = (editorState: EditorState): boolean => {
   const selectionState = editorState.getSelection();
   return !selectionState.isCollapsed();
 };
-

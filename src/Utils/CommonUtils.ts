@@ -1,28 +1,28 @@
 /// <reference path="../types/Types.d.ts"/>
-import * as path from 'path';
-import * as fse from 'fs-extra';
+import * as fse from "fs-extra";
+import * as path from "path";
 
-export function removeFromArray<T>(array: Array<T>, element: T): Array<T> {
-  return array.filter(a => a != element);
+export function removeFromArray<T>(array: T[], element: T): T[] {
+  return array.filter((a) => a !== element);
 }
 export function getPathToUserHome() {
-  return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+  return process.env[(process.platform === "win32") ? "USERPROFILE" : "HOME"];
 }
 export function getPathToDocuments() {
-  return path.join(getPathToUserHome(), 'Documents');
+  return path.join(getPathToUserHome(), "Documents");
 }
 export function getPathToLantastic() {
   // return path.join(getPathToDocuments(), 'lantastic');
-  return '/mnt/HDD/lantastic-config-dir'
+  return "/mnt/HDD/lantastic-config-dir";
 }
 export function getPathToDictParserDbFile() {
-  return path.join(getPathToLantastic(), 'dict-parser.db');
+  return path.join(getPathToLantastic(), "dict-parser.db");
 }
 export function getPathToCardDbFile() {
-  return path.join(getPathToLantastic(), 'card.db');
+  return path.join(getPathToLantastic(), "card.db");
 }
 export function getPathToWordFormsFolder() {
-  return path.join(__dirname, '../node_modules/dict-parser/lib/resources/wordforms');
+  return path.join(__dirname, "../node_modules/dict-parser/lib/resources/wordforms");
 }
 export const getDateFromStr = (str: string) => {
   // assuming str is in utc
@@ -32,18 +32,18 @@ export const getStrFromDate = (date: Date) => {
   return date.toISOString(); // YYYY-MM-DD, in UTC
 };
 export async function createDirIfNotExists(dir: string) {
-  if(!await fse.pathExists(dir)) {
+  if (!await fse.pathExists(dir)) {
     await fse.mkdir(dir);
   }
 }
 export function getPathToDictionaryResources() {
-  return './resources/dictionaries';
+  return "./resources/dictionaries";
 }
 export const getPathToSqliteDbFile = () => {
-  return path.join(getPathToLantastic(), 'sqlite.db');
+  return path.join(getPathToLantastic(), "sqlite.db");
 };
 export const getPathToConfigurationFile = () => {
-  return path.join(getPathToLantastic(), 'configuration.json');
+  return path.join(getPathToLantastic(), "configuration.json");
 };
 
 Array.prototype.remove = function<T>(o: T): T[] {
@@ -67,5 +67,5 @@ export const guid = () => {
       .toString(16)
       .substring(1);
   }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
 };

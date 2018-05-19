@@ -1,20 +1,15 @@
-import {WordDefinition} from "dict-parser";
-import * as React from 'react';
-import {actions} from '../actions'
-import {bindActionCreators, Dispatch} from 'redux';
-import {connect} from 'react-redux';
-import {Input, Segment, Ref, Icon} from 'semantic-ui-react';
+import * as React from "react";
+import {connect} from "react-redux";
+import {bindActionCreators, Dispatch} from "redux";
+import {Ref, Segment} from "semantic-ui-react";
 
-import '../stylesheets/components/Dictionary.scss';
-import '../stylesheets/dictionaries/common.scss';
-import '../stylesheets/dictionaries/dsl.scss';
+import { IRootState } from "../reducers";
+import "../stylesheets/components/Dictionary.scss";
+import "../stylesheets/dictionaries/common.scss";
+import "../stylesheets/dictionaries/dsl.scss";
 import {AutoSuggestInput} from "./AutoSuggestInput";
-import { RootState } from "../reducers";
 
-interface DictionaryStates {
-}
-
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: IRootState) => ({
   wordDefinitions: state.wordDefinitions,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
@@ -22,36 +17,36 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 
 type DictionaryProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
-class ConnectedDictionary extends React.Component<DictionaryProps, DictionaryStates> {
+class ConnectedDictionary extends React.Component<DictionaryProps> {
 
   private definitionSegment: HTMLElement;
 
-  componentDidMount() {
+  public componentDidMount() {
     this.populateDefinition();
   }
 
-  componentDidUpdate() {
+  public componentDidUpdate() {
     this.populateDefinition();
   }
 
-  render() {
+  public render() {
     return (
       <div className={"dictionary-container"}>
         <AutoSuggestInput
-          onSearchCompleted={() => {this.definitionSegment.scrollTop = 0;}}
+          onSearchCompleted={() => {this.definitionSegment.scrollTop = 0; }}
         />
-        <Ref innerRef={ref => this.definitionSegment = ref}>
+        <Ref innerRef={(ref) => this.definitionSegment = ref}>
           <Segment className="definition"/>
         </Ref>
       </div>
-    )
+    );
   }
   private populateDefinition = () => {
     this.definitionSegment.innerHTML = this.getDefinitionHTMLs();
-  };
+  }
 
   private getDefinitionHTMLs(): string {
-    let html = '';
+    let html = "";
     for (const wordDefinition of this.props.wordDefinitions) {
       html += wordDefinition.html;
     }

@@ -1,20 +1,20 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import {Scan} from './Scan';
-import {Grid, Menu, Segment, Modal, Button, Icon} from 'semantic-ui-react';
+import {Button, Grid, Icon, Menu, Modal, Segment} from "semantic-ui-react";
+import {Scan} from "./Scan";
 
-import '../stylesheets/components/Preference.scss';
-import {actions} from '../actions/index';
-import {bindActionCreators, Dispatch} from 'redux';
-import {connect} from 'react-redux';
+import {connect} from "react-redux";
+import {bindActionCreators, Dispatch} from "redux";
+import {actions} from "../actions/index";
+import "../stylesheets/components/Preference.scss";
 
-import * as electron from 'electron';
+import * as electron from "electron";
 
-import '../stylesheets/components/Preferences.scss';
-import { RootState } from '../reducers';
+import { IRootState } from "../reducers";
+import "../stylesheets/components/Preferences.scss";
 
-const mapStateToProps = (state: RootState) => ({});
+const mapStateToProps = (state: IRootState) => ({});
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 
@@ -22,10 +22,10 @@ export type PreferencesProps = ReturnType<typeof mapStateToProps> & ReturnType<t
 
 class ConnectPreferences extends React.Component<PreferencesProps> {
 
-  render() {
+  public render() {
     return (
-      <div className='preferences-container'>
-        <Menu vertical className='preferences-selector'>
+      <div className="preferences-container">
+        <Menu vertical className="preferences-selector">
           <Menu.Item>
             <Menu.Header>Dictionary</Menu.Header>
             <Menu.Menu>
@@ -34,11 +34,11 @@ class ConnectPreferences extends React.Component<PreferencesProps> {
             </Menu.Menu>
           </Menu.Item>
         </Menu>
-        <Segment className='preferences-contents'>
+        <Segment className="preferences-contents">
           <Scan/>
         </Segment>
       </div>
-    )
+    );
   }
 }
 

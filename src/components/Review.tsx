@@ -1,28 +1,28 @@
-import {RootState} from "../reducers";
+import {IRootState} from "../reducers";
 
-import {Sqlite} from '../Sqlite';
 import {
   AGAIN_DURATION_MINUTES,
   CARD_COLUMN_BACK, CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
   CARD_COLUMN_NEXT_REVIEW_TIME,
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST, CARD_TABLE,
-  DATE_FORMAT
+  DATE_FORMAT,
 } from "../Constants";
+import {Sqlite} from "../Sqlite";
 
-import * as React from 'react';
-import {connect} from 'react-redux';
-import {bindActionCreators, Dispatch} from 'redux';
-import {Container} from "semantic-ui-react";
-import '../stylesheets/components/Review.scss';
-import {BaseButton} from "./BaseButton";
 import moment = require("moment");
+import * as React from "react";
+import {connect} from "react-redux";
+import {bindActionCreators, Dispatch} from "redux";
+import {Container} from "semantic-ui-react";
+import "../stylesheets/components/Review.scss";
+import {BaseButton} from "./BaseButton";
 
-interface ReviewStates {
+interface IReviewStates {
   isAnswerShown: boolean;
   card: any;
 }
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: IRootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
@@ -30,16 +30,16 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispat
 type ReviewProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export enum Level {
-  AGAIN, HARD, GOOD, EASY
+  AGAIN, HARD, GOOD, EASY,
 }
 
-const INITIAL_CARD = 'initial_card';
+const INITIAL_CARD = "initial_card";
 
 class Interval {
 }
 
 class MinutesInterval extends Interval {
-  minutes: number;
+  public minutes: number;
 
   constructor(minutes: number) {
     super();
@@ -48,7 +48,7 @@ class MinutesInterval extends Interval {
 }
 
 class DaysInterval extends Interval {
-  days: number;
+  public days: number;
 
   constructor(days: number) {
     super();
@@ -56,25 +56,25 @@ class DaysInterval extends Interval {
   }
 }
 
-class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
+class ConnectedReview extends React.Component<ReviewProps, IReviewStates> {
   constructor(props: ReviewProps) {
     super(props);
     this.state = {
       isAnswerShown: false,
-      card: INITIAL_CARD
+      card: INITIAL_CARD,
     };
   }
 
-  async componentWillMount() {
+  public async componentWillMount() {
     if (this.state.card === INITIAL_CARD) {
       const card = await this.getReviewCard();
       this.setState({
-        card: card
+        card,
       });
     }
   }
 
-  render() {
+  public render() {
     if (this.state.card === INITIAL_CARD) {
       return <div>Loading Data...</div>;
     } else if (this.state.card === undefined) {
@@ -96,7 +96,7 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
               <hr className="answer-hr"/>
               <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}}/>
             </div>
-            : ''
+            : ""
           }
           <div className="review-bottom">
             <hr className="hr"/>
@@ -117,7 +117,7 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
           </div>
         </div>
       </Container>
-    )
+    );
   }
 
   private getReviewCard = async (): Promise<any> => {
@@ -137,12 +137,12 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     const params = [moment().format(DATE_FORMAT), this.props.chosenDeckName];
     const reviewCard = await db.get(sql, params);
     return reviewCard;
-  };
+  }
   private getInterval = (level: Level): Interval => {
-    if (this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST] === '') {
+    if (this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST] === "") {
       return this.getInitialInterval(level);
     }
-    const previousReviewTimeList = this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST].split(',');
+    const previousReviewTimeList = this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST].split(",");
     const lastReviewTime = moment(previousReviewTimeList[previousReviewTimeList.length - 1], DATE_FORMAT);
     const duration = ~~moment.duration(moment().diff(lastReviewTime)).asDays();
     if (duration === 0) {
@@ -158,14 +158,14 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
     } else if (level === Level.EASY) {
       return new DaysInterval(~~(duration * 1.1 + 3));
     }
-  };
+  }
   private getIntervalDescription = (interval: Interval): string => {
     if (interval instanceof MinutesInterval) {
-      return interval.minutes + (interval.minutes === 1 ? ' min' : ' mins');
+      return interval.minutes + (interval.minutes === 1 ? " min" : " mins");
     } else if (interval instanceof DaysInterval) {
-      return interval.days + (interval.days === 1 ? ' day' : ' days');
+      return interval.days + (interval.days === 1 ? " day" : " days");
     }
-  };
+  }
   private review = async (interval: Interval): Promise<void> => {
     const nextReviewTime = this.getNextReviewTime(interval);
     await this.adjustReviewTime(this.state.card[CARD_COLUMN_ID], nextReviewTime);
@@ -173,7 +173,7 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
       isAnswerShown: false,
       card: await this.getReviewCard(),
     });
-  };
+  }
   private adjustReviewTime = async (cardId: number, nextReviewTime: moment.Moment): Promise<void> => {
     const db = await Sqlite.getDb();
     const previousReviewTimeList = (await db.get(`
@@ -184,7 +184,7 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
             WHERE ${CARD_COLUMN_ID} = ${cardId}
     `))[`${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST}`];
     const currentReviewTime = moment().format(DATE_FORMAT);
-    const updatedReviewTimeList = previousReviewTimeList === '' ? currentReviewTime : previousReviewTimeList + ',' + currentReviewTime;
+    const updatedReviewTimeList = previousReviewTimeList === "" ? currentReviewTime : previousReviewTimeList + "," + currentReviewTime;
     await db.run(`
             UPDATE
               ${CARD_TABLE}
@@ -193,22 +193,22 @@ class ConnectedReview extends React.Component<ReviewProps, ReviewStates> {
               ${CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST} = ?
             WHERE ${CARD_COLUMN_ID} = ${cardId}
     `, updatedReviewTimeList);
-  };
+  }
   private getNextReviewTime = (interval: Interval): moment.Moment => {
     if (interval instanceof MinutesInterval) {
-      return moment().add(interval.minutes, 'minutes');
+      return moment().add(interval.minutes, "minutes");
     } else if (interval instanceof DaysInterval) {
       const nextReviewTime = moment();
-      nextReviewTime.add(interval.days, 'days');
+      nextReviewTime.add(interval.days, "days");
       nextReviewTime.set({
-        'hours': 0,
-        'minutes': 0,
-        'seconds': 0,
-        'milliseconds': 0
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0,
       });
       return nextReviewTime;
     }
-  };
+  }
   private getInitialInterval = (level: Level): Interval => {
     if (level === Level.AGAIN) {
       return new MinutesInterval(AGAIN_DURATION_MINUTES);

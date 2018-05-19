@@ -1,20 +1,16 @@
-import * as React from 'react';
-import {Dictionary} from "./Dictionary";
-import {AddCard} from "./AddCard";
+import * as React from "react";
 import * as SplitPane from "react-split-pane";
+import {AddCard} from "./AddCard";
+import {Dictionary} from "./Dictionary";
 
-import '../stylesheets/components/SearchAndAdd.scss';
+import "../stylesheets/components/SearchAndAdd.scss";
 
-interface SearchAndAddProps {
+export class SearchAndAdd extends React.Component {
 
-}
-
-export class SearchAndAdd extends React.Component<SearchAndAddProps, {}> {
-
-  render() {
+  public render() {
     return (
-      <div style={{position: 'relative', flex: '1'}}>
-        <SplitPane split="vertical" minSize={50} defaultSize='40%'>
+      <div style={{position: "relative", flex: "1"}}>
+        <SplitPane split="vertical" minSize={50} defaultSize="40%">
           <Dictionary/>
           <AddCard/>
         </SplitPane>

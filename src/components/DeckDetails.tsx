@@ -1,49 +1,54 @@
-import {RootState} from "../reducers";
+import {IRootState} from "../reducers";
 
-import * as React from 'react';
+import * as React from "react";
 import {connect, Dispatch} from "react-redux";
-import {actions} from "../actions";
-import {Icon, Modal, Input} from 'semantic-ui-react';
-import '../stylesheets/components/DeckDetails.scss';
-import {BaseButton} from "./BaseButton";
-import {CARD_COLUMN_DECK, CARD_TABLE, DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
 import {bindActionCreators} from "redux";
-import {Sqlite} from "../Sqlite";
+import {Icon, Input, Modal} from "semantic-ui-react";
+import {actions} from "../actions";
 import {Configuration} from "../Configuration";
-import {Title} from './Title';
+import {CARD_COLUMN_DECK, CARD_TABLE, DECK_COLUMN_NAME, DECK_TABLE} from "../Constants";
+import {Sqlite} from "../Sqlite";
+import "../stylesheets/components/DeckDetails.scss";
+import {BaseButton} from "./BaseButton";
+import {Title} from "./Title";
 
-interface DeckDetailsStates {
+interface IDeckDetailsStates {
   isDeleteDeckModalShown: boolean;
   deckNameInputValue: string;
   updateDeckNameMessage: string;
 }
 
-const mapStateToProps = (state: RootState) => ({
-  decks: state.decks,
-  moreDeckName: state.moreDeckName,
-  defaultDeckName: state.defaultDeckName,
+const mapStateToProps = (state: IRootState) => ({
   chosenDeckName: state.chosenDeckName,
+  decks: state.decks,
+  defaultDeckName: state.defaultDeckName,
+  moreDeckName: state.moreDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-  setMoreDeckName: actions.setMoreDeckName,
+  setChosenDeckName: actions.setChosenDeckName,
   setDecks: actions.setDecks,
   setDefaultDeckName: actions.setDefaultDeckName,
-  setChosenDeckName: actions.setChosenDeckName,
+  setMoreDeckName: actions.setMoreDeckName,
 }, dispatch);
 
 type DeckDetailsProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
-export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, DeckDetailsStates> {
+export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, IDeckDetailsStates> {
   constructor(props: DeckDetailsProps) {
     super(props);
     this.state = {
-      isDeleteDeckModalShown: false,
       deckNameInputValue: this.props.moreDeckName,
-      updateDeckNameMessage: '',
-    }
+      isDeleteDeckModalShown: false,
+      updateDeckNameMessage: "",
+    };
   }
 
-  render() {
+  public setDefaultDeck = async (deckName: string): Promise<void> => {
+    this.props.setDefaultDeckName(deckName);
+    Configuration.insertOrUpdate("defaultDeckName", deckName);
+  }
+
+  public render() {
     return (
       <div className={"deck-details-root"}>
         <div className="top">
@@ -56,7 +61,12 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
 
             <Modal
               open={this.state.isDeleteDeckModalShown}
-              trigger={<BaseButton color="red" onClick={() => this.setState({isDeleteDeckModalShown: true})}>Delete This Deck</BaseButton>}>
+              trigger={
+                <BaseButton
+                  color="red"
+                  onClick={() => this.setState({isDeleteDeckModalShown: true})}>
+                  Delete This Deck
+                </BaseButton>}>
               <Modal.Header>Deck Deletion</Modal.Header>
               <Modal.Content>
                 <p>Are you sure you want to delete deck {this.props.moreDeckName}?</p>
@@ -96,13 +106,13 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
   }
 
   private handleBackClick = () => {
-    this.props.setMoreDeckName('');
-  };
+    this.props.setMoreDeckName("");
+  }
   private deleteDeck = async () => {
     const db = await Sqlite.getDb();
 
     // delete this deck and related cards
-    const newDecks = this.props.decks.filter(deck => deck.name !== this.props.moreDeckName);
+    const newDecks = this.props.decks.filter((deck) => deck.name !== this.props.moreDeckName);
     this.props.setDecks(newDecks);
     await Promise.all([
       db.run(`DELETE FROM ${DECK_TABLE} WHERE ${DECK_COLUMN_NAME} = ?`, this.props.moreDeckName),
@@ -110,50 +120,50 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
     ]);
 
     // check if this is the only deck
-    if(this.props.decks.length === 0) {
+    if (this.props.decks.length === 0) {
       await db.run(`
-                  INSERT INTO ${DECK_TABLE} 
+                  INSERT INTO ${DECK_TABLE}
                     (${DECK_COLUMN_NAME})
-                  VALUES 
-                    ('Default')`, );
+                  VALUES
+                    ('Default')` );
       this.props.setDecks([{
-        name: 'Default'
+        name: "Default",
       }]);
     }
 
     // check if the current deck is default
-    if(this.props.defaultDeckName === this.props.moreDeckName) {
+    if (this.props.defaultDeckName === this.props.moreDeckName) {
       const newDefaultDeckName = (await db.get(`
-                  SELECT 
+                  SELECT
                     ${DECK_COLUMN_NAME}
                   FROM ${DECK_TABLE}
       `)).name;
-      await Configuration.insertOrUpdate('defaultDeckName', newDefaultDeckName);
+      await Configuration.insertOrUpdate("defaultDeckName", newDefaultDeckName);
       this.props.setDefaultDeckName(newDefaultDeckName);
     }
 
     // check if the current deck is in use
-    if(this.props.chosenDeckName === this.props.moreDeckName) {
+    if (this.props.chosenDeckName === this.props.moreDeckName) {
       this.props.setChosenDeckName(this.props.defaultDeckName);
     }
 
     // return to the deck tab
     this.setState({
-      isDeleteDeckModalShown: false
+      isDeleteDeckModalShown: false,
     });
-    this.props.setMoreDeckName('');
-  };
+    this.props.setMoreDeckName("");
+  }
   private updateDeckName = async () => {
-    if(this.props.moreDeckName === this.state.deckNameInputValue) {
+    if (this.props.moreDeckName === this.state.deckNameInputValue) {
       this.setState({
-        updateDeckNameMessage: `Deck name is not changed`
+        updateDeckNameMessage: `Deck name is not changed`,
       });
       return;
     }
-    for(const deck of this.props.decks) {
-      if(this.state.deckNameInputValue === deck.name && deck.name !== this.props.moreDeckName) {
+    for (const deck of this.props.decks) {
+      if (this.state.deckNameInputValue === deck.name && deck.name !== this.props.moreDeckName) {
         this.setState({
-          updateDeckNameMessage: `Deck name ${this.state.deckNameInputValue} already exists`
+          updateDeckNameMessage: `Deck name ${this.state.deckNameInputValue} already exists`,
         });
         return;
       }
@@ -168,26 +178,22 @@ export class ConnectedDeckDetails extends React.Component<DeckDetailsProps, Deck
     `, this.state.deckNameInputValue, this.props.moreDeckName);
 
     // update props
-    if(this.props.defaultDeckName === this.props.moreDeckName) {
+    if (this.props.defaultDeckName === this.props.moreDeckName) {
       await this.setDefaultDeck(this.state.deckNameInputValue);
     }
-    if(this.props.chosenDeckName === this.props.moreDeckName) {
+    if (this.props.chosenDeckName === this.props.moreDeckName) {
       this.props.setChosenDeckName(this.state.deckNameInputValue);
     }
-    let newDecks = this.props.decks.concat();
-    for(let i = 0; i < newDecks.length; i++) {
-      if(newDecks[i].name === this.props.moreDeckName) {
-        newDecks[i].name = this.state.deckNameInputValue;
+    const newDecks = this.props.decks.concat();
+    for (const newDeck of newDecks) {
+      if (newDeck.name === this.props.moreDeckName) {
+        newDeck.name = this.state.deckNameInputValue;
         break;
       }
     }
     this.props.setDecks(newDecks);
     this.props.setMoreDeckName(this.state.deckNameInputValue);
-  };
-  setDefaultDeck = async (deckName: string): Promise<void> => {
-    this.props.setDefaultDeckName(deckName);
-    Configuration.insertOrUpdate("defaultDeckName", deckName);
-  };
+  }
 }
 
 export const DeckDetails = connect(mapStateToProps, mapDispatchToProps)(ConnectedDeckDetails);

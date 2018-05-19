@@ -1,13 +1,13 @@
 import {bindActionCreators} from "redux";
 
-import * as React from 'react';
+import * as React from "react";
 import {connect, Dispatch} from "react-redux";
-import { RootState } from "../reducers";
+import { IRootState } from "../reducers";
 
 interface FooterStates {
 
 }
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: IRootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
@@ -17,7 +17,7 @@ type FooterProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDis
 
 export class ConnectedFooter extends React.Component<FooterProps, FooterStates> {
 
-  render() {
+  public render() {
     return (
       <footer style={{
         display: "flex",

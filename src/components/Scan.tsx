@@ -1,29 +1,28 @@
-import * as electron from 'electron';
-import {ZipReader} from "../ZipReader";
-import * as fse from 'fs-extra';
-import * as React from 'react';
-import {connect} from 'react-redux';
 import {DictMap} from "dict-parser/lib/DictionaryFinder";
-import {actions} from '../actions';
-import {Button, Icon, Checkbox, Menu, CheckboxProps, Table} from 'semantic-ui-react';
-import {bindActionCreators, Dispatch} from 'redux';
-import * as path from 'path';
-import '../stylesheets/components/Scan.scss';
-import {getPathToLantastic, createDirIfNotExists} from '../Utils/CommonUtils';
-import {RootState} from "../reducers";
-import {BaseButton} from "./BaseButton";
-import {Title} from "./Title";
+import * as electron from "electron";
+import * as fse from "fs-extra";
+import * as path from "path";
+import * as React from "react";
+import {connect} from "react-redux";
+import {bindActionCreators, Dispatch} from "redux";
+import {Button, Checkbox, CheckboxProps, Icon, Menu, Table} from "semantic-ui-react";
+import {actions} from "../actions";
 import {Configuration} from "../Configuration";
 import Config = Electron.Config;
 import {Parser} from "../Parser";
-
+import {IRootState} from "../reducers";
+import "../stylesheets/components/Scan.scss";
+import {createDirIfNotExists, getPathToLantastic} from "../Utils/CommonUtils";
+import {ZipReader} from "../ZipReader";
+import {BaseButton} from "./BaseButton";
+import {Title} from "./Title";
 
 interface ScanStates {
   scanPaths: string[];
   scanMessage: string;
 }
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: IRootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
@@ -36,11 +35,11 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
     super(props);
     this.state = {
       scanPaths: Configuration.get(Configuration.SCAN_PATHS_KEY),
-      scanMessage: '',
-    }
+      scanMessage: "",
+    };
   }
 
-  render() {
+  public render() {
     return (
       <div className="scan-container">
         <div className="scan-path">
@@ -51,24 +50,24 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
             </Title>
 
           </div>
-          <div style={{marginTop: '20px', paddingTop: '10px', width: '100%'}}>
-            <div style={{display: 'inline-block'}}>
-              <Button icon labelPosition='left' onClick={this.handleClickOnAdd}>
-                <Icon name='add'/>
+          <div style={{marginTop: "20px", paddingTop: "10px", width: "100%"}}>
+            <div style={{display: "inline-block"}}>
+              <Button icon labelPosition="left" onClick={this.handleClickOnAdd}>
+                <Icon name="add"/>
                 Add
               </Button>
             </div>
-            <div style={{float: 'right'}}>
-              <span style={{marginRight: '10px'}}>{this.state.scanMessage}</span>
-              <Button icon labelPosition='left' color="teal" onClick={this.handleClickOnScan.bind(this)}>
-                <Icon name='search'/>
+            <div style={{float: "right"}}>
+              <span style={{marginRight: "10px"}}>{this.state.scanMessage}</span>
+              <Button icon labelPosition="left" color="teal" onClick={this.handleClickOnScan.bind(this)}>
+                <Icon name="search"/>
                 Scan
               </Button>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   private getTable = () => (
@@ -81,7 +80,7 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
       </Table.Header>
 
       <Table.Body>
-        {this.state.scanPaths.map(path => (
+        {this.state.scanPaths.map((path) => (
           <Table.Row key={path}>
             <Table.Cell>{path}</Table.Cell>
             <Table.Cell collapsing>
@@ -91,36 +90,36 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
         ))}
       </Table.Body>
     </Table>
-  );
+  )
 
   private handleClickOnAdd = () => {
     electron.remote.dialog.showOpenDialog({
-      properties: ['openDirectory']
-    }, async filePaths => {
-      let uniquePaths = this.removeDuplicates(filePaths, this.state.scanPaths);
+      properties: ["openDirectory"],
+    }, async (filePaths) => {
+      const uniquePaths = this.removeDuplicates(filePaths, this.state.scanPaths);
       await Configuration.insertOrUpdate(Configuration.SCAN_PATHS_KEY, uniquePaths);
       this.setState({
         scanPaths: uniquePaths,
       });
     });
-  };
+  }
   private removeDuplicates = (addedPaths: string[], previousPaths: string[]) => {
     const normalizedPaths = addedPaths.concat(previousPaths)
-      .map(p => path.normalize(p));
+      .map((p) => path.normalize(p));
     return normalizedPaths.removeDuplicates();
-  };
+  }
   private handleClickOnRemove = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
     const target = event.target as HTMLButtonElement;
     const path = (target.parentElement.previousElementSibling as HTMLTableDataCellElement).innerHTML;
     const newPaths = Configuration.get(Configuration.SCAN_PATHS_KEY).concat().remove(path);
     await Configuration.insertOrUpdate(Configuration.SCAN_PATHS_KEY, newPaths);
     this.setState({
-      scanPaths: newPaths
+      scanPaths: newPaths,
     });
-  };
+  }
 
   private async handleClickOnScan() {
-    Parser.getDictParser().on('name', (dictionaryName: string) => {
+    Parser.getDictParser().on("name", (dictionaryName: string) => {
       this.setState({
         scanMessage: `Scanning ${dictionaryName}`,
       });
@@ -145,12 +144,12 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
   private buildZipEntries = async (resourceHolder: string): Promise<void> => {
     const entries = await ZipReader.getZipEntries(resourceHolder);
     await ZipReader.saveEntriesToDb(resourceHolder, entries);
-  };
+  }
   private getZippedResourceHolders = async (dictMapList: DictMap[]): Promise<string[]> => {
     const resourceHolderList = [];
     for (const dictMap of dictMapList) {
       const resourceHolder = dictMap.dict.resourceHolder;
-      if ((await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith('.zip')) {
+      if ((await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith(".zip")) {
         resourceHolderList.push(resourceHolder);
       }
     }
