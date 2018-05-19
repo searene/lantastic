@@ -19,16 +19,16 @@ export interface IRootState {
 }
 
 const initialState: IRootState = {
-  wordDefinitions: [],
-  word: "",
   activeTab: Tab.SEARCH_AND_ADD,
   chosenDeckName: "",
   decks: [],
-  isLoading: true,
-  moreDeckName: "",
   defaultDeckName: "",
   editorStateList: [],
   focusedEditorIndex: 0,
+  isLoading: true,
+  moreDeckName: "",
+  word: "",
+  wordDefinitions: [],
 };
 
 export const rootReducer = (state: IRootState = initialState, action: RootAction): IRootState => {

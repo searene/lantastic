@@ -10,7 +10,12 @@ export class SearchAndAdd extends React.Component {
   public render() {
     return (
       <div style={{position: "relative", flex: "1"}}>
-        <SplitPane split="vertical" minSize={50} defaultSize="40%">
+        <SplitPane
+          split="vertical"
+          primary={"second"}
+          minSize={200}
+          maxSize={-100}
+          defaultSize="40%">
           <Dictionary/>
           <AddCard/>
         </SplitPane>

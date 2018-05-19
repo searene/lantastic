@@ -25,6 +25,7 @@ export class RawContentEditableEditor extends React.Component<ContentEditableEdi
           border: "1px solid rgba(34,36,38,.15)",
           fontSize: "1em",
           marginBottom: "5px",
+          overflowX: "auto",
           padding: ".67857143em 1em",
         }}
         contentEditable={true}
