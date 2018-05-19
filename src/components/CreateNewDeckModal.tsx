@@ -12,7 +12,7 @@ import {Sqlite} from "../Sqlite";
 import "../stylesheets/components/CreateNewDeckModal.scss";
 import {BaseInput} from "./BaseInput";
 
-interface CreateNewDeckModalStates {
+interface ICreateNewDeckModalStates {
   message: string;
   deckName: string;
   isShown: boolean;
@@ -27,7 +27,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 
 type CreateNewDeckModalProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
-export class ConnectedCreateNewDeckModal extends React.Component<CreateNewDeckModalProps, CreateNewDeckModalStates> {
+export class ConnectedCreateNewDeckModal extends React.Component<CreateNewDeckModalProps, ICreateNewDeckModalStates> {
   constructor(props: CreateNewDeckModalProps) {
     super(props);
     this.state = {

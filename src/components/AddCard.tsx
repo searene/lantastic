@@ -51,8 +51,8 @@ class ConnectedAddCard extends React.Component<AddCardProps> {
       <div style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
         height: "100%",
+        justifyContent: "space-between",
       }}>
         <Form>
         {
@@ -69,24 +69,24 @@ class ConnectedAddCard extends React.Component<AddCardProps> {
         }
         </Form>
         <div style={{
-          paddingTop: "10px",
           borderTop: "1px solid #BEBEBE",
+          paddingTop: "10px",
         }}>
           <BaseButton
             content="Add"
             icon="add"
             labelPosition="left"
-            onClick={this._add}
+            onClick={this.add}
             style={{
-              marginRight: 0,
               borderRadius: 0,
               float: "right",
+              marginRight: 0,
             }} />
         </div>
       </div>
     );
   }
-  private _add = async () => {
+  private add = async () => {
     const db = await Sqlite.getDb();
     const now = moment();
     const front = this.editorComponents[0].getContents();
