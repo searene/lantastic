@@ -17,7 +17,6 @@ import {Deck} from "./components/Deck";
 import {actions} from "./actions";
 import {CardBrowser} from "./components/CardBrowser";
 import {ConnectedTestComponent, TestComponent} from "./components/TestComponent";
-import {ToolBar} from "./components/ToolBar";
 import {RichEditorExample} from "./components/RichEditorExample";
 import {Parser} from "./Parser";
 

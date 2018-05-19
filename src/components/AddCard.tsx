@@ -14,11 +14,14 @@ import {
   CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST,
   DATE_FORMAT
 } from "../Constants";
-import {EditorState, ContentState} from "draft-js";
-import {RichEditor} from "./RichEditor";
-import {ToolBar} from "./ToolBar";
+import {
+  RawContentEditableEditor,
+  ContentEditableEditor,
+  ContentEditableEditorProps
+} from "./ContentEditableEditor";
 import '../stylesheets/dictionaries/common.scss';
 import '../stylesheets/dictionaries/dsl.scss';
+import {guid} from "../Utils/CommonUtils";
 
 export interface AddCardStates {
 }
@@ -33,10 +36,20 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 
 export type AddCardProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
+const editorList = [{
+  key: guid(),
+  name: 'front',
+}, {
+  key: guid(),
+  name: 'back',
+}];
+
 class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
+
+  private editorComponents: RawContentEditableEditor[] = [];
+
   constructor(props: AddCardProps) {
     super(props);
-    this.props.setEditorStateList([EditorState.createEmpty(), EditorState.createEmpty()]);
   }
   render() {
     return (
@@ -47,9 +60,18 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
         height: '100%',
       }}>
         <Form>
-          <ToolBar/>
-          <RichEditor editorIndex={0}/>
-          <RichEditor editorIndex={1}/>
+        {
+          editorList.map((e, i) =>
+            <ContentEditableEditor
+              key={e.key}
+              editorIndex={i}
+              ref={ editor => {
+                if(editor) {
+                  this.editorComponents[i] = (editor as any).getWrappedInstance();
+                }
+              }} />
+          )
+        }
         </Form>
         <div style={{
           paddingTop: "10px",
@@ -72,8 +94,8 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
   private _add = async () => {
     const db = await Sqlite.getDb();
     const now = moment();
-    const front = stateToHTML(this.props.editorStateList[0].getCurrentContent());
-    const back = stateToHTML(this.props.editorStateList[1].getCurrentContent());
+    const front = this.editorComponents[0].getContents();
+    const back = this.editorComponents[1].getContents();
     const creationTime = now.format(DATE_FORMAT);
     const nextReviewTime = this.getNextReviewMoment(now).format(DATE_FORMAT);
     const previousReviewTimeList = '';
@@ -88,16 +110,15 @@ class ConnectedAddCard extends React.Component<AddCardProps, AddCardStates> {
         ) VALUES (?, ?, ?, ?, ?, ?)`,
          [this.props.chosenDeckName, front, back, creationTime, nextReviewTime, previousReviewTimeList]);
 
-    [0, 1].map(editorIndex => this.clearEditor(editorIndex));
+    this.clearEditors();
   };
   private getNextReviewMoment = (creationTime: moment.Moment): moment.Moment => {
     return creationTime;
   };
-  private clearEditor = (editorIndex: number): void => {
-    const newEditorState = EditorState.push(this.props.editorStateList[editorIndex], ContentState.createFromText(''), 'remove-range');
-    const newEditorStateList = this.props.editorStateList.concat();
-    newEditorStateList[editorIndex] = newEditorState;
-    this.props.setEditorStateList(newEditorStateList);
+  private clearEditors = (): void => {
+    editorList.map((editor, i) => {
+      this.editorComponents[i].clear();
+    });
   };
 }
 export const AddCard = connect(mapStateToProps, mapDispatchToProps)(ConnectedAddCard);

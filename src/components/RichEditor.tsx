@@ -70,7 +70,7 @@ export class ConnectedRichEditor extends React.Component<RichEditorProps, RichEd
   };
   private handlePastedText = (text: string, html: string | undefined, editorState: EditorState): DraftHandleValue => {
     console.log(html);
-    const newEditorState = new RichEditorPasteHandler().getEditorStateFromHTML(html);
+    const newEditorState = new RichEditorPasteHandler().getEditorStateFromHTML(editorState, html);
     this.onChange(newEditorState);
     return 'handled';
   };

@@ -61,3 +61,11 @@ Array.prototype.removeDuplicates = function<T>(): T[] {
 export const range = (start: number, end: number): number[] => {
   return new Array(end - start).fill(1).map((d, i) => i + start);
 };
+export const guid = () => {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+};
