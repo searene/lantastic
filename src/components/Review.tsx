@@ -13,7 +13,7 @@ import moment = require("moment");
 import * as React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {Container, Ref} from "semantic-ui-react";
+import {Container} from "semantic-ui-react";
 import "../stylesheets/components/Review.scss";
 import {BaseButton} from "./BaseButton";
 
@@ -58,7 +58,7 @@ class DaysInterval extends Interval {
 
 class InternalReview extends React.Component<ReviewProps, IReviewStates> {
 
-  private container: HTMLDivElement;
+  private reviewDiv: HTMLDivElement;
 
   constructor(props: ReviewProps) {
     super(props);
@@ -91,42 +91,48 @@ class InternalReview extends React.Component<ReviewProps, IReviewStates> {
     const goodInterval = this.getInterval(Level.GOOD);
     const hardInterval = this.getInterval(Level.HARD);
     return (
-      <Ref innerRef={ (ref) => this.container = ref as HTMLDivElement }>
-        <Container
-          style={{ overflow: "auto" }}>
-          <div className="review-div">
+        <Container style={{
+          display: "flex",
+          flexDirection: "column",
+        }}>
+          <div
+            style={{ overflow: "auto" }}
+            ref={ (ref: HTMLDivElement) => this.reviewDiv = ref }
+            className="review-div">
             <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.front}}/>
-            {this.state.showAnswer ?
+            { this.state.showAnswer &&
               <div className="review-answer">
                 <hr className="answer-hr"/>
                 <div className="review-card" dangerouslySetInnerHTML={{__html: this.state.card.back}}/>
               </div>
-              : ""
             }
-            <div className="review-bottom">
-              <hr className="hr"/>
-              <div className="bottom-buttons">
-                {this.state.showAnswer ?
-                  [<BaseButton onClick={() => this.review(againInterval)}
-                               key={Level.AGAIN}><b>AGAIN</b><br/> ({this.getIntervalDescription(againInterval)})
-                   </BaseButton>,
-                   <BaseButton onClick={() => this.review(hardInterval)}
-                               key={Level.HARD}><b>HARD</b><br/> ({this.getIntervalDescription(hardInterval)})
-                   </BaseButton>,
-                   <BaseButton onClick={() => this.review(goodInterval)}
-                               key={Level.GOOD}><b>GOOD</b><br/> ({this.getIntervalDescription(goodInterval)})
-                   </BaseButton>,
-                   <BaseButton onClick={() => this.review(easyInterval)}
-                               key={Level.EASY}><b>EASY</b><br/> ({this.getIntervalDescription(easyInterval)})
-                   </BaseButton>]
-                  :
-                  <BaseButton onClick={this.showAnswer}>Show Answer</BaseButton>
-                }
-              </div>
+          </div>
+          <div
+            style={{
+              flexShrink: 0,
+            }}
+            className="review-bottom">
+            <hr className="hr"/>
+            <div className="bottom-buttons">
+              {this.state.showAnswer ?
+                [<BaseButton onClick={() => this.review(againInterval)}
+                             key={Level.AGAIN}><b>AGAIN</b><br/> ({this.getIntervalDescription(againInterval)})
+                </BaseButton>,
+                  <BaseButton onClick={() => this.review(hardInterval)}
+                              key={Level.HARD}><b>HARD</b><br/> ({this.getIntervalDescription(hardInterval)})
+                  </BaseButton>,
+                  <BaseButton onClick={() => this.review(goodInterval)}
+                              key={Level.GOOD}><b>GOOD</b><br/> ({this.getIntervalDescription(goodInterval)})
+                  </BaseButton>,
+                  <BaseButton onClick={() => this.review(easyInterval)}
+                              key={Level.EASY}><b>EASY</b><br/> ({this.getIntervalDescription(easyInterval)})
+                  </BaseButton>]
+                :
+                <BaseButton onClick={this.showAnswer}>Show Answer</BaseButton>
+              }
             </div>
           </div>
         </Container>
-      </Ref>
     );
   }
 
@@ -135,7 +141,7 @@ class InternalReview extends React.Component<ReviewProps, IReviewStates> {
       showAnswer: true,
     });
     setTimeout(() => {
-      this.container.scrollTop = this.container.scrollHeight;
+      this.reviewDiv.scrollTop = this.reviewDiv.scrollHeight;
     }, 0);
   }
 
@@ -154,8 +160,7 @@ class InternalReview extends React.Component<ReviewProps, IReviewStates> {
             WHERE ${CARD_COLUMN_NEXT_REVIEW_TIME} <= ?
               AND ${CARD_COLUMN_DECK} = ?`;
     const params = [moment().format(DATE_FORMAT), this.props.chosenDeckName];
-    const reviewCard = await db.get(sql, params);
-    return reviewCard;
+    return await db.get(sql, params);
   }
   private getInterval = (level: Level): Interval => {
     if (this.state.card[CARD_COLUMN_PREVIOUS_REVIEW_TIME_LIST] === "") {
