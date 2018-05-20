@@ -67,7 +67,7 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
             <BaseButton onClick={this.search}>Search</BaseButton>
           </div>,
           <div className={"table-body-row"} key={"table-body-row"}>
-            <Table celled>
+            <Table celled selectable striped sortable fixed>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>Deck</Table.HeaderCell>
