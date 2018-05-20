@@ -69,3 +69,8 @@ export const guid = () => {
   }
   return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
 };
+export const nodeFromHTML = (html: string): Node => {
+  const div = document.createElement("div");
+  div.innerHTML = html.trim();
+  return div.firstChild;
+};
