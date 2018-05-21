@@ -5,7 +5,7 @@ import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Dropdown, Icon, Menu, SemanticICONS} from "semantic-ui-react";
 import {actions} from "../actions";
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 
 import "../stylesheets/components/ToolBar.scss";
 import {
@@ -16,7 +16,7 @@ interface IToolBarStates {
   blockType: string;
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   editorStateList: state.editorStateList,
   focusedEditorIndex: state.focusedEditorIndex,
 });
@@ -28,13 +28,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 type ToolBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export class ConnectedToolBar extends React.Component<ToolBarProps, IToolBarStates> {
-
-  constructor(props: ToolBarProps) {
-    super(props);
-    this.state = {
-      blockType: this.BLOCK_TYPE_LABEL_NORMAL_TEXTS,
-    };
-  }
 
   private BLOCK_TYPE_LABEL_HEADING1 = "Heading 1";
   private BLOCK_TYPE_LABEL_HEADING2 = "Heading 2";
@@ -64,6 +57,13 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, IToolBarStat
     {label: this.BLOCK_TYPE_LABEL_NORMAL_TEXTS, style: "unstyled"},
   ];
 
+  constructor(props: ToolBarProps) {
+    super(props);
+    this.state = {
+      blockType: this.BLOCK_TYPE_LABEL_NORMAL_TEXTS,
+    };
+  }
+
   public render() {
     return (
       <Menu icon className={"toolbar-container borderless"}>
@@ -73,7 +73,10 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, IToolBarStat
               <Dropdown.Item
                 key={blockType.style}
                 className={blockType.style}
-                onMouseDown={(event: React.SyntheticEvent<HTMLDivElement>) => this.handleMouseDownOnBlockTypeDropdown.call(this, event, blockType)}>{blockType.label}</Dropdown.Item>,
+                onMouseDown={(event: React.SyntheticEvent<HTMLDivElement>) =>
+                  this.handleMouseDownOnBlockTypeDropdown.call(this, event, blockType)}>
+                {blockType.label}
+              </Dropdown.Item>,
             )}
           </Dropdown.Menu>
         </Dropdown>
@@ -129,7 +132,8 @@ export class ConnectedToolBar extends React.Component<ToolBarProps, IToolBarStat
       ),
     );
   }
-  private handleMouseDownOnBlockTypeDropdown = (event: React.SyntheticEvent<HTMLDivElement>, blockType: {label: string, style: string}): void => {
+  private handleMouseDownOnBlockTypeDropdown = (event: React.SyntheticEvent<HTMLDivElement>,
+                                                blockType: {label: string, style: string}): void => {
     event.preventDefault();
     this.toggleBlockStyle(blockType.style);
     this.setState({

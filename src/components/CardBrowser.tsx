@@ -4,30 +4,38 @@ import moment = require("moment");
 import * as React from "react";
 import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
-import {Pagination, PaginationProps, Segment, Table} from "semantic-ui-react";
+import { Pagination, PaginationProps, Segment, Table } from "semantic-ui-react";
 import {
   CARD_COLUMN_BACK,
   CARD_COLUMN_CREATION_TIME, CARD_COLUMN_DECK, CARD_COLUMN_FRONT, CARD_COLUMN_ID,
   CARD_COLUMN_NEXT_REVIEW_TIME, CARD_TABLE, DATE_FORMAT,
 } from "../Constants";
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 import {Sqlite} from "../Sqlite";
 import "../stylesheets/components/CardBrowser.scss";
 import {BaseButton} from "./BaseButton";
+import { CardModal } from "./CardModal";
+import { actions } from "../actions";
+import { Card } from "../models/Card";
+import { List } from "immutable";
 
 interface ICardBrowserStates {
   totalPageNum: number;
   searchInputValue: string;
-  cards: any[];
   activePage: number;
   orderBy: string;
   isOrderByAscending: boolean;
   isLoaded: boolean;
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
+  cardsInCardBrowser: state.cardsInCardBrowser,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
+  setCardModalOpen: (cardModalOpen: boolean) => dispatch(actions.setCardModalOpen(cardModalOpen)),
+  setCardInCardModal: (cardInCardModal: Card) => dispatch(actions.setCardInCardModal(cardInCardModal)),
+  setCardsInCardBrowser: (cardsInCardBrowser: List<Card>) =>
+    dispatch(actions.setCardsInCardBrowser(cardsInCardBrowser)),
 }, dispatch);
 
 type CardBrowserProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
@@ -41,7 +49,6 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
     super(props);
     this.state = {
       activePage: 1,
-      cards: [],
       isLoaded: false,
       isOrderByAscending: true,
       orderBy: CARD_COLUMN_DECK,
@@ -57,7 +64,7 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
     return (
       <Segment className={"card-browser-segment"}>
         {this.state.isLoaded ?
-          [<div className={"search-row"} key={"search-row"}>
+          [<div className={"search-container"} key={"search-container"}>
             <BaseInput
               placeholder={"Search cards..."}
               value={this.state.searchInputValue}
@@ -66,7 +73,8 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
             />
             <BaseButton onClick={this.search}>Search</BaseButton>
           </div>,
-          <div className={"table-body-row"} key={"table-body-row"}>
+          <div className={"table-container"} key={"table-container"}>
+            <CardModal/>
             <Table celled selectable striped sortable fixed>
               <Table.Header>
                 <Table.Row>
@@ -79,8 +87,10 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
               </Table.Header>
 
               <Table.Body>
-                {this.state.cards.map((card) => (
-                  <Table.Row key={card[CARD_COLUMN_ID]}>
+                {this.props.cardsInCardBrowser.map((card) => (
+                  <Table.Row key={card[CARD_COLUMN_ID]}
+                             className={"search-table-row"}
+                             onClick={() => this.handleClickOnTableRow(card)}>
                     <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
                     <Table.Cell>{card[CARD_COLUMN_FRONT]}</Table.Cell>
                     <Table.Cell>{card[CARD_COLUMN_BACK]}</Table.Cell>
@@ -109,10 +119,9 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
   }
 
   private reloadData = async (pageNo: number): Promise<void> => {
-    const cards = await this.getCards(pageNo);
+    this.props.setCardsInCardBrowser(await this.getCards(pageNo));
     const totalPageNum = await this.getTotalPageNum();
     this.setState({
-      cards,
       isLoaded: true,
       totalPageNum,
     });
@@ -129,9 +138,10 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
       .replace(/_/, "!!")
       .replace(/\[/, "!!") + "%";
   }
-  private getCards = async (pageNo: number): Promise<any[]> => {
+  private getCards = async (pageNo: number): Promise<List<Card>> => {
     const db = await Sqlite.getDb();
-    return await db.all(this.getSQL(this.getColumns(), pageNo), this.getSQLParams());
+    const cards = await db.all(this.getSQL(this.getColumns(), pageNo), this.getSQLParams());
+    return List.of(...cards);
   }
   private getSQL = (column: string, pageNo?: number): string => {
     return `
@@ -182,16 +192,19 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
   }
   private handleClickOnPagination = async (event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => {
     const pageNo = data.activePage as number;
-    const cards = await this.getCards(pageNo);
+    this.props.setCardsInCardBrowser(await this.getCards(pageNo));
     this.setState({
       activePage: pageNo,
-      cards,
     });
   }
   private handleInputKeyPress = async (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       await this.search();
     }
+  }
+  private handleClickOnTableRow = (card: Card) => {
+    this.props.setCardInCardModal(card);
+    this.props.setCardModalOpen(true);
   }
 }
 

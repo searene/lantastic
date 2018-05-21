@@ -1,17 +1,17 @@
 import * as React from "react";
-import {connect, Dispatch, MapStateToProps} from "react-redux";
+import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Icon, Input, Ref} from "semantic-ui-react";
 import {actions} from "../actions";
 import {Parser} from "../Parser";
-import { IRootState } from "../reducers";
+import { RootState } from "../reducers";
 import "../stylesheets/components/AutoSuggestInput.scss";
 
 interface IAutoSuggestInputStates {
   suggestions: string[];
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   word: state.word,
   wordDefinitions: state.wordDefinitions,
 });

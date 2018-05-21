@@ -1,20 +1,16 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
-import {Button, Grid, Icon, Menu, Modal, Segment} from "semantic-ui-react";
+import {Menu, Segment} from "semantic-ui-react";
 import {Scan} from "./Scan";
 
 import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {actions} from "../actions/index";
 import "../stylesheets/components/Preference.scss";
 
-import * as electron from "electron";
-
-import { IRootState } from "../reducers";
+import { RootState } from "../reducers";
 import "../stylesheets/components/Preferences.scss";
 
-const mapStateToProps = (state: IRootState) => ({});
+const mapStateToProps = (state: RootState) => ({});
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
 

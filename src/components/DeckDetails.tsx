@@ -1,4 +1,4 @@
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 
 import * as React from "react";
 import {connect, Dispatch} from "react-redux";
@@ -18,7 +18,7 @@ interface IDeckDetailsStates {
   updateDeckNameMessage: string;
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
   decks: state.decks,
   defaultDeckName: state.defaultDeckName,

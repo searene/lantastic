@@ -7,7 +7,7 @@ import {actions} from "../actions";
 import {BaseButton} from "./BaseButton";
 
 import {bindActionCreators} from "redux";
-import { IRootState } from "../reducers";
+import { RootState } from "../reducers";
 import {Sqlite} from "../Sqlite";
 import "../stylesheets/components/CreateNewDeckModal.scss";
 import {BaseInput} from "./BaseInput";
@@ -18,7 +18,7 @@ interface ICreateNewDeckModalStates {
   isShown: boolean;
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   decks: state.decks,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({

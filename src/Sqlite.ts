@@ -7,7 +7,6 @@ import {
 import {getPathToSqliteDbFile} from "./Utils/CommonUtils";
 
 export class Sqlite {
-  private static _db: sqlite.Database;
   public static init = async () => {
     const db = await Sqlite.getDb();
     await Promise.all(
@@ -61,10 +60,10 @@ export class Sqlite {
   }
 
   public static getDb = async (): Promise<sqlite.Database> => {
-    if (Sqlite._db === undefined) {
-      Sqlite._db = await sqlite.open(getPathToSqliteDbFile());
+    if (Sqlite.db === undefined) {
+      Sqlite.db = await sqlite.open(getPathToSqliteDbFile());
     }
-    return Sqlite._db;
+    return Sqlite.db;
   }
   public static createDefaultDeckNoDeckExists = async (): Promise<void> => {
     const db = await Sqlite.getDb();
@@ -78,5 +77,12 @@ export class Sqlite {
       `);
     }
   }
-
+  public static deleteCard = async (cardId: number): Promise<void> => {
+    const db = await Sqlite.getDb();
+    await db.run(`
+                DELETE FROM ${CARD_TABLE}
+                WHERE ${CARD_COLUMN_ID} = ?
+    `, cardId);
+  }
+  private static db: sqlite.Database;
 }

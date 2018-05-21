@@ -2,12 +2,9 @@ import {bindActionCreators} from "redux";
 
 import * as React from "react";
 import {connect, Dispatch} from "react-redux";
-import { IRootState } from "../reducers";
+import { RootState } from "../reducers";
 
-interface FooterStates {
-
-}
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
@@ -15,7 +12,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 
 type FooterProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
-export class ConnectedFooter extends React.Component<FooterProps, FooterStates> {
+export class ConnectedFooter extends React.Component<FooterProps> {
 
   public render() {
     return (
@@ -30,7 +27,7 @@ export class ConnectedFooter extends React.Component<FooterProps, FooterStates> 
       }}>
         <div style={{
           marginRight: "15px",
-        }}><i className="book icon"></i>Deck: <b>{this.props.chosenDeckName}</b></div>
+        }}><i className="book icon"/>Deck: <b>{this.props.chosenDeckName}</b></div>
       </footer>
     );
   }

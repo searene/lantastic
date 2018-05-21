@@ -2,11 +2,11 @@ import { buildAudioTag } from "dict-parser/lib/util/HTMLUtil";
 import * as React from "react";
 import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 import "../stylesheets/components/RichEditor.scss";
 import { nodeFromHTML } from "../Utils/CommonUtils";
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);

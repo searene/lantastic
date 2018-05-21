@@ -3,16 +3,13 @@ import {connect, Dispatch} from "react-redux";
 import {bindActionCreators} from "redux";
 import {Segment} from "semantic-ui-react";
 import {actions} from "../actions";
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 import "../stylesheets/components/Deck.scss";
 import {BaseButton} from "./BaseButton";
 import {CreateNewDeckModal} from "./CreateNewDeckModal";
 import {DeckDetails} from "./DeckDetails";
 
-interface DeckStates {
-}
-
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
   decks: state.decks,
   moreDeckName: state.moreDeckName,
@@ -25,7 +22,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 
 type DeckProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
-export class ConnectedDeck extends React.Component<DeckProps, DeckStates> {
+export class ConnectedDeck extends React.Component<DeckProps> {
 
   public render() {
     return (

@@ -1,7 +1,9 @@
 import {WordDefinition} from "dict-parser";
 import {EditorState} from "draft-js";
-import { createAction, TypeGetter } from "typesafe-actions";
+import { createAction} from "typesafe-actions";
 import {Tab} from "../components/NavBar";
+import { Card } from "../models/Card";
+import { List } from "immutable";
 
 export const actions = {
   setActiveTab: createAction(
@@ -29,11 +31,20 @@ export const actions = {
     "SET_MORE_DECK_NAME",
     (moreDeckName: string) => ({ type: "SET_MORE_DECK_NAME", moreDeckName })),
   setWord: createAction(
-    "WORD",
-    (word: string) => ({ type: "WORD", word })),
+    "SET_WORD",
+    (word: string) => ({ type: "SET_WORD", word })),
   setWordDefinitions: createAction(
-    "WORD_DEFINITIONS",
-    (wordDefinitions: WordDefinition[]) => ({ type: "WORD_DEFINITIONS", wordDefinitions })),
+    "SET_WORD_DEFINITIONS",
+    (wordDefinitions: WordDefinition[]) => ({ type: "SET_WORD_DEFINITIONS", wordDefinitions })),
+  setCardModalOpen: createAction(
+    "SET_CARD_MODAL_OPEN",
+    (cardModalOpen: boolean) => ({ type: "SET_CARD_MODAL_OPEN", cardModalOpen })),
+  setCardInCardModal: createAction(
+    "SET_CARD_IN_CARD_MODAL",
+    (cardInCardModal: Card) => ({ type: "SET_CARD_IN_CARD_MODAL", cardInCardModal })),
+  setCardsInCardBrowser: createAction(
+    "SET_CARDS_IN_CARD_BROWSER",
+    (cardsInCardBrowser: List<Card>) => ({ type: "SET_CARDS_IN_CARD_BROWSER", cardsInCardBrowser })),
 };
 
 export type RootAction = ReturnType<typeof actions[keyof typeof actions]>;

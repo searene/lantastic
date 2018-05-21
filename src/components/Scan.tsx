@@ -5,12 +5,10 @@ import * as path from "path";
 import * as React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
-import {Button, Checkbox, CheckboxProps, Icon, Menu, Table} from "semantic-ui-react";
-import {actions} from "../actions";
+import {Button, Icon, Table} from "semantic-ui-react";
 import {Configuration} from "../Configuration";
-import Config = Electron.Config;
 import {Parser} from "../Parser";
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 import "../stylesheets/components/Scan.scss";
 import {createDirIfNotExists, getPathToLantastic} from "../Utils/CommonUtils";
 import {ZipReader} from "../ZipReader";
@@ -22,7 +20,7 @@ interface ScanStates {
   scanMessage: string;
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
 }, dispatch);
@@ -80,9 +78,9 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
       </Table.Header>
 
       <Table.Body>
-        {this.state.scanPaths.map((path) => (
-          <Table.Row key={path}>
-            <Table.Cell>{path}</Table.Cell>
+        {this.state.scanPaths.map((scanPath) => (
+          <Table.Row key={scanPath}>
+            <Table.Cell>{scanPath}</Table.Cell>
             <Table.Cell collapsing>
               <BaseButton color={"red"} size={"tiny"} onClick={this.handleClickOnRemove}>Remove</BaseButton>
             </Table.Cell>
@@ -110,8 +108,8 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
   }
   private handleClickOnRemove = async (event: React.SyntheticEvent<HTMLButtonElement>) => {
     const target = event.target as HTMLButtonElement;
-    const path = (target.parentElement.previousElementSibling as HTMLTableDataCellElement).innerHTML;
-    const newPaths = Configuration.get(Configuration.SCAN_PATHS_KEY).concat().remove(path);
+    const scanPath = (target.parentElement.previousElementSibling as HTMLTableDataCellElement).innerHTML;
+    const newPaths = Configuration.get(Configuration.SCAN_PATHS_KEY).concat().remove(scanPath);
     await Configuration.insertOrUpdate(Configuration.SCAN_PATHS_KEY, newPaths);
     this.setState({
       scanPaths: newPaths,

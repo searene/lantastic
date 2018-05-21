@@ -1,4 +1,4 @@
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 
 import * as moment from "moment";
 import * as React from "react";
@@ -21,7 +21,7 @@ import {
   RawContentEditableEditor,
 } from "./ContentEditableEditor";
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
   editorStateList: state.editorStateList,
 });

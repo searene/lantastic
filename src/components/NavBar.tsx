@@ -4,14 +4,14 @@ import { Icon, Menu } from "semantic-ui-react";
 import {actions} from "../actions";
 
 import {bindActionCreators} from "redux";
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 import "../stylesheets/components/NavBar.scss";
 
 export enum Tab {
   DECK, SEARCH_AND_ADD, REVIEW, CARD_BROWSER, PREFERENCES,
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   activeTab: state.activeTab,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({

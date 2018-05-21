@@ -3,8 +3,10 @@ import {EditorState} from "draft-js";
 import {getType} from "typesafe-actions";
 import {actions, RootAction} from "../actions";
 import {Tab} from "../components/NavBar";
+import { Card } from "../models/Card";
+import { List } from "immutable";
 
-export interface IRootState {
+export interface RootState {
   [index: string]: any;
   readonly wordDefinitions: WordDefinition[];
   readonly word: string;
@@ -16,10 +18,13 @@ export interface IRootState {
   readonly defaultDeckName: string;
   readonly editorStateList: EditorState[];
   readonly focusedEditorIndex: number; // starts from 0
+  readonly cardModalOpen: boolean;
+  readonly cardInCardModal: Card;
+  readonly cardsInCardBrowser: List<Card>;
 }
 
-const initialState: IRootState = {
-  activeTab: Tab.SEARCH_AND_ADD,
+const initialState: RootState = {
+  activeTab: Tab.CARD_BROWSER,
   chosenDeckName: "",
   decks: [],
   defaultDeckName: "",
@@ -29,9 +34,12 @@ const initialState: IRootState = {
   moreDeckName: "",
   word: "",
   wordDefinitions: [],
+  cardModalOpen: false,
+  cardInCardModal: undefined,
+  cardsInCardBrowser: List(),
 };
 
-export const rootReducer = (state: IRootState = initialState, action: RootAction): IRootState => {
+export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
   switch (action.type) {
 
     case getType(actions.setWordDefinitions):
@@ -92,6 +100,24 @@ export const rootReducer = (state: IRootState = initialState, action: RootAction
       return {
         ...state,
         editorStateList: action.editorStateList,
+      };
+
+    case getType(actions.setCardModalOpen):
+      return {
+        ...state,
+        cardModalOpen: action.cardModalOpen,
+      };
+
+    case getType(actions.setCardInCardModal):
+      return {
+        ...state,
+        cardInCardModal: action.cardInCardModal,
+      };
+
+    case getType(actions.setCardsInCardBrowser):
+      return {
+        ...state,
+        cardsInCardBrowser: action.cardsInCardBrowser,
       };
 
     default:

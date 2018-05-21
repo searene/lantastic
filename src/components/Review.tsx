@@ -1,4 +1,4 @@
-import {IRootState} from "../reducers";
+import {RootState} from "../reducers";
 
 import {
   AGAIN_DURATION_MINUTES,
@@ -22,7 +22,7 @@ interface IReviewStates {
   card: any;
 }
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);

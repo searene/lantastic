@@ -3,13 +3,13 @@ import {connect} from "react-redux";
 import {bindActionCreators, Dispatch} from "redux";
 import {Ref, Segment} from "semantic-ui-react";
 
-import { IRootState } from "../reducers";
+import { RootState } from "../reducers";
 import "../stylesheets/components/Dictionary.scss";
 import "../stylesheets/dictionaries/common.scss";
 import "../stylesheets/dictionaries/dsl.scss";
 import {AutoSuggestInput} from "./AutoSuggestInput";
 
-const mapStateToProps = (state: IRootState) => ({
+const mapStateToProps = (state: RootState) => ({
   wordDefinitions: state.wordDefinitions,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({

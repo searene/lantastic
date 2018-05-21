@@ -30,18 +30,18 @@ export interface AppProps {
 
 const mapStateToProps = (state: AppProps) => ({
   activeTab: state.activeTab,
-  isLoading: state.isLoading,
   decks: state.decks,
+  isLoading: state.isLoading,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading)),
-  setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
   setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
+  setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
   setDefaultDeckName: (deckName: string) => dispatch(actions.setDefaultDeckName(deckName)),
+  setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading)),
 });
 
-export class ConnectedApp extends React.Component<AppProps, {}> {
+export class ConnectedApp extends React.Component<AppProps> {
 
   public init = async (): Promise<void> => {
     await Sqlite.init();
