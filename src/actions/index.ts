@@ -48,6 +48,18 @@ export const actions = {
   setShowGoogleImageModal: createAction(
     "SET_SHOW_GOOGLE_IMAGE_MODAL",
     (showGoogleImageModal: boolean) => ({ type: "SET_SHOW_GOOGLE_IMAGE_MODAL", showGoogleImageModal })),
+  setFindInputBoxVisible: createAction(
+    "SET_FIND_INPUT_BOX_VISIBLE",
+    (isFindInputBoxVisible: boolean) => ({ type: "SET_FIND_INPUT_BOX_VISIBLE", isFindInputBoxVisible })),
+  setFindWord: createAction(
+    "SET_FIND_WORD",
+    (findWord: string) => ({ type: "SET_FIND_WORD", findWord })),
+  setFindWordIndex: createAction(
+    "SET_FIND_WORD_INDEX",
+    (findWordIndex: number) => ({ type: "SET_FIND_WORD_INDEX", findWordIndex })),
+  setFindInputBoxFocused: createAction(
+    "SET_FIND_INPUT_BOX_FOCUSED",
+    (isFindInputBoxFocused: boolean) => ({ type: "SET_FIND_INPUT_BOX_FOCUSED", isFindInputBoxFocused })),
 };
 
 export type RootAction = ReturnType<typeof actions[keyof typeof actions]>;

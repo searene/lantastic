@@ -22,6 +22,10 @@ export interface RootState {
   readonly cardInCardModal: Card;
   readonly cardsInCardBrowser: List<Card>;
   readonly showGoogleImageModal: boolean;
+  readonly isFindInputBoxVisible: boolean;
+  readonly findWord: string;
+  readonly findWordIndex: number;
+  readonly isFindInputBoxFocused: boolean;
 }
 
 const initialState: RootState = {
@@ -39,6 +43,10 @@ const initialState: RootState = {
   cardInCardModal: undefined,
   cardsInCardBrowser: List(),
   showGoogleImageModal: false,
+  isFindInputBoxVisible: false,
+  findWord: "",
+  findWordIndex: 0,
+  isFindInputBoxFocused: false,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -126,6 +134,30 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         showGoogleImageModal: action.showGoogleImageModal,
+      };
+
+    case getType(actions.setFindInputBoxVisible):
+      return {
+        ...state,
+        isFindInputBoxVisible: action.isFindInputBoxVisible,
+      };
+
+    case getType(actions.setFindWord):
+      return {
+        ...state,
+        findWord: action.findWord,
+      };
+
+    case getType(actions.setFindWordIndex):
+      return {
+        ...state,
+        findWordIndex: action.findWordIndex,
+      };
+
+    case getType(actions.setFindInputBoxFocused):
+      return {
+        ...state,
+        isFindInputBoxFocused: action.isFindInputBoxFocused,
       };
 
     default:
