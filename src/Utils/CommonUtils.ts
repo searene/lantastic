@@ -1,6 +1,6 @@
-/// <reference path="../types/Types.d.ts"/>
 import * as fse from "fs-extra";
 import * as path from "path";
+import * as React from "react";
 
 export function removeFromArray<T>(array: T[], element: T): T[] {
   return array.filter((a) => a !== element);
@@ -74,3 +74,31 @@ export const nodeFromHTML = (html: string): Node => {
   div.innerHTML = html.trim();
   return div.firstChild;
 };
+export enum OS {
+  MacOS, Windows, Linux,
+}
+export function getOS(): OS {
+  const osvar = process.platform;
+  if (osvar === "darwin") {
+    return OS.MacOS;
+  } else if (osvar === "win32") {
+    return OS.Windows;
+  } else {
+    return OS.Linux;
+  }
+}
+export function isMacOS(): boolean {
+  return getOS() === OS.MacOS;
+}
+export function isWindowsOrLinux(): boolean {
+  return getOS() === OS.Windows || getOS() === OS.Linux;
+}
+export function isCtrlOrCommand(event: KeyboardEvent): boolean {
+  const os = getOS();
+  if (isMacOS() && event.key === "Meta") {
+    return true;
+  } else if (isWindowsOrLinux() && event.key === "Control") {
+    return true;
+  }
+  return false;
+}

@@ -45,6 +45,9 @@ export const actions = {
   setCardsInCardBrowser: createAction(
     "SET_CARDS_IN_CARD_BROWSER",
     (cardsInCardBrowser: List<Card>) => ({ type: "SET_CARDS_IN_CARD_BROWSER", cardsInCardBrowser })),
+  setShowGoogleImageModal: createAction(
+    "SET_SHOW_GOOGLE_IMAGE_MODAL",
+    (showGoogleImageModal: boolean) => ({ type: "SET_SHOW_GOOGLE_IMAGE_MODAL", showGoogleImageModal })),
 };
 
 export type RootAction = ReturnType<typeof actions[keyof typeof actions]>;

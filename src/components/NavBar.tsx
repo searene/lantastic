@@ -23,7 +23,10 @@ export type NavBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof
 export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
   public render() {
     return (
-      <Menu icon="labeled" vertical className="navbar">
+      <Menu
+        icon="labeled"
+        vertical
+        className="navbar">
         <Menu.Item
           active={this.props.activeTab === Tab.DECK}
           onClick={() => this.props.setActiveTab(Tab.DECK)}>

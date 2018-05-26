@@ -3317,6 +3317,12 @@ globule@^1.0.0:
     lodash "~4.17.4"
     minimatch "~3.0.2"
 
+google-images@^2.1.0:
+  version "2.1.0"
+  resolved "http://registry.npm.taobao.org/google-images/download/google-images-2.1.0.tgz#1274ae404825978264d3a4f8f2d526b88d0bf02c"
+  dependencies:
+    got "^6.7.1"
+
 got@^6.7.1:
   version "6.7.1"
   resolved "http://registry.npm.taobao.org/got/download/got-6.7.1.tgz#240cd05785a9a18e561dc1b44b41c763ef1e8db0"

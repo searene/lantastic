@@ -21,10 +21,11 @@ export interface RootState {
   readonly cardModalOpen: boolean;
   readonly cardInCardModal: Card;
   readonly cardsInCardBrowser: List<Card>;
+  readonly showGoogleImageModal: boolean;
 }
 
 const initialState: RootState = {
-  activeTab: Tab.CARD_BROWSER,
+  activeTab: Tab.SEARCH_AND_ADD,
   chosenDeckName: "",
   decks: [],
   defaultDeckName: "",
@@ -37,6 +38,7 @@ const initialState: RootState = {
   cardModalOpen: false,
   cardInCardModal: undefined,
   cardsInCardBrowser: List(),
+  showGoogleImageModal: false,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -118,6 +120,12 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         cardsInCardBrowser: action.cardsInCardBrowser,
+      };
+
+    case getType(actions.setShowGoogleImageModal):
+      return {
+        ...state,
+        showGoogleImageModal: action.showGoogleImageModal,
       };
 
     default:

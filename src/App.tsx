@@ -17,6 +17,9 @@ import {Review} from "./components/Review";
 import {SearchAndAdd} from "./components/SearchAndAdd";
 import {Parser} from "./Parser";
 import "./stylesheets/App.scss";
+import { getOS, isCtrlOrCommand, OS } from "./Utils/CommonUtils";
+import { Keyboard } from "./services/Keyboard";
+import { Stack, Set } from "immutable";
 
 export interface AppProps {
   activeTab: Tab;
@@ -41,7 +44,27 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading)),
 });
 
-export class ConnectedApp extends React.Component<AppProps> {
+export class InternalApp extends React.Component<AppProps> {
+
+  public static isModifierKeyPressed = (modifierKeys: string[]) => {
+    return Keyboard.isModifierKeyPressed(InternalApp.pressedKeyStack, modifierKeys);
+  }
+
+  public static isKeyPressed = (modifierKeys: string[], normalKey: string): boolean => {
+    return InternalApp.isModifierKeyPressed(modifierKeys) &&
+      InternalApp.pressedKeyStack[InternalApp.pressedKeyStack.length - 1] === normalKey;
+  }
+
+  public static isKeyWithCtrlOrCmdPressed = (otherModifierKeys: string[], normalKey: string): boolean => {
+    const isMacShortcut = getOS() === OS.MacOS &&
+      InternalApp.isKeyPressed([Keyboard.KEY_META, ...otherModifierKeys], normalKey);
+    const isWinOrLinuxShortcut = [OS.MacOS, OS.Linux].indexOf(getOS()) &&
+      InternalApp.isKeyPressed([Keyboard.KEY_CONTROL, ...otherModifierKeys], normalKey);
+    return isMacShortcut || isWinOrLinuxShortcut;
+  }
+
+  private static pressedKeyStack: string[] = [];
+  private static isKeyboardEventListenerRegistered = false;
 
   public init = async (): Promise<void> => {
     await Sqlite.init();
@@ -54,6 +77,7 @@ export class ConnectedApp extends React.Component<AppProps> {
   }
 
   public async componentWillMount() {
+    this.registerShortcuts();
     await this.init();
   }
 
@@ -122,9 +146,20 @@ export class ConnectedApp extends React.Component<AppProps> {
     const defaultDeckName = await Configuration.get(Configuration.DEFAULT_DECK_NAME_KEY);
     this.props.setDefaultDeckName(defaultDeckName);
   }
+  private registerShortcuts = () => {
+    if (!InternalApp.isKeyboardEventListenerRegistered) {
+      document.addEventListener("keydown", (event) => {
+        InternalApp.pressedKeyStack.push(event.key);
+      });
+      document.addEventListener("keyup", (event) => {
+        InternalApp.pressedKeyStack.pop();
+      });
+      InternalApp.isKeyboardEventListenerRegistered = true;
+    }
+  }
 }
 
-export const App = connect(mapStateToProps, mapDispatchToProps)(ConnectedApp);
+export const App = connect(mapStateToProps, mapDispatchToProps)(InternalApp);
 
 ReactDOM.render(
   <Provider store={store}>

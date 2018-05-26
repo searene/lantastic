@@ -5,7 +5,7 @@
   "main": "lib/main.js",
   "scripts": {
     "watch": "webpack --watch",
-    "start": "electron dist/main.js --force-device-scale-factor=1.5",
+    "start": "proxychains electron dist/main.js --force-device-scale-factor=1.5",
     "test": "mocha lib/test",
     "dev": "webpack-dev-server --hot --inline",
     "rebuild": "electron-rebuild -f -w sqlite3",
@@ -27,6 +27,7 @@
     "draft-js-image-plugin": "2.0.1",
     "draft-js-import-html": "^1.2.1",
     "fs-extra": "6.0.1",
+    "google-images": "^2.1.0",
     "immutable": "3.8.2",
     "moment": "2.22.1",
     "react": "16.3.2",

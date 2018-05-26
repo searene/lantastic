@@ -20,6 +20,7 @@ import {
   ContentEditableEditor,
   RawContentEditableEditor,
 } from "./ContentEditableEditor";
+import { ToolBar } from "./ToolBar";
 
 const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
@@ -57,18 +58,19 @@ class ConnectedAddCard extends React.Component<AddCardProps> {
         <Form style={{
           overflow: "auto",
         }}>
-        {
-          editorList.map((e, i) =>
-            <ContentEditableEditor
-              key={e.key}
-              editorIndex={i}
-              ref={ (editor) => {
-                if (editor) {
-                  this.editorComponents[i] = (editor as any).getWrappedInstance();
-                }
-              }} />,
-          )
-        }
+          <ToolBar/>
+          {
+            editorList.map((e, i) =>
+              <ContentEditableEditor
+                key={e.key}
+                editorIndex={i}
+                ref={ (editor) => {
+                  if (editor) {
+                    this.editorComponents[i] = (editor as any).getWrappedInstance();
+                  }
+                }} />,
+            )
+          }
         </Form>
         <div style={{
           borderTop: "1px solid #BEBEBE",
