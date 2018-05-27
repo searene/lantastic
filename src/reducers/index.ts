@@ -8,7 +8,7 @@ import { List } from "immutable";
 
 export interface RootState {
   [index: string]: any;
-  readonly wordDefinitions: WordDefinition[];
+  readonly wordDefinitions: List<WordDefinition>;
   readonly word: string;
   readonly activeTab: Tab;
   readonly chosenDeckName: string;
@@ -38,7 +38,7 @@ const initialState: RootState = {
   isLoading: true,
   moreDeckName: "",
   word: "",
-  wordDefinitions: [],
+  wordDefinitions: List(),
   cardModalOpen: false,
   cardInCardModal: undefined,
   cardsInCardBrowser: List(),

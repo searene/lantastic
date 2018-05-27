@@ -9,12 +9,15 @@ import { MouseEventHandler } from "react";
 
 const mapStateToProps = (state: RootState) => ({
   isFindInputBoxFocused: state.isFindInputBoxFocused,
+  findWordIndex: state.findWordIndex,
+  findWord: state.findWord,
+  isFindInputBoxVisible: state.isFindInputBoxVisible,
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-  setFindInputBoxVisible: (isFindInputBoxVisible) =>
-    dispatch(actions.setFindInputBoxVisible(isFindInputBoxVisible)),
-  setFindInputBoxFocused: (isFindInputBoxFocused) =>
-    dispatch(actions.setFindInputBoxFocused(isFindInputBoxFocused)),
+  setFindInputBoxVisible: actions.setFindInputBoxVisible,
+  setFindInputBoxFocused: actions.setFindInputBoxFocused,
+  setFindWordIndex: actions.setFindWordIndex,
+  setFindWord: actions.setFindWord,
 }, dispatch);
 
 type FindInputBoxProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
@@ -22,11 +25,12 @@ type FindInputBoxProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof 
   style?: React.CSSProperties;
 };
 
-class InternalFindInputBox extends React.Component<FindInputBoxProps> {
+export class InternalFindInputBox extends React.Component<FindInputBoxProps> {
 
   private input: HTMLInputElement;
 
   public componentDidMount() {
+    this.reset();
     this.input.addEventListener("keyup", (event) => {
       if (event.key === "Escape") {
         this.props.setFindInputBoxVisible(false);
@@ -38,7 +42,10 @@ class InternalFindInputBox extends React.Component<FindInputBoxProps> {
     this.input.addEventListener("focus", (event) => {
       this.props.setFindInputBoxFocused(true);
     });
-    this.props.setFindInputBoxFocused(true);
+    this.input.addEventListener("input", (event) => {
+      this.props.setFindWord((event.currentTarget as HTMLInputElement).value);
+      this.props.setFindWordIndex(0);
+    });
   }
   public componentDidUpdate() {
     if (this.props.isFindInputBoxFocused) {
@@ -93,6 +100,12 @@ class InternalFindInputBox extends React.Component<FindInputBoxProps> {
   }
   private handleClickOnClose = () => {
     this.props.setFindInputBoxVisible(false);
+    this.reset();
+  }
+  private reset = () => {
+    this.props.setFindWordIndex(0);
+    this.props.setFindWord("");
+    this.props.setFindInputBoxFocused(true);
   }
 }
 

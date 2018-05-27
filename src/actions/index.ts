@@ -35,7 +35,7 @@ export const actions = {
     (word: string) => ({ type: "SET_WORD", word })),
   setWordDefinitions: createAction(
     "SET_WORD_DEFINITIONS",
-    (wordDefinitions: WordDefinition[]) => ({ type: "SET_WORD_DEFINITIONS", wordDefinitions })),
+    (wordDefinitions: List<WordDefinition>) => ({ type: "SET_WORD_DEFINITIONS", wordDefinitions })),
   setCardModalOpen: createAction(
     "SET_CARD_MODAL_OPEN",
     (cardModalOpen: boolean) => ({ type: "SET_CARD_MODAL_OPEN", cardModalOpen })),

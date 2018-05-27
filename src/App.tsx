@@ -20,6 +20,7 @@ import "./stylesheets/App.scss";
 import { getOS, isCtrlOrCommand, OS } from "./Utils/CommonUtils";
 import { Keyboard } from "./services/Keyboard";
 import { Stack, Set } from "immutable";
+import { TestComponent } from "./components/TestComponent";
 
 export interface AppProps {
   activeTab: Tab;

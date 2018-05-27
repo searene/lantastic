@@ -6,6 +6,8 @@ import {actions} from "../actions";
 import {Parser} from "../Parser";
 import { RootState } from "../reducers";
 import "../stylesheets/components/AutoSuggestInput.scss";
+import { List } from "immutable";
+import { InternalFindInputBox } from "./FindInputBox";
 
 interface IAutoSuggestInputStates {
   suggestions: string[];
@@ -18,6 +20,9 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setWord: actions.setWord,
   setWordDefinitions: actions.setWordDefinitions,
+  setFindInputBoxVisible: actions.setFindInputBoxVisible,
+  setFindWordIndex: actions.setFindWordIndex,
+  setFindWord: actions.setFindWord,
 }, dispatch);
 
 type AutoSuggestInputProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
@@ -77,7 +82,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
   private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
-      this.props.setWordDefinitions([]);
+      this.props.setWordDefinitions(List());
       await this.search(currentActiveSuggestion === undefined ? this.props.word : currentActiveSuggestion.innerHTML);
     } else if (["ArrowUp", "ArrowDown"].indexOf(event.key) > -1 && !this.suggestionsComponent) {
       event.preventDefault();
@@ -121,7 +126,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
       suggestions: [],
     });
     const wordDefinitions = await Parser.getDictParser().getWordDefinitions(word);
-    this.props.setWordDefinitions(wordDefinitions);
+    this.props.setWordDefinitions(List(wordDefinitions));
     this.props.onSearchCompleted();
   }
   private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
