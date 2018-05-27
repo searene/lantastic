@@ -26,6 +26,8 @@ export interface RootState {
   readonly findWord: string;
   readonly findWordIndex: number;
   readonly isFindInputBoxFocused: boolean;
+  readonly definitionsDOM: HTMLDocument;
+  readonly highlightedDefinitionsHTML: string;
 }
 
 const initialState: RootState = {
@@ -47,6 +49,8 @@ const initialState: RootState = {
   findWord: "",
   findWordIndex: 0,
   isFindInputBoxFocused: false,
+  definitionsDOM: new DOMParser().parseFromString("", "text/html"),
+  highlightedDefinitionsHTML: "",
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
@@ -158,6 +162,18 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
       return {
         ...state,
         isFindInputBoxFocused: action.isFindInputBoxFocused,
+      };
+
+    case getType(actions.setDefinitionsDOM):
+      return {
+        ...state,
+        definitionsDOM: action.definitionsDOM,
+      };
+
+    case getType(actions.setHighlightedDefinitionsHTML):
+      return {
+        ...state,
+        highlightedDefinitionsHTML: action.highlightedDefinitionsHTML,
       };
 
     default:

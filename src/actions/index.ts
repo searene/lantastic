@@ -60,6 +60,12 @@ export const actions = {
   setFindInputBoxFocused: createAction(
     "SET_FIND_INPUT_BOX_FOCUSED",
     (isFindInputBoxFocused: boolean) => ({ type: "SET_FIND_INPUT_BOX_FOCUSED", isFindInputBoxFocused })),
+  setDefinitionsDOM: createAction(
+    "SET_DEFINITIONS_DOM",
+    (definitionsDOM: HTMLDocument) => ({ type: "SET_DEFINITIONS_DOM", definitionsDOM })),
+  setHighlightedDefinitionsHTML: createAction(
+    "SET_HIGHLIGHTED_DEFINITIONS_HTML",
+    (highlightedDefinitionsHTML: string) => ({ type: "SET_HIGHLIGHTED_DEFINITIONS_HTML", highlightedDefinitionsHTML })),
 };
 
 export type RootAction = ReturnType<typeof actions[keyof typeof actions]>;

@@ -80,6 +80,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
     );
   }
   private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    this.props.setFindInputBoxVisible(false);
     if (event.key === "Enter") {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
       this.props.setWordDefinitions(List());
