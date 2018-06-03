@@ -84,7 +84,7 @@ class InternalDictionary extends React.Component<DictionaryProps, DictionaryStat
         }}>
           {
             this.props.isFindInputBoxVisible &&
-            <FindInputBox/>
+            <FindInputBox textContainerId="definition-segment"/>
           }
           <Ref innerRef={(ref) => this.definitionSegment = ref}>
             <Segment style={{
@@ -93,6 +93,7 @@ class InternalDictionary extends React.Component<DictionaryProps, DictionaryStat
               borderRadius: 0,
               border: "none",
               boxShadow: "none",
+              id: "definition-segment"
             }} />
           </Ref>
         </div>

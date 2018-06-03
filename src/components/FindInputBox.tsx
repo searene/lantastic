@@ -7,13 +7,14 @@ import "../stylesheets/components/FindInputBox.scss";
 import { actions } from "../actions";
 import { MouseEventHandler } from "react";
 import { getDefinitionHTML } from "./Dictionary";
+import electron = require("electron");
 
 export interface Match {
   node: Node,
   index: number,
 }
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState, ownProps: FindInputBoxOwnProps) => ({
   wordDefinitions: state.wordDefinitions,
   isFindInputBoxFocused: state.isFindInputBoxFocused,
   findWordIndex: state.findWordIndex,
@@ -29,10 +30,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   setHighlightedDefinitionsHTML: actions.setHighlightedDefinitionsHTML,
 }, dispatch);
 
-type FindInputBoxProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
-  [key: string]: any;
-  style?: React.CSSProperties;
-};
+interface FindInputBoxOwnProps {
+  textContainerId: string;
+}
+
+type FindInputBoxProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & FindInputBoxOwnProps;
 
 export class InternalFindInputBox extends React.Component<FindInputBoxProps> {
 
@@ -54,10 +56,10 @@ export class InternalFindInputBox extends React.Component<FindInputBoxProps> {
       this.props.setFindInputBoxFocused(true);
     });
     this.input.addEventListener("input", (event) => {
-      const word = (event.currentTarget as HTMLInputElement).value;
-      this.props.setFindWord(word);
-      this.props.setFindWordIndex(0);
-      this.props.setHighlightedDefinitionsHTML(this.getHighlightedHTML(word, 0));
+      const searchText = (event.currentTarget as HTMLInputElement).value;
+      this.props.setFindWord(searchText);
+      electron.remote.getCurrentWebContents().findInPage(searchText);
+      this.props.setFindInputBoxFocused(true);
     });
   }
   public componentDidUpdate() {
