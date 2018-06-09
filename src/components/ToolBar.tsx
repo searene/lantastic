@@ -1,8 +1,8 @@
 import * as React from "react";
-import {connect, Dispatch} from "react-redux";
-import {bindActionCreators} from "redux";
-import {Icon, Menu} from "semantic-ui-react";
-import {RootState} from "../reducers";
+import { connect, Dispatch } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Icon, Menu } from "semantic-ui-react";
+import { RootState } from "../reducers";
 
 import "../stylesheets/components/ToolBar.scss";
 import { actions } from "../actions";
@@ -14,11 +14,15 @@ interface IToolBarStates {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  word: state.word,
+  word: state.word
 });
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-  setShowGoogleImageModal: actions.setShowGoogleImageModal,
-}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      setShowGoogleImageModal: actions.setShowGoogleImageModal
+    },
+    dispatch
+  );
 
 type ToolBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
@@ -26,38 +30,39 @@ export class InternalToolBar extends React.Component<ToolBarProps, IToolBarState
   constructor(props: ToolBarProps) {
     super(props);
     this.state = {
-      openImageSearchModal: false,
+      openImageSearchModal: false
     };
   }
   public render() {
     return (
       <Menu icon style={{ marginRight: 0 }}>
-        <Menu.Item
-          name="google"
-          onClick={this.openImageSearchModal}
-          target={"_blank"}>
+        <Menu.Item name="google" onClick={this.openImageSearchModal} target={"_blank"}>
           <Icon name="google" />
-          <ImageSearchModal 
+          <ImageSearchModal
             url={this.getImageSearchURL()}
             onClose={this.closeImageSearchModal}
-            open={this.state.openImageSearchModal}/>
+            open={this.state.openImageSearchModal}
+          />
         </Menu.Item>
       </Menu>
     );
   }
   private openImageSearchModal = () => {
     this.setState({
-      openImageSearchModal: true,
+      openImageSearchModal: true
     });
-  }
+  };
   private getImageSearchURL = () => {
     return `https://www.google.com/search?q=${encodeURIComponent(this.props.word)}&tbm=isch`;
-  }
+  };
   private closeImageSearchModal = () => {
     this.setState({
-      openImageSearchModal: false,
+      openImageSearchModal: false
     });
-  }
+  };
 }
 
-export const ToolBar = connect(mapStateToProps, mapDispatchToProps)(InternalToolBar);
+export const ToolBar = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InternalToolBar);

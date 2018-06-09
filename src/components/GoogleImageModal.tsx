@@ -10,32 +10,35 @@ interface IToolBarStates {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  showGoogleImageModal: state.showGoogleImageModal,
+  showGoogleImageModal: state.showGoogleImageModal
 });
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-  setShowGoogleImageModal: actions.setShowGoogleImageModal,
-}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      setShowGoogleImageModal: actions.setShowGoogleImageModal
+    },
+    dispatch
+  );
 
 type GoogleImageModalProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
 export class InternalGoogleImageModal extends React.Component<GoogleImageModalProps> {
   public render() {
     return (
-      <Modal
-        onClose={this.closeModal}
-        closeIcon
-        size={"fullscreen"}
-        open={this.props.showGoogleImageModal}>
+      <Modal onClose={this.closeModal} closeIcon size={"fullscreen"} open={this.props.showGoogleImageModal}>
         <Modal.Header icon={"google"} content={"Google Images"} />
         <Modal.Content>
-          <iframe src={"https://www.google.com/search?q=apple&tbm=isch"} width={"100%"} height={"100%"}>
-          </iframe>
+          <iframe src={"https://www.google.com/search?q=apple&tbm=isch"} width={"100%"} height={"100%"} />
         </Modal.Content>
-      </Modal>);
+      </Modal>
+    );
   }
   private closeModal = () => {
     this.props.setShowGoogleImageModal(false);
-  }
+  };
 }
 
-export const GoogleImageModal = connect(mapStateToProps, mapDispatchToProps)(InternalGoogleImageModal);
+export const GoogleImageModal = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InternalGoogleImageModal);

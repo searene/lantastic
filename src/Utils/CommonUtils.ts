@@ -3,10 +3,10 @@ import * as path from "path";
 import * as React from "react";
 
 export function removeFromArray<T>(array: T[], element: T): T[] {
-  return array.filter((a) => a !== element);
+  return array.filter(a => a !== element);
 }
 export function getPathToUserHome() {
-  return process.env[(process.platform === "win32") ? "USERPROFILE" : "HOME"];
+  return process.env[process.platform === "win32" ? "USERPROFILE" : "HOME"];
 }
 export function getPathToDocuments() {
   return path.join(getPathToUserHome(), "Documents");
@@ -32,7 +32,7 @@ export const getStrFromDate = (date: Date) => {
   return date.toISOString(); // YYYY-MM-DD, in UTC
 };
 export async function createDirIfNotExists(dir: string) {
-  if (!await fse.pathExists(dir)) {
+  if (!(await fse.pathExists(dir))) {
     await fse.mkdir(dir);
   }
 }
@@ -75,7 +75,9 @@ export const nodeFromHTML = (html: string): Node => {
   return div.firstChild;
 };
 export enum OS {
-  MacOS, Windows, Linux,
+  MacOS,
+  Windows,
+  Linux
 }
 export function getOS(): OS {
   const osvar = process.platform;

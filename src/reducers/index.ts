@@ -1,8 +1,8 @@
-import {WordDefinition} from "dict-parser";
-import {EditorState} from "draft-js";
-import {getType} from "typesafe-actions";
-import {actions, RootAction} from "../actions";
-import {Tab} from "../components/NavBar";
+import { WordDefinition } from "dict-parser";
+import { EditorState } from "draft-js";
+import { getType } from "typesafe-actions";
+import { actions, RootAction } from "../actions";
+import { Tab } from "../components/NavBar";
 import { Card } from "../models/Card";
 import { List } from "immutable";
 
@@ -50,131 +50,64 @@ const initialState: RootState = {
   findWordIndex: 0,
   isFindInputBoxFocused: false,
   definitionsDOM: new DOMParser().parseFromString("", "text/html"),
-  highlightedDefinitionsHTML: "",
+  highlightedDefinitionsHTML: ""
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
   switch (action.type) {
-
     case getType(actions.setWordDefinitions):
-      return {
-        ...state,
-        wordDefinitions: action.wordDefinitions,
-      };
+      return { ...state, wordDefinitions: action.payload };
 
     case getType(actions.setWord):
-      return {
-        ...state,
-        word: action.word,
-      };
+      return { ...state, word: action.payload };
 
     case getType(actions.setActiveTab):
-      return {
-        ...state,
-        activeTab: action.activeTab,
-      };
+      return { ...state, activeTab: action.payload };
 
     case getType(actions.setChosenDeckName):
-      return {
-        ...state,
-        chosenDeckName: action.chosenDeckName,
-      };
+      return { ...state, chosenDeckName: action.payload };
 
     case getType(actions.setDecks):
-      return {
-        ...state,
-        decks: action.decks,
-      };
+      return { ...state, decks: action.payload };
 
     case getType(actions.setLoading):
-      return {
-        ...state,
-        isLoading: action.isLoading,
-      };
+      return { ...state, isLoading: action.payload };
 
     case getType(actions.setMoreDeckName):
-      return {
-        ...state,
-        moreDeckName: action.moreDeckName,
-      };
+      return { ...state, moreDeckName: action.payload };
 
     case getType(actions.setDefaultDeckName):
-      return {
-        ...state,
-        defaultDeckName: action.defaultDeckName,
-      };
-
-    case getType(actions.setFocusedEditorIndex):
-      return {
-        ...state,
-        focusedEditorIndex: action.focusedEditorIndex,
-      };
-
-    case getType(actions.setEditorStateList):
-      return {
-        ...state,
-        editorStateList: action.editorStateList,
-      };
+      return { ...state, defaultDeckName: action.payload };
 
     case getType(actions.setCardModalOpen):
-      return {
-        ...state,
-        cardModalOpen: action.cardModalOpen,
-      };
+      return { ...state, cardModalOpen: action.payload };
 
     case getType(actions.setCardInCardModal):
-      return {
-        ...state,
-        cardInCardModal: action.cardInCardModal,
-      };
+      return { ...state, cardInCardModal: action.payload };
 
     case getType(actions.setCardsInCardBrowser):
-      return {
-        ...state,
-        cardsInCardBrowser: action.cardsInCardBrowser,
-      };
+      return { ...state, cardsInCardBrowser: action.payload };
 
     case getType(actions.setShowGoogleImageModal):
-      return {
-        ...state,
-        showGoogleImageModal: action.showGoogleImageModal,
-      };
+      return { ...state, showGoogleImageModal: action.payload };
 
     case getType(actions.setFindInputBoxVisible):
-      return {
-        ...state,
-        isFindInputBoxVisible: action.isFindInputBoxVisible,
-      };
+      return { ...state, isFindInputBoxVisible: action.payload };
 
     case getType(actions.setFindWord):
-      return {
-        ...state,
-        findWord: action.findWord,
-      };
+      return { ...state, findWord: action.payload };
 
     case getType(actions.setFindWordIndex):
-      return {
-        ...state,
-        findWordIndex: action.findWordIndex,
-      };
+      return { ...state, findWordIndex: action.payload };
 
     case getType(actions.setFindInputBoxFocused):
-      return {
-        ...state,
-        isFindInputBoxFocused: action.isFindInputBoxFocused,
-      };
+      return { ...state, isFindInputBoxFocused: action.payload };
 
     case getType(actions.setDefinitionsDOM):
-      return {
-        ...state,
-        definitionsDOM: action.definitionsDOM,
-      };
+      return { ...state, definitionsDOM: action.payload };
 
     case getType(actions.setHighlightedDefinitionsHTML):
-      return {
-        ...state,
-        highlightedDefinitionsHTML: action.highlightedDefinitionsHTML,
-      };
+      return { ...state, highlightedDefinitionsHTML: action.payload };
 
     default:
       return state;

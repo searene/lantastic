@@ -1,6 +1,6 @@
 import * as React from "react";
-import {connect} from "react-redux";
-import {bindActionCreators, Dispatch} from "redux";
+import { connect } from "react-redux";
+import { bindActionCreators, Dispatch } from "redux";
 import { RootState } from "../reducers";
 import { Icon, Input, Ref, SemanticICONS } from "semantic-ui-react";
 import "../stylesheets/components/FindInputBox.scss";
@@ -10,8 +10,8 @@ import { getDefinitionHTML } from "./Dictionary";
 import electron = require("electron");
 
 export interface Match {
-  node: Node,
-  index: number,
+  node: Node;
+  index: number;
 }
 
 const mapStateToProps = (state: RootState, ownProps: FindInputBoxOwnProps) => ({
@@ -20,107 +20,116 @@ const mapStateToProps = (state: RootState, ownProps: FindInputBoxOwnProps) => ({
   findWordIndex: state.findWordIndex,
   findWord: state.findWord,
   isFindInputBoxVisible: state.isFindInputBoxVisible,
-  definitionsDOM: state.definitionsDOM,
+  definitionsDOM: state.definitionsDOM
 });
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
-  setFindInputBoxVisible: actions.setFindInputBoxVisible,
-  setFindInputBoxFocused: actions.setFindInputBoxFocused,
-  setFindWordIndex: actions.setFindWordIndex,
-  setFindWord: actions.setFindWord,
-  setHighlightedDefinitionsHTML: actions.setHighlightedDefinitionsHTML,
-}, dispatch);
+const mapDispatchToProps = (dispatch: Dispatch) =>
+  bindActionCreators(
+    {
+      setFindInputBoxVisible: actions.setFindInputBoxVisible,
+      setFindInputBoxFocused: actions.setFindInputBoxFocused,
+      setFindWordIndex: actions.setFindWordIndex,
+      setFindWord: actions.setFindWord,
+      setHighlightedDefinitionsHTML: actions.setHighlightedDefinitionsHTML
+    },
+    dispatch
+  );
 
 interface FindInputBoxOwnProps {
   textContainerId: string;
 }
 
-type FindInputBoxProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & FindInputBoxOwnProps;
+type FindInputBoxProps = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps> &
+  FindInputBoxOwnProps;
 
 export class InternalFindInputBox extends React.Component<FindInputBoxProps> {
-
   private input: HTMLInputElement;
-  private matches: Match[] =[];
+  private matches: Match[] = [];
   private previouslyHighlightedNode: Node;
 
   public componentDidMount() {
     this.reset();
-    this.input.addEventListener("keyup", (event) => {
+    this.input.addEventListener("keyup", event => {
       if (event.key === "Escape") {
         this.props.setFindInputBoxVisible(false);
       }
     });
-    this.input.addEventListener("blur", (event) => {
+    this.input.addEventListener("blur", event => {
       this.props.setFindInputBoxFocused(false);
     });
-    this.input.addEventListener("focus", (event) => {
+    this.input.addEventListener("focus", event => {
       this.props.setFindInputBoxFocused(true);
     });
-    this.input.addEventListener("input", (event) => {
+    this.input.addEventListener("input", event => {
       const searchText = (event.currentTarget as HTMLInputElement).value;
       this.props.setFindWord(searchText);
       electron.remote.getCurrentWebContents().findInPage(searchText);
       this.props.setFindInputBoxFocused(true);
     });
   }
+
   public componentDidUpdate() {
     if (this.props.isFindInputBoxFocused) {
       this.input.focus();
     }
   }
+
   public render() {
     return (
-      <div style={{
-        position: "absolute",
-        zIndex: 999,
-        display: "flex",
-        top: 0,
-        width: "216px",
-        left: "calc(50% - 108px)",
-        border: "1px solid rgba(34,36,38,.15)",
-        padding: "9.5px 14px",
-        backgroundColor: "white",
-      }}>
-        <Ref innerRef={(ref) => this.input = ref.childNodes[0] as HTMLInputElement}>
+      <div
+        style={{
+          position: "absolute",
+          zIndex: 999,
+          display: "flex",
+          top: 0,
+          width: "216px",
+          left: "calc(50% - 108px)",
+          border: "1px solid rgba(34,36,38,.15)",
+          padding: "9.5px 14px",
+          backgroundColor: "white"
+        }}
+      >
+        <Ref innerRef={ref => (this.input = ref.childNodes[0] as HTMLInputElement)}>
           <Input
             className={"find-input"}
             style={{
               width: "100px",
               borderRight: "1px solid rgba(34,36,38,.15)",
-              marginRight: "10px",
-            }}/>
+              marginRight: "10px"
+            }}
+          />
         </Ref>
-        { this.inputIcon("chevron up", this.handleClickOnPrevFind) }
-        { this.inputIcon("chevron down", this.handleClickOnNextFind) }
-        { this.inputIcon("close", this.handleClickOnClose) }
+        {this.inputIcon("chevron up", this.handleClickOnPrevFind)}
+        {this.inputIcon("chevron down", this.handleClickOnNextFind)}
+        {this.inputIcon("close", this.handleClickOnClose)}
       </div>
     );
   }
+
   private inputIcon = (iconName: SemanticICONS, handler: MouseEventHandler<HTMLDivElement>): React.ReactNode => {
     return (
-      <div className={"find-input-icon-container"}
-           style={{
-             marginRight: "10px",
-           }}
-           onClick={handler}>
-        <Icon name={iconName}/>
+      <div
+        className={"find-input-icon-container"}
+        style={{
+          marginRight: "10px"
+        }}
+        onClick={handler}
+      >
+        <Icon name={iconName} />
       </div>
     );
-  }
-  private handleClickOnPrevFind = () => {
-
-  }
-  private handleClickOnNextFind = () => {
-
-  }
+  };
+  private handleClickOnPrevFind = () => {};
+  private handleClickOnNextFind = () => {};
   private handleClickOnClose = () => {
     this.props.setFindInputBoxVisible(false);
     this.reset();
-  }
+  };
   private reset = () => {
     this.props.setFindWordIndex(0);
     this.props.setFindWord("");
     this.props.setFindInputBoxFocused(true);
-  }
+  };
   private getMatchedNodes = (node: Node, word: string, prevMatchedNodes: Match[]) => {
     for (let i = 0; i < node.childNodes.length; i++) {
       const currentNode = node.childNodes[i];
@@ -129,7 +138,7 @@ export class InternalFindInputBox extends React.Component<FindInputBoxProps> {
         for (let matchedIndex of matchedIndexes) {
           prevMatchedNodes.push({
             node: currentNode,
-            index: matchedIndex,
+            index: matchedIndex
           });
         }
       } else {
@@ -186,12 +195,14 @@ export class InternalFindInputBox extends React.Component<FindInputBoxProps> {
     if (node === undefined) {
       return;
     }
-    const text = node.childNodes[0].nodeValue +
-      node.childNodes[1].childNodes[0].nodeValue +
-      node.childNodes[2].nodeValue;
+    const text =
+      node.childNodes[0].nodeValue + node.childNodes[1].childNodes[0].nodeValue + node.childNodes[2].nodeValue;
     const newNode = document.createTextNode(text);
     node.parentNode.replaceChild(newNode, node);
   };
 }
 
-export const FindInputBox = connect(mapStateToProps, mapDispatchToProps)(InternalFindInputBox);
+export const FindInputBox = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InternalFindInputBox);

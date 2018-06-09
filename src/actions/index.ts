@@ -1,71 +1,30 @@
-import {WordDefinition} from "dict-parser";
-import {EditorState} from "draft-js";
-import { createAction} from "typesafe-actions";
-import {Tab} from "../components/NavBar";
+import { WordDefinition } from "dict-parser";
+import { EditorState } from "draft-js";
+import { action, ActionType, createAction, createStandardAction } from "typesafe-actions";
+import { Tab } from "../components/NavBar";
 import { Card } from "../models/Card";
 import { List } from "immutable";
+import { create } from "domain";
 
 export const actions = {
-  setActiveTab: createAction(
-    "SET_ACTIVE_TAB",
-    (activeTab: Tab) => ({ type: "SET_ACTIVE_TAB", activeTab })),
-  setChosenDeckName: createAction(
-    "SET_CHOSEN_DECK_NAME",
-    (deckName: string) => ({ type: "SET_CHOSEN_DECK_NAME", chosenDeckName: deckName })),
-  setDecks: createAction(
-    "SET_DECKS",
-    (decks: any[]) => ({ type: "SET_DECKS", decks })),
-  setDefaultDeckName: createAction(
-    "SET_DEFAULT_DECK_NAME",
-    (defaultDeckName: string) => ({ type: "SET_DEFAULT_DECK_NAME", defaultDeckName })),
-  setEditorStateList: createAction(
-    "SET_EDITOR_STATE_LIST",
-    (editorStateList: EditorState[]) => ({ type: "SET_EDITOR_STATE_LIST", editorStateList })),
-  setFocusedEditorIndex: createAction(
-    "SET_FOCUSED_EDITOR_INDEX",
-    (focusedEditorIndex: number) => ({ type: "SET_FOCUSED_EDITOR_INDEX", focusedEditorIndex })),
-  setLoading: createAction(
-    "SET_LOADING",
-    (isLoading: boolean) => ({ type: "SET_LOADING", isLoading })),
-  setMoreDeckName: createAction(
-    "SET_MORE_DECK_NAME",
-    (moreDeckName: string) => ({ type: "SET_MORE_DECK_NAME", moreDeckName })),
-  setWord: createAction(
-    "SET_WORD",
-    (word: string) => ({ type: "SET_WORD", word })),
-  setWordDefinitions: createAction(
-    "SET_WORD_DEFINITIONS",
-    (wordDefinitions: List<WordDefinition>) => ({ type: "SET_WORD_DEFINITIONS", wordDefinitions })),
-  setCardModalOpen: createAction(
-    "SET_CARD_MODAL_OPEN",
-    (cardModalOpen: boolean) => ({ type: "SET_CARD_MODAL_OPEN", cardModalOpen })),
-  setCardInCardModal: createAction(
-    "SET_CARD_IN_CARD_MODAL",
-    (cardInCardModal: Card) => ({ type: "SET_CARD_IN_CARD_MODAL", cardInCardModal })),
-  setCardsInCardBrowser: createAction(
-    "SET_CARDS_IN_CARD_BROWSER",
-    (cardsInCardBrowser: List<Card>) => ({ type: "SET_CARDS_IN_CARD_BROWSER", cardsInCardBrowser })),
-  setShowGoogleImageModal: createAction(
-    "SET_SHOW_GOOGLE_IMAGE_MODAL",
-    (showGoogleImageModal: boolean) => ({ type: "SET_SHOW_GOOGLE_IMAGE_MODAL", showGoogleImageModal })),
-  setFindInputBoxVisible: createAction(
-    "SET_FIND_INPUT_BOX_VISIBLE",
-    (isFindInputBoxVisible: boolean) => ({ type: "SET_FIND_INPUT_BOX_VISIBLE", isFindInputBoxVisible })),
-  setFindWord: createAction(
-    "SET_FIND_WORD",
-    (findWord: string) => ({ type: "SET_FIND_WORD", findWord })),
-  setFindWordIndex: createAction(
-    "SET_FIND_WORD_INDEX",
-    (findWordIndex: number) => ({ type: "SET_FIND_WORD_INDEX", findWordIndex })),
-  setFindInputBoxFocused: createAction(
-    "SET_FIND_INPUT_BOX_FOCUSED",
-    (isFindInputBoxFocused: boolean) => ({ type: "SET_FIND_INPUT_BOX_FOCUSED", isFindInputBoxFocused })),
-  setDefinitionsDOM: createAction(
-    "SET_DEFINITIONS_DOM",
-    (definitionsDOM: HTMLDocument) => ({ type: "SET_DEFINITIONS_DOM", definitionsDOM })),
-  setHighlightedDefinitionsHTML: createAction(
-    "SET_HIGHLIGHTED_DEFINITIONS_HTML",
-    (highlightedDefinitionsHTML: string) => ({ type: "SET_HIGHLIGHTED_DEFINITIONS_HTML", highlightedDefinitionsHTML })),
+  setActiveTab: createStandardAction("SET_ACTIVE_TAB")<Tab>(),
+  setChosenDeckName: createStandardAction("SET_CHOSEN_DECK_NAME")<string>(),
+  setDecks: createStandardAction("SET_DECKS")<any[]>(),
+  setDefaultDeckName: createStandardAction("SET_DEFAULT_DECK_NAME")<string>(),
+  setLoading: createStandardAction("SET_LOADING")<boolean>(),
+  setMoreDeckName: createStandardAction("SET_MORE_DECK_NAME")<string>(),
+  setWord: createStandardAction("SET_WORD")<string>(),
+  setWordDefinitions: createStandardAction("SET_WORD_DEFINITIONS")<List<WordDefinition>>(),
+  setCardModalOpen: createStandardAction("SET_CARD_MODAL_OPEN")<boolean>(),
+  setCardInCardModal: createStandardAction("SET_CARD_IN_CARD_MODAL")<Card>(),
+  setCardsInCardBrowser: createStandardAction("SET_CARDS_IN_CARD_BROWSER")<List<Card>>(),
+  setShowGoogleImageModal: createStandardAction("SET_SHOW_GOOGLE_IMAGE_MODAL")<boolean>(),
+  setFindInputBoxVisible: createStandardAction("SET_FIND_INPUT_BOX_VISIBLE")<boolean>(),
+  setFindWord: createStandardAction("SET_FIND_WORD")<string>(),
+  setFindWordIndex: createStandardAction("SET_FIND_WORD_INDEX")<number>(),
+  setFindInputBoxFocused: createStandardAction("SET_FIND_INPUT_BOX_FOCUSED")<boolean>(),
+  setDefinitionsDOM: createStandardAction("SET_DEFINITIONS_DOM")<HTMLDocument>(),
+  setHighlightedDefinitionsHTML: createStandardAction("SET_HIGHLIGHTED_DEFINITIONS_HTML")<string>()
 };
 
-export type RootAction = ReturnType<typeof actions[keyof typeof actions]>;
+export type RootAction = ActionType<typeof actions>;

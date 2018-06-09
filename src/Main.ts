@@ -2,7 +2,7 @@ import { app, BrowserWindow, protocol } from "electron";
 import * as fse from "fs-extra";
 import * as path from "path";
 import * as url from "url";
-import {ZipReader} from "./ZipReader";
+import { ZipReader } from "./ZipReader";
 import MimeTypedBuffer = Electron.MimeTypedBuffer;
 import RegisterBufferProtocolRequest = Electron.RegisterBufferProtocolRequest;
 
@@ -12,14 +12,16 @@ let win: Electron.BrowserWindow;
 
 function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({width: 800, height: 600});
+  win = new BrowserWindow({ width: 800, height: 600 });
 
   // and load the index.html of the app.
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, "index.html"),
-    protocol: "file:",
-    slashes: true,
-  }));
+  win.loadURL(
+    url.format({
+      pathname: path.join(__dirname, "index.html"),
+      protocol: "file:",
+      slashes: true
+    })
+  );
 
   // Open the DevTools.
   win.webContents.openDevTools();
@@ -38,13 +40,14 @@ function createWindow() {
     if (type === "image" || type === "audio") {
       await loadResources(request, callback);
     } else if (type === "lookup") {
-
     }
   });
 }
 
-const loadResources = async (request: RegisterBufferProtocolRequest,
-                             callback: (buffer?: Buffer | MimeTypedBuffer) => void) => {
+const loadResources = async (
+  request: RegisterBufferProtocolRequest,
+  callback: (buffer?: Buffer | MimeTypedBuffer) => void
+) => {
   const urlContents = request.url.substr(8).split(":");
   const resourceType = urlContents[0]; // image/audio/lookup
   const resourceHolderType = urlContents[1]; // zip
@@ -56,7 +59,7 @@ const loadResources = async (request: RegisterBufferProtocolRequest,
   const buffer = await ZipReader.extractFileFromZip(resourceHolderPath, resourceFileName);
   callback({
     data: buffer,
-    mimeType: resourceType,
+    mimeType: resourceType
   });
 };
 
