@@ -1,10 +1,11 @@
-import { app, BrowserWindow, protocol } from "electron";
+import { app, BrowserWindow, protocol, ipcMain, clipboard, Menu } from "electron";
 import * as fse from "fs-extra";
 import * as path from "path";
 import * as url from "url";
 import { ZipReader } from "./ZipReader";
 import MimeTypedBuffer = Electron.MimeTypedBuffer;
 import RegisterBufferProtocolRequest = Electron.RegisterBufferProtocolRequest;
+import { IImageSearchWebViewData } from "./components/ImageSearchModal";
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -84,6 +85,17 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+ipcMain.on("webview-context-link", (event: Event, data: IImageSearchWebViewData) => {
+  console.log("blah");
+  const menu = Menu.buildFromTemplate([{
+    label: "Copy Image Address",
+    click: () => {
+      clipboard.writeText(data.src);
+    }
+  }]);
+  menu.popup({});
+})
 
 // for hot reload
 // TODO remove it in production

@@ -6,7 +6,6 @@ import { RootState } from "../reducers";
 
 import "../stylesheets/components/ToolBar.scss";
 import { actions } from "../actions";
-import { GoogleImageModal } from "./GoogleImageModal";
 import { ImageSearchModal } from "./ImageSearchModal";
 
 interface IToolBarStates {

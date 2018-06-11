@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Modal } from "semantic-ui-react";
+import { ipcRenderer } from "electron";
 import "../stylesheets/components/ImageSearchModal.scss";
 
 interface ImageSearchModalProps {
@@ -7,7 +8,9 @@ interface ImageSearchModalProps {
   onClose: (event: React.MouseEvent<HTMLElement>) => void;
   url: string;
 }
-
+export interface IImageSearchWebViewData {
+  src: string;
+}
 export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
   constructor(props: ImageSearchModalProps) {
     super(props);
@@ -20,7 +23,10 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
           marginTop: 0,
           marginBottom: 0,
           top: "5px",
-          bottom: "5px"
+          bottom: "5px",
+          left: "5px",
+          right: "5px",
+          position: "fixed"
         }}
         onClose={this.props.onClose}
         open={this.props.open}
@@ -36,9 +42,25 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
             useragent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36"
             src={this.props.url}
             style={{ height: "100%" }}
+            ref={this.webviewRefHandler}
           />
         </Modal.Content>
       </Modal>
     );
   }
+  private webviewRefHandler = (webview: HTMLWebViewElement) => {
+    if (webview === null) {
+      return;
+    }
+    webview.addEventListener("contextmenu", event => {
+      console.log(window.event);
+      console.log(event);
+      if ((event.target as HTMLElement).tagName.toLowerCase() === "img") {
+        const imgElement = event.target as HTMLImageElement;
+        ipcRenderer.send("webview-context-link", {
+          src: imgElement.src
+        } as IImageSearchWebViewData);
+      }
+    });
+  };
 }
