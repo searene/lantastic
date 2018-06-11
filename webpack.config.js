@@ -121,6 +121,57 @@ const electronConfig = {
   }
 };
 
+const imageSearchInjectionConfig = {
+  entry: ['./src/services/ImageSearchInjection.ts',],
+  output: {
+    path: __dirname + '/dist',
+    filename: 'ImageSearchInjection.js',
+    devtoolModuleFilenameTemplate: '../[resource-path]',
+    pathinfo: false,
+  },
+  target: 'web',
+  mode: 'development',
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+
+  // Enable sourcemaps for debugging webpack's output.
+  devtool: 'source-map',
+
+  resolve: {
+    extensions: ['.ts']
+  },
+
+  devServer: {
+    hot: true
+  },
+
+  module: {
+    rules: [
+
+      {
+        test: /\.tsx?$/,
+        use: [{
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+            experimentalWatchApi: true,
+          }
+        }],
+      },
+
+      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      {enforce: "pre", test: /\.js$/, loader: "source-map-loader"},
+
+      {
+        test: /\.scss$/,
+        loaders: ["style-loader", "css-loader", "sass-loader"]
+      },
+    ]
+  },
+};
+
 // const testConfig = {
 //   entry: ['./src/Test.ts',],
 //   output: {
@@ -160,4 +211,4 @@ const electronConfig = {
 // };
 
 // module.exports = [appConfig, electronConfig, testConfig];
-module.exports = [appConfig, electronConfig];
+module.exports = [appConfig, electronConfig, imageSearchInjectionConfig];

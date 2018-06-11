@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Modal } from "semantic-ui-react";
 import { ipcRenderer } from "electron";
+import * as fse from "fs-extra";
 import "../stylesheets/components/ImageSearchModal.scss";
+import * as path from "path";
 
 interface ImageSearchModalProps {
   open: boolean;
@@ -48,19 +50,23 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
       </Modal>
     );
   }
-  private webviewRefHandler = (webview: HTMLWebViewElement) => {
+  private webviewRefHandler = (webview: Electron.WebviewTag) => {
     if (webview === null) {
       return;
     }
-    webview.addEventListener("contextmenu", event => {
-      console.log(window.event);
-      console.log(event);
-      if ((event.target as HTMLElement).tagName.toLowerCase() === "img") {
-        const imgElement = event.target as HTMLImageElement;
-        ipcRenderer.send("webview-context-link", {
-          src: imgElement.src
-        } as IImageSearchWebViewData);
-      }
-    });
+    // webview.addEventListener("contextmenu", event => {
+    //   console.log(window.event);
+    //   console.log(event);
+    //   if ((event.target as HTMLElement).tagName.toLowerCase() === "img") {
+    //     const imgElement = event.target as HTMLImageElement;
+    //     ipcRenderer.send("webview-context-link", {
+    //       src: imgElement.src
+    //     } as IImageSearchWebViewData);
+    //   }
+    // });
+    webview.addEventListener("dom-ready", async event => {
+      const code = await fse.readFile(path.resolve(__dirname, "ImageSearchInjection.js"), "utf-8");
+      webview.executeJavaScript(code);
+    })
   };
 }
