@@ -4,25 +4,31 @@ import "../../node_modules/jquery-contextmenu/dist/jquery.contextMenu.min.css";
 
 const copyToClipboard = (text: string) => {
   const input = document.createElement("input");
-  input.setAttribute('value', text);
+  input.setAttribute("value", text);
   document.body.appendChild(input);
   input.select();
   const result = document.execCommand("copy");
-  document.body.removeChild(input)
+  document.body.removeChild(input);
   return result;
-}
+};
 const registerContextMenu = () => {
+  let currentClickedElement: HTMLImageElement;
   $(function() {
     $.contextMenu({
       selector: "img",
-      callback: function(key, options) {
-        copyToClipboard(key);
+      build: (trigger, e) => {
+        currentClickedElement = trigger[0] as HTMLImageElement;
       },
       items: {
-        copyImageAddress: {name: "Copy Image Address"}
+        copyImageAddress: {
+          name: "Copy Image Address",
+          callback: (key: string, opt: any) => {
+            copyToClipboard(currentClickedElement.src);
+          }
+        }
       }
     });
   });
-}
+};
 
 registerContextMenu();
