@@ -30,6 +30,16 @@
   version "3.0.1"
   resolved "http://registry.npm.taobao.org/@types/inline-style-prefixer/download/@types/inline-style-prefixer-3.0.1.tgz#8541e636b029124b747952e9a28848286d2b5bf6"
 
+"@types/jquery.contextmenu@^1.7.33":
+  version "1.7.33"
+  resolved "https://registry.yarnpkg.com/@types/jquery.contextmenu/-/jquery.contextmenu-1.7.33.tgz#bac711bbd39f711d11cd0287a8401f7b52174cb8"
+  dependencies:
+    "@types/jquery" "*"
+
+"@types/jquery@*":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.2.tgz#8700226bdde24b6f98e3a60126dbaab3b2a3ab41"
+
 "@types/node@*":
   version "6.0.110"
   resolved "http://registry.npm.taobao.org/@types/node/download/@types/node-6.0.110.tgz#6bbfc1c14d671348e3db4f89f3b487785e684684"
@@ -3135,6 +3145,10 @@ isomorphic-fetch@^2.1.1:
 isstream@~0.1.2:
   version "0.1.2"
   resolved "http://registry.npm.taobao.org/isstream/download/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
+
+jquery-contextmenu@^2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/jquery-contextmenu/-/jquery-contextmenu-2.6.4.tgz#f48e56c436b1becb6935e5dd0def02e39d4e129e"
 
 jquery@x.*:
   version "3.3.1"

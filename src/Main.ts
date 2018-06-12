@@ -86,15 +86,9 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.on("webview-context-link", (event: Event, data: IImageSearchWebViewData) => {
-  console.log("blah");
-  const menu = Menu.buildFromTemplate([{
-    label: "Copy Image Address",
-    click: () => {
-      clipboard.writeText(data.src);
-    }
-  }]);
-  menu.popup({});
+ipcMain.on("test", (event: Event, data: IImageSearchWebViewData) => {
+  console.log("cool");
+  console.log(data);
 })
 
 // for hot reload

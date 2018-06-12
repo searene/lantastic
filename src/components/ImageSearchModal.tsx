@@ -65,8 +65,8 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
     //   }
     // });
     webview.addEventListener("dom-ready", async event => {
-      const code = await fse.readFile(path.resolve(__dirname, "ImageSearchInjection.js"), "utf-8");
-      webview.executeJavaScript(code);
+      const jsCode = await fse.readFile(path.resolve(__dirname, "ImageSearchInjection.js"), "utf-8");
+      webview.executeJavaScript(jsCode);
     })
   };
 }

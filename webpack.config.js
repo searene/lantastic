@@ -1,6 +1,7 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack = require("webpack");
 const path = require('path');
 
 const appConfig = {
@@ -140,7 +141,7 @@ const imageSearchInjectionConfig = {
   devtool: 'source-map',
 
   resolve: {
-    extensions: ['.ts']
+    extensions: ['.js', '.ts', '.css']
   },
 
   devServer: {
@@ -165,11 +166,19 @@ const imageSearchInjectionConfig = {
       {enforce: "pre", test: /\.js$/, loader: "source-map-loader"},
 
       {
-        test: /\.scss$/,
-        loaders: ["style-loader", "css-loader", "sass-loader"]
+        test: /\.css$/,
+        loaders: ["style-loader", "css-loader"]
       },
+
+      {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'file-loader?publicPath=../&outputPath=font/'}
     ]
   },
+  // plugins: [
+  //   new webpack.ProvidePlugin({
+  //     $: "jquery",
+  //     jQuery: "jquery"
+  //   })
+  // ]
 };
 
 // const testConfig = {
