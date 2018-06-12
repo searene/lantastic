@@ -17,9 +17,6 @@ const selectElement = (element: HTMLElement) => {
   getSelection().removeAllRanges();
   getSelection().addRange(range);
 };
-const wrapElementInDiv = (element: HTMLElement) => {
-
-};
 const copyImageToClipboard = (imgElement: HTMLImageElement) => {
   $(imgElement).wrap("<div></div>");
   const divElement = imgElement.parentElement;
