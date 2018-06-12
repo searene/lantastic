@@ -2,7 +2,7 @@ import * as $ from "jquery";
 import "jquery-contextmenu";
 import "../../node_modules/jquery-contextmenu/dist/jquery.contextMenu.min.css";
 
-const copyToClipboard = (text: string) => {
+const copyTextToClipboard = (text: string) => {
   const input = document.createElement("input");
   input.setAttribute("value", text);
   document.body.appendChild(input);
@@ -23,7 +23,7 @@ const registerContextMenu = () => {
         copyImageAddress: {
           name: "Copy Image Address",
           callback: (key: string, opt: any) => {
-            copyToClipboard(currentClickedElement.src);
+            copyTextToClipboard(currentClickedElement.src);
           }
         }
       }
