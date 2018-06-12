@@ -11,6 +11,25 @@ const copyTextToClipboard = (text: string) => {
   document.body.removeChild(input);
   return result;
 };
+const selectElement = (element: HTMLElement) => {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  getSelection().removeAllRanges();
+  getSelection().addRange(range);
+};
+const wrapElementInDiv = (element: HTMLElement) => {
+
+};
+const copyImageToClipboard = (imgElement: HTMLImageElement) => {
+  $(imgElement).wrap("<div></div>");
+  const divElement = imgElement.parentElement;
+  divElement.setAttribute("contenteditable", "true");
+  selectElement(divElement);
+  document.execCommand("copy");
+  getSelection().removeAllRanges();
+  divElement.setAttribute("contenteditable", "false")
+  $(imgElement).unwrap();
+};
 const registerContextMenu = () => {
   let currentClickedElement: HTMLImageElement;
   $(function() {
@@ -24,6 +43,14 @@ const registerContextMenu = () => {
           name: "Copy Image Address",
           callback: (key: string, opt: any) => {
             copyTextToClipboard(currentClickedElement.src);
+          }
+        },
+        copyImage: {
+          name: "Copy Image",
+          callback: (key: string, opt: any) => {
+            setTimeout(() => {
+              copyImageToClipboard(currentClickedElement);
+            }, 1000);
           }
         }
       }
