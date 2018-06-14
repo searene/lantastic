@@ -29,7 +29,6 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
       setFindInputBoxFocused: actions.setFindInputBoxFocused,
       setFindWordIndex: actions.setFindWordIndex,
       setFindWord: actions.setFindWord,
-      setHighlightedDefinitionsHTML: actions.setHighlightedDefinitionsHTML
     },
     dispatch
   );

@@ -86,11 +86,6 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.on("test", (event: Event, data: IImageSearchWebViewData) => {
-  console.log("cool");
-  console.log(data);
-})
-
 // for hot reload
 // TODO remove it in production
 fse.watch(path.join(__dirname), (event, fileName) => {

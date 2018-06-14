@@ -8,6 +8,7 @@ import { RootState } from "../reducers";
 import "../stylesheets/components/AutoSuggestInput.scss";
 import { List } from "immutable";
 import { InternalFindInputBox } from "./FindInputBox";
+import { CSSProperties } from "react";
 
 interface IAutoSuggestInputStates {
   suggestions: string[];
@@ -32,6 +33,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
 type AutoSuggestInputProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps> & {
     onSearchCompleted: () => void;
+    style?: CSSProperties;
   };
 
 class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, IAutoSuggestInputStates> {
@@ -45,7 +47,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
   }
   public render() {
     return (
-      <div>
+      <div {...this.props.style}>
         <button
           id={"refer-word-search-button"}
           onClick={(event: React.SyntheticEvent<HTMLButtonElement>) =>

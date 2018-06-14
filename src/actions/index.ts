@@ -23,8 +23,6 @@ export const actions = {
   setFindWord: createStandardAction("SET_FIND_WORD")<string>(),
   setFindWordIndex: createStandardAction("SET_FIND_WORD_INDEX")<number>(),
   setFindInputBoxFocused: createStandardAction("SET_FIND_INPUT_BOX_FOCUSED")<boolean>(),
-  setDefinitionsDOM: createStandardAction("SET_DEFINITIONS_DOM")<HTMLDocument>(),
-  setHighlightedDefinitionsHTML: createStandardAction("SET_HIGHLIGHTED_DEFINITIONS_HTML")<string>()
 };
 
 export type RootAction = ActionType<typeof actions>;

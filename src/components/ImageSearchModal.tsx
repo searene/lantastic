@@ -54,16 +54,6 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
     if (webview === null) {
       return;
     }
-    // webview.addEventListener("contextmenu", event => {
-    //   console.log(window.event);
-    //   console.log(event);
-    //   if ((event.target as HTMLElement).tagName.toLowerCase() === "img") {
-    //     const imgElement = event.target as HTMLImageElement;
-    //     ipcRenderer.send("webview-context-link", {
-    //       src: imgElement.src
-    //     } as IImageSearchWebViewData);
-    //   }
-    // });
     webview.addEventListener("dom-ready", async event => {
       const jsCode = await fse.readFile(path.resolve(__dirname, "ImageSearchInjection.js"), "utf-8");
       webview.executeJavaScript(jsCode);

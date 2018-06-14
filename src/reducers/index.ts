@@ -103,12 +103,6 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
     case getType(actions.setFindInputBoxFocused):
       return { ...state, isFindInputBoxFocused: action.payload };
 
-    case getType(actions.setDefinitionsDOM):
-      return { ...state, definitionsDOM: action.payload };
-
-    case getType(actions.setHighlightedDefinitionsHTML):
-      return { ...state, highlightedDefinitionsHTML: action.payload };
-
     default:
       return state;
   }
