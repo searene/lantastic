@@ -18,6 +18,9 @@ export function getPathToLantastic() {
 export function getPathToDictParserDbFile() {
   return path.join(getPathToLantastic(), "dict-parser.db");
 }
+export function getPathToDictParserSqliteDbFile() {
+  return path.join(getPathToLantastic(), "dict-parser-sqlite.db");
+}
 export function getPathToCardDbFile() {
   return path.join(getPathToLantastic(), "card.db");
 }
@@ -37,7 +40,7 @@ export async function createDirIfNotExists(dir: string) {
   }
 }
 export function getPathToDictionaryResources() {
-  return "./resources/dictionaries";
+  return path.resolve(__dirname, "resources/dictionaries");
 }
 export const getPathToSqliteDbFile = () => {
   return path.join(getPathToLantastic(), "sqlite.db");

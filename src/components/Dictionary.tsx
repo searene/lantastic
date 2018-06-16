@@ -11,6 +11,7 @@ import { List } from "immutable";
 import { FindInputBox } from "./FindInputBox";
 import { actions } from "../actions";
 import { WordDefinition } from "dict-parser";
+import * as fse from "fs-extra";
 import WebviewTag = Electron.WebviewTag;
 
 export const getDefinitionHTML = (wordDefinitions: List<WordDefinition>): string => {
@@ -66,7 +67,7 @@ class InternalDictionary extends React.Component<DictionaryProps, DictionaryStat
             this.webview.scrollTop = 0;
             let html = getDefinitionHTML(this.props.wordDefinitions);
             html = `<div style="height: 1000px">${html}</div>`
-            this.webview.src = `data:text/html,${html}`;
+            this.webview.src = `data:text/html;charset=UTF-8,${html}`;
           }}
         />
         <div
@@ -84,7 +85,7 @@ class InternalDictionary extends React.Component<DictionaryProps, DictionaryStat
           {this.props.isFindInputBoxVisible && <FindInputBox textContainerId="definition-segment" />}
 
           <webview
-            src="data:text/html,"
+            src="data:text/html;charset=UTF-8,"
             ref={ref => this.webview = ref as WebviewTag}
             style={{
               height: "100%",

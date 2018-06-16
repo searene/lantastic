@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="css/react-select.css"/>
     <script defer src="resources/font-awesome/all.js"></script>
     <script>
-      function playAudio(audio_id) {
-        document.getElementById(audio_id).play();
+      function playAudio(audioType, base64) {
+        var audio = new Audio("data:audio/" + audioType + ";base64," + base64);
+        audio.play();
       }
     </script>
 </head>

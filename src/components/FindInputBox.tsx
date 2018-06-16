@@ -6,7 +6,6 @@ import { Icon, Input, Ref, SemanticICONS } from "semantic-ui-react";
 import "../stylesheets/components/FindInputBox.scss";
 import { actions } from "../actions";
 import { MouseEventHandler } from "react";
-import { getDefinitionHTML } from "./Dictionary";
 import electron = require("electron");
 
 export interface Match {
