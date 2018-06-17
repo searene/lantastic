@@ -45,9 +45,7 @@ const registerContextMenu = () => {
         copyImage: {
           name: "Copy Image",
           callback: (key: string, opt: any) => {
-            setTimeout(() => {
-              copyImageToClipboard(currentClickedElement);
-            }, 1000);
+            copyImageToClipboard(currentClickedElement);
           }
         }
       }

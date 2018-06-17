@@ -22,10 +22,6 @@
   },
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
-    "draft-js": "0.10.5",
-    "draft-js-export-html": "1.2.0",
-    "draft-js-image-plugin": "2.0.5",
-    "draft-js-import-html": "1.2.1",
     "fs-extra": "^6.0.1",
     "google-images": "2.1.0",
     "immutable": "3.8.2",
@@ -41,7 +37,6 @@
     "tslint": "5.10.0"
   },
   "devDependencies": {
-    "@types/draft-js": "0.10.23",
     "@types/fs-extra": "^5.0.3",
     "@types/inline-style-prefixer": "3.0.1",
     "@types/jquery.contextmenu": "^1.7.33",

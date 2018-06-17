@@ -101,7 +101,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
           ref={ref => (this.webview = ref as WebviewTag)}
           style={{
             height: "100%",
-            margin: "10px",
+            margin: "10px 0 0 10px",
             flexGrow: 1
           }}
         />

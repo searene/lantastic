@@ -14,15 +14,10 @@ export const actions = {
   setLoading: createStandardAction("SET_LOADING")<boolean>(),
   setMoreDeckName: createStandardAction("SET_MORE_DECK_NAME")<string>(),
   setWord: createStandardAction("SET_WORD")<string>(),
-  setWordDefinitions: createStandardAction("SET_WORD_DEFINITIONS")<List<WordDefinition>>(),
   setCardModalOpen: createStandardAction("SET_CARD_MODAL_OPEN")<boolean>(),
   setCardInCardModal: createStandardAction("SET_CARD_IN_CARD_MODAL")<Card>(),
   setCardsInCardBrowser: createStandardAction("SET_CARDS_IN_CARD_BROWSER")<List<Card>>(),
   setShowGoogleImageModal: createStandardAction("SET_SHOW_GOOGLE_IMAGE_MODAL")<boolean>(),
-  setFindInputBoxVisible: createStandardAction("SET_FIND_INPUT_BOX_VISIBLE")<boolean>(),
-  setFindWord: createStandardAction("SET_FIND_WORD")<string>(),
-  setFindWordIndex: createStandardAction("SET_FIND_WORD_INDEX")<number>(),
-  setFindInputBoxFocused: createStandardAction("SET_FIND_INPUT_BOX_FOCUSED")<boolean>(),
 };
 
 export type RootAction = ActionType<typeof actions>;
