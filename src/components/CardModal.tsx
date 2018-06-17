@@ -89,13 +89,7 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
         <p>Card was deleted successfully</p>
       </Modal.Content>
       <Modal.Actions>
-        <Button
-          positive
-          icon="checkmark"
-          labelPosition="right"
-          onClick={this.closeAllModals}
-          content="OK"
-        />
+        <Button positive icon="checkmark" labelPosition="right" onClick={this.closeAllModals} content="OK"/>
       </Modal.Actions>
     </Modal>
   );

@@ -33,18 +33,21 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
   }
   render() {
     return (
-      <div style={{
-        width: "100%",
-        flexGrow: 1,
-        overflow: "auto",
-        margin: "10px 10px 20px 0",
-        paddingRight: "10px"
-      }}>
+      <div
+        style={{
+          width: "100%",
+          flexGrow: 1,
+          overflow: "auto",
+          margin: "10px 10px 20px 0",
+          paddingRight: "10px"
+        }}
+      >
         <CardModal
           card={this.state.activeCard}
           onDeleteCard={this.deleteActiveCard}
           open={this.state.showModal}
-          onClose={this.closeModal} />
+          onClose={this.closeModal}
+        />
         <Table celled selectable striped sortable fixed>
           <Table.Header>
             <Table.Row>
@@ -85,10 +88,10 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
   private handleClickOnTableRow = (card: Card) => {
     this.setState({
       activeCard: card,
-      showModal: true,
-    })
+      showModal: true
+    });
   };
   private deleteActiveCard = (callback: (success: boolean) => void) => {
     this.props.onDeleteCard(this.state.activeCard.id, callback);
-  }
+  };
 }
