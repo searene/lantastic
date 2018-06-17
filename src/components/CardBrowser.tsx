@@ -34,12 +34,7 @@ interface ICardBrowserStates {
 }
 
 const mapStateToProps = (state: RootState) => ({});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-    },
-    dispatch
-  );
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
 type CardBrowserProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
@@ -77,10 +72,7 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
               />
               <BaseButton onClick={this.search}>Search</BaseButton>
             </div>
-            <CardTable
-              cards={this.state.cards}
-              onDeleteCard={this.deleteCard}
-            />
+            <CardTable cards={this.state.cards} onDeleteCard={this.deleteCard} />
             <div className={"pagination-row"} key={"pagination-row"}>
               <Pagination
                 activePage={this.state.activePage}
@@ -190,9 +182,9 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
     await Sqlite.deleteCard(cardId);
     this.setState({
       cards: this.state.cards.filter(card => card.id !== cardId).toList()
-    })
+    });
     callback(true);
-  }
+  };
 }
 
 export const CardBrowser = connect(

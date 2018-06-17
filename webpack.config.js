@@ -27,10 +27,6 @@ const appConfig = {
     extensions: [".ts", ".tsx", ".js", ".json"]
   },
 
-  devServer: {
-    hot: true
-  },
-
   module: {
     rules: [
       {
@@ -148,10 +144,6 @@ const imageSearchInjectionConfig = {
     extensions: [".js", ".ts", ".css"]
   },
 
-  devServer: {
-    hot: true
-  },
-
   module: {
     rules: [
       {
@@ -192,10 +184,6 @@ const dictionaryStyleConfig = {
 
   // Enable sourcemaps for debugging webpack's output.
   devtool: "source-map",
-
-  devServer: {
-    hot: true
-  },
 
   module: {
     rules: [
