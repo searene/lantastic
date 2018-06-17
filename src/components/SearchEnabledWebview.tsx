@@ -6,6 +6,8 @@ import WebviewTag = Electron.WebviewTag;
 import { InternalApp } from "../App";
 import FoundInPageEvent = Electron.FoundInPageEvent;
 import { Keyboard } from "../services/Keyboard";
+import * as fse from "fs-extra";
+import * as path from "path";
 
 interface SearchEnabledWebviewProps {
   definition: string;
@@ -30,9 +32,9 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.registerShowFindInputBoxShortcut();
-    this.registerWebviewEventListeners();
+    await this.registerWebviewEventListeners();
     this.showDefinition();
   }
 
@@ -149,18 +151,18 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     this.registerInputKeyboardShortcuts();
     this.registerInputChangeEvents();
   };
-  private registerWebviewEventListeners = () => {
+  private registerWebviewEventListeners = async () => {
     this.registerFoundInPage();
     this.registerConsoleMessage();
-    this.insertCSS();
+    await this.insertCSS();
   };
   private registerConsoleMessage = () => {
     this.webview.addEventListener("console-message", event => {
       console.log("webview message: " + event.message);
     });
   };
-  private insertCSS = () => {
-    const css = this.commonCSS + this.dslCSS;
+  private insertCSS = async () => {
+    const css = await fse.readFile(path.resolve(__dirname, "css/dictionary.css"), "UTF-8");
     this.webview.addEventListener("dom-ready", event => {
       this.webview.insertCSS(css);
     });
@@ -210,88 +212,4 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     this.setState({ showSearchInputBox: false });
     this.webview.stopFindInPage("clearSelection");
   };
-  private commonCSS = `
-    .dictp-sound-img {
-      width: 25px;
-      height: 25px;
-    }
-    .dictp-sound-img:hover {
-      cursor: pointer;
-    }
-    .dict-title {
-      text-align: center;
-      padding: 20px;
-      border: 1px dashed black;
-      font-weight: 700;
-      font-size: 21px;
-    }
-    .dp-entry {
-      margin: 10px 0;
-      font-size: 20px;
-      font-weight: 700;
-    }
-  `;
-  private dslCSS = `
-    .dsl-headwords {
-      font-weight: bold;
-      margin-top: 15px;
-      margin-bottom: 10px;
-    }
-    .dsl-headwords p {
-      font-weight: bold;
-      font-size: 15px;
-      margin: 0;
-    }
-    .dsl-b {
-      font-weight: bold;
-    }
-    .dsl-i {
-      font-style: italic;
-    }
-    .dsl-u {
-      text-decoration: underline;
-    }
-    .dsl-m0 {
-      padding-left: 0;
-    }
-    .dsl-m1 {
-      padding-left: 9px;
-    }
-    .dsl-m2 {
-      padding-left: 18px;
-    }
-    .dsl-m3 {
-      padding-left: 27px;
-    }
-    .dsl-m4 {
-      padding-left: 36px;
-    }
-    .dsl-m5 {
-      padding-left: 45px;
-    }
-    .dsl-m6 {
-      padding-left: 54px;
-    }
-    .dsl-m7 {
-      padding-left: 63px;
-    }
-    .dsl-m8 {
-      padding-left: 72px;
-    }
-    .dsl-m9 {
-      padding-left: 81px;
-    }
-    .dsl-opt {
-      display: inline;
-      color: gray;
-    }
-    .dsl-p {
-      color: green;
-      font-style: italic;
-    }
-    .dsl-ref {
-      color: blue;
-      text-decoration: underline;
-    }
-  `;
 }

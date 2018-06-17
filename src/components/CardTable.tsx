@@ -67,8 +67,16 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
                 onClick={() => this.handleClickOnTableRow(card)}
               >
                 <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
-                <Table.Cell>{card[CARD_COLUMN_FRONT]}</Table.Cell>
-                <Table.Cell>{card[CARD_COLUMN_BACK]}</Table.Cell>
+                <Table.Cell>
+                  <webview
+                    src={"data:text/html;charset=utf-8," + card[CARD_COLUMN_FRONT]}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <webview
+                    src={"data:text/html;charset=utf-8," + card[CARD_COLUMN_BACK]}
+                  />
+                </Table.Cell>
                 <Table.Cell>
                   {moment(card[CARD_COLUMN_CREATION_TIME], DATE_FORMAT).format(this.TABLE_DATE_FORMAT)}
                 </Table.Cell>
