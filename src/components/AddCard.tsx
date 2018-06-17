@@ -27,13 +27,7 @@ const mapStateToProps = (state: RootState) => ({
   chosenDeckName: state.chosenDeckName,
   editorStateList: state.editorStateList
 });
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      setEditorStateList: actions.setEditorStateList
-    },
-    dispatch
-  );
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
 export type AddCardProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 

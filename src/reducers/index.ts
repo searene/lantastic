@@ -13,9 +13,6 @@ export interface RootState {
   readonly isLoading: boolean;
   readonly moreDeckName: string;
   readonly defaultDeckName: string;
-  readonly cardModalOpen: boolean;
-  readonly cardInCardModal: Card;
-  readonly cardsInCardBrowser: List<Card>;
   readonly showGoogleImageModal: boolean;
 }
 
@@ -28,9 +25,6 @@ const initialState: RootState = {
   moreDeckName: "",
   word: "",
   wordDefinitions: List(),
-  cardModalOpen: false,
-  cardInCardModal: undefined,
-  cardsInCardBrowser: List(),
   showGoogleImageModal: false,
 };
 
@@ -56,15 +50,6 @@ export const rootReducer = (state: RootState = initialState, action: RootAction)
 
     case getType(actions.setDefaultDeckName):
       return { ...state, defaultDeckName: action.payload };
-
-    case getType(actions.setCardModalOpen):
-      return { ...state, cardModalOpen: action.payload };
-
-    case getType(actions.setCardInCardModal):
-      return { ...state, cardInCardModal: action.payload };
-
-    case getType(actions.setCardsInCardBrowser):
-      return { ...state, cardsInCardBrowser: action.payload };
 
     case getType(actions.setShowGoogleImageModal):
       return { ...state, showGoogleImageModal: action.payload };

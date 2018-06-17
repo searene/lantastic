@@ -13,26 +13,15 @@ interface CardModalStates {
   showDeleteModal: boolean;
   showDeleteSuccessModal: boolean;
 }
-const mapStateToProps = (state: RootState) => ({
-  cardModalOpen: state.cardModalOpen,
-  cardInCardModal: state.cardInCardModal,
-  cardsInCardBrowser: state.cardsInCardBrowser
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      setCardModalOpen: (cardModalOpen: boolean) => dispatch(actions.setCardModalOpen(cardModalOpen)),
-      setCardsInCardBrowser: (cardsInCardBrowser: List<Card>) =>
-        dispatch(actions.setCardsInCardBrowser(cardsInCardBrowser))
-    },
-    dispatch
-  );
-
-type CardModalProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {};
-
-class InternalCardModal extends React.Component<CardModalProps, CardModalStates> {
-  private MENU_CONTENTS = "home";
-  private MENU_STATISTICS = "statistics";
+interface CardModalProps {
+  card: Card;
+  open: boolean;
+  onClose: () => void;
+  onDeleteCard: (callback: (success: boolean) => void) => void;
+}
+export class CardModal extends React.Component<CardModalProps, CardModalStates> {
+  private readonly MENU_CONTENTS = "home";
+  private readonly MENU_STATISTICS = "statistics";
 
   constructor(props: CardModalProps) {
     super(props);
@@ -45,7 +34,7 @@ class InternalCardModal extends React.Component<CardModalProps, CardModalStates>
 
   public render() {
     return (
-      <Modal open={this.props.cardModalOpen} size={"fullscreen"}>
+      <Modal open={this.props.open} size={"fullscreen"} closeIcon>
         {this.deleteCardModal()}
         {this.deleteCardSuccessModal()}
         <Modal.Content>
@@ -117,7 +106,7 @@ class InternalCardModal extends React.Component<CardModalProps, CardModalStates>
   );
 
   private handleOK = () => {
-    this.props.setCardModalOpen(false);
+    this.props.onClose();
   };
   private handleClickOnMenuItem = (e: React.SyntheticEvent<HTMLElement>, menuItemProps: MenuItemProps): void => {
     this.setState({
@@ -129,23 +118,21 @@ class InternalCardModal extends React.Component<CardModalProps, CardModalStates>
       showDeleteModal: true
     });
   };
-  private deleteCard = async (): Promise<void> => {
-    await Sqlite.deleteCard(this.props.cardInCardModal.id);
-    this.setState({
-      showDeleteSuccessModal: true
+  private deleteCard = () => {
+    this.props.onDeleteCard(success => {
+      if (success) {
+        this.setState({
+          showDeleteSuccessModal: true
+        });
+      } else {
+        console.error("Card deletion failed");
+      }
     });
   };
   private handleClickOnDeleteCardSuccessModalOK = () => {
     this.setState({
       showDeleteSuccessModal: false
     });
-    this.props.setCardModalOpen(false);
-    this.props.setCardsInCardBrowser(
-      this.props.cardsInCardBrowser.filter(card => card.id !== this.props.cardInCardModal.id).toList()
-    );
+    this.props.onClose();
   };
 }
-export const CardModal = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(InternalCardModal);

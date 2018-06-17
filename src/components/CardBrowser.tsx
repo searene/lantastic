@@ -1,6 +1,5 @@
 import { BaseInput } from "./BaseInput";
 
-import moment = require("moment");
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -19,10 +18,10 @@ import { RootState } from "../reducers";
 import { Sqlite } from "../Sqlite";
 import "../stylesheets/components/CardBrowser.scss";
 import { BaseButton } from "./BaseButton";
-import { CardModal } from "./CardModal";
 import { actions } from "../actions";
 import { Card } from "../models/Card";
 import { List } from "immutable";
+import { CardTable } from "./CardTable";
 
 interface ICardBrowserStates {
   totalPageNum: number;
@@ -31,18 +30,13 @@ interface ICardBrowserStates {
   orderBy: string;
   isOrderByAscending: boolean;
   isLoaded: boolean;
+  cards: List<Card>;
 }
 
-const mapStateToProps = (state: RootState) => ({
-  cardsInCardBrowser: state.cardsInCardBrowser
-});
+const mapStateToProps = (state: RootState) => ({});
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
-      setCardModalOpen: (cardModalOpen: boolean) => dispatch(actions.setCardModalOpen(cardModalOpen)),
-      setCardInCardModal: (cardInCardModal: Card) => dispatch(actions.setCardInCardModal(cardInCardModal)),
-      setCardsInCardBrowser: (cardsInCardBrowser: List<Card>) =>
-        dispatch(actions.setCardsInCardBrowser(cardsInCardBrowser))
     },
     dispatch
   );
@@ -61,7 +55,8 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
       isOrderByAscending: true,
       orderBy: CARD_COLUMN_DECK,
       searchInputValue: "",
-      totalPageNum: 1
+      totalPageNum: 1,
+      cards: List()
     };
   }
   public async componentWillMount() {
@@ -71,8 +66,8 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
   public render() {
     return (
       <Segment className={"card-browser-segment"}>
-        {this.state.isLoaded ? (
-          [
+        {this.state.isLoaded && (
+          <div>
             <div className={"search-container"} key={"search-container"}>
               <BaseInput
                 placeholder={"Search cards..."}
@@ -81,42 +76,11 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
                 onKeyPress={this.handleInputKeyPress}
               />
               <BaseButton onClick={this.search}>Search</BaseButton>
-            </div>,
-            <div className={"table-container"} key={"table-container"}>
-              <CardModal />
-              <Table celled selectable striped sortable fixed>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell>Deck</Table.HeaderCell>
-                    <Table.HeaderCell>Front</Table.HeaderCell>
-                    <Table.HeaderCell>Back</Table.HeaderCell>
-                    <Table.HeaderCell>Creation Time</Table.HeaderCell>
-                    <Table.HeaderCell>Next Review Time</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                  {this.props.cardsInCardBrowser.map(card => (
-                    <Table.Row
-                      key={card[CARD_COLUMN_ID]}
-                      className={"search-table-row"}
-                      onClick={() => this.handleClickOnTableRow(card)}
-                    >
-                      <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
-                      <Table.Cell>{card[CARD_COLUMN_FRONT]}</Table.Cell>
-                      <Table.Cell>{card[CARD_COLUMN_BACK]}</Table.Cell>
-                      <Table.Cell>
-                        {moment(card[CARD_COLUMN_CREATION_TIME], DATE_FORMAT).format(TABLE_DATE_FORMAT)}
-                      </Table.Cell>
-                      <Table.Cell>
-                        {moment(card[CARD_COLUMN_NEXT_REVIEW_TIME], DATE_FORMAT).format(TABLE_DATE_FORMAT)}
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </div>,
-
+            </div>
+            <CardTable
+              cards={this.state.cards}
+              onDeleteCard={this.deleteCard}
+            />
             <div className={"pagination-row"} key={"pagination-row"}>
               <Pagination
                 activePage={this.state.activePage}
@@ -124,16 +88,15 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
                 onPageChange={this.handleClickOnPagination}
               />
             </div>
-          ]
-        ) : (
-          <div />
+          </div>
         )}
       </Segment>
     );
   }
 
   private reloadData = async (pageNo: number): Promise<void> => {
-    this.props.setCardsInCardBrowser(await this.getCards(pageNo));
+    const cards = await this.getCards(pageNo);
+    this.setState({ cards: cards });
     const totalPageNum = await this.getTotalPageNum();
     this.setState({
       isLoaded: true,
@@ -212,7 +175,8 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
   };
   private handleClickOnPagination = async (event: React.MouseEvent<HTMLAnchorElement>, data: PaginationProps) => {
     const pageNo = data.activePage as number;
-    this.props.setCardsInCardBrowser(await this.getCards(pageNo));
+    const cards = await this.getCards(pageNo);
+    this.setState({ cards: cards });
     this.setState({
       activePage: pageNo
     });
@@ -222,10 +186,13 @@ class InternalCardBrowser extends React.Component<CardBrowserProps, ICardBrowser
       await this.search();
     }
   };
-  private handleClickOnTableRow = (card: Card) => {
-    this.props.setCardInCardModal(card);
-    this.props.setCardModalOpen(true);
-  };
+  private deleteCard = async (cardId: number, callback: (success: boolean) => void) => {
+    await Sqlite.deleteCard(cardId);
+    this.setState({
+      cards: this.state.cards.filter(card => card.id !== cardId).toList()
+    })
+    callback(true);
+  }
 }
 
 export const CardBrowser = connect(

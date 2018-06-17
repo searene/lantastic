@@ -69,9 +69,6 @@ const appConfig = {
       from: path.join(__dirname, 'node_modules/semantic-ui-css'),
       to: path.join(__dirname, 'dist/semantic-ui-css'),
     }, {
-      from: path.join(__dirname, 'node_modules/draft-js/dist/Draft.css'),
-      to: path.join(__dirname, 'dist/css/Draft.css'),
-    }, {
       from: path.join(__dirname, 'node_modules/react-select/dist/react-select.css'),
       to: path.join(__dirname, 'dist/css/react-select.css'),
     }]),
