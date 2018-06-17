@@ -1,16 +1,10 @@
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { bindActionCreators } from "redux";
 import { Button, Icon, Menu, MenuItemProps, Modal } from "semantic-ui-react";
-import { RootState } from "../reducers";
-import { actions } from "../actions";
-import { Sqlite } from "../Sqlite";
-import { List } from "immutable";
 import { Card } from "../models/Card";
 
 interface CardModalStates {
   activeMenuItem: string;
-  showDeleteModal: boolean;
+  showDeleteConfirmModal: boolean;
   showDeleteSuccessModal: boolean;
 }
 interface CardModalProps {
@@ -27,16 +21,16 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
     super(props);
     this.state = {
       activeMenuItem: this.MENU_CONTENTS,
-      showDeleteModal: false,
+      showDeleteConfirmModal: false,
       showDeleteSuccessModal: false
     };
   }
 
   public render() {
     return (
-      <Modal open={this.props.open} size={"fullscreen"} closeIcon>
-        {this.deleteCardModal()}
-        {this.deleteCardSuccessModal()}
+      <Modal open={this.props.open} size={"fullscreen"} closeIcon onClose={this.props.onClose}>
+        {this.deleteConfirmModal()}
+        <Modal.Header icon="sticky note outline" content="Card Details"/>
         <Modal.Content>
           <Modal.Description>
             <Menu
@@ -72,14 +66,15 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
     );
   }
 
-  private deleteCardModal = () => (
-    <Modal size={"mini"} open={this.state.showDeleteModal}>
+  private deleteConfirmModal = () => (
+    <Modal size={"mini"} open={this.state.showDeleteConfirmModal} closeIcon onClose={this.closeDeleteCardModal}>
+      {this.deleteSuccessModal()}
       <Modal.Header>Delete Card</Modal.Header>
       <Modal.Content>
         <p>Are you sure you want to delete this card?</p>
       </Modal.Content>
       <Modal.Actions>
-        <Button onClick={() => this.setState({ showDeleteModal: false })} negative>
+        <Button onClick={this.closeDeleteCardModal} negative>
           No
         </Button>
         <Button positive icon="checkmark" labelPosition="right" onClick={this.deleteCard} content="Yes" />
@@ -87,8 +82,8 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
     </Modal>
   );
 
-  private deleteCardSuccessModal = () => (
-    <Modal size={"mini"} open={this.state.showDeleteSuccessModal}>
+  private deleteSuccessModal = () => (
+    <Modal size={"mini"} open={this.state.showDeleteSuccessModal} closeIcon onClose={this.closeAllModals}>
       <Modal.Header>Success</Modal.Header>
       <Modal.Content>
         <p>Card was deleted successfully</p>
@@ -98,7 +93,7 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
           positive
           icon="checkmark"
           labelPosition="right"
-          onClick={this.handleClickOnDeleteCardSuccessModalOK}
+          onClick={this.closeAllModals}
           content="OK"
         />
       </Modal.Actions>
@@ -115,7 +110,7 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
   };
   private handleDelete = () => {
     this.setState({
-      showDeleteModal: true
+      showDeleteConfirmModal: true
     });
   };
   private deleteCard = () => {
@@ -129,10 +124,16 @@ export class CardModal extends React.Component<CardModalProps, CardModalStates> 
       }
     });
   };
-  private handleClickOnDeleteCardSuccessModalOK = () => {
+  private closeAllModals = () => {
     this.setState({
+      showDeleteConfirmModal: false,
       showDeleteSuccessModal: false
     });
     this.props.onClose();
+  };
+  private closeDeleteCardModal = () => {
+    this.setState({
+      showDeleteConfirmModal: false
+    });
   };
 }
