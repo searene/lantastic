@@ -1,46 +1,24 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { Ref, Segment } from "semantic-ui-react";
-import { RootState } from "../reducers";
 import { AutoSuggestInput } from "./AutoSuggestInput";
-import { InternalApp } from "../App";
-import { List } from "immutable";
-import { actions } from "../actions";
-import { WordDefinition } from "dict-parser";
-import * as fse from "fs-extra";
 import WebviewTag = Electron.WebviewTag;
 import { SearchEnabledWebview } from "./SearchEnabledWebview";
 
-export const getDefinitionHTML = (wordDefinitions: List<WordDefinition>): string => {
-  const multipleLineHTML = wordDefinitions.reduce((r, wordDefinition) => r + wordDefinition.html, "");
-  const singleLineHTML = multipleLineHTML.replace(/[\r\n]/g, "");
-  return singleLineHTML;
-};
+interface DictionaryStates {
+  definition: string;
+}
 
-interface DictionaryStates {}
+interface DictionaryProps {}
 
-const mapStateToProps = (state: RootState) => ({
-  wordDefinitions: state.wordDefinitions,
-  isFindInputBoxVisible: state.isFindInputBoxVisible,
-  findWord: state.findWord,
-  findWordIndex: state.findWordIndex
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      setFindInputBoxVisible: actions.setFindInputBoxVisible,
-      setFindInputBoxFocused: actions.setFindInputBoxFocused,
-      setFindWordIndex: actions.setFindWordIndex
-    },
-    dispatch
-  );
+export class Dictionary extends React.Component<DictionaryProps, DictionaryStates> {
 
-type DictionaryProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
+  // for recovering previous states when remounting
+  static previousDefinition = "";
 
-class InternalDictionary extends React.Component<DictionaryProps, DictionaryStates> {
   constructor(props: DictionaryProps) {
     super(props);
+    this.state = {
+      definition: Dictionary.previousDefinition,
+    };
   }
 
   private webview: WebviewTag;
@@ -56,22 +34,13 @@ class InternalDictionary extends React.Component<DictionaryProps, DictionaryStat
         }}
       >
         <AutoSuggestInput
-          onSearchCompleted={() => {
-            this.webview.scrollTop = 0;
-            let html = getDefinitionHTML(this.props.wordDefinitions);
-            html = `<div style="height: 1000px">${html}</div>`;
-            this.webview.src = `data:text/html;charset=UTF-8,${html}`;
+          onSearchCompleted={html => {
+            this.setState({ definition: html });
+            Dictionary.previousDefinition = html;
           }}
         />
-        <SearchEnabledWebview
-          webviewRef={ref => this.webview = ref}
-        />
+        <SearchEnabledWebview definition={this.state.definition} webviewRef={ref => (this.webview = ref)} />
       </div>
     );
   }
 }
-
-export const Dictionary = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(InternalDictionary);

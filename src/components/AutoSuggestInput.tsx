@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as fse from "fs-extra";
 import { connect, Dispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Icon, Input, Ref } from "semantic-ui-react";
@@ -8,8 +7,8 @@ import { Parser } from "../Parser";
 import { RootState } from "../reducers";
 import "../stylesheets/components/AutoSuggestInput.scss";
 import { List } from "immutable";
-import { InternalFindInputBox } from "./FindInputBox";
 import { CSSProperties } from "react";
+import { WordDefinition } from "dict-parser";
 
 interface IAutoSuggestInputStates {
   suggestions: string[];
@@ -17,23 +16,18 @@ interface IAutoSuggestInputStates {
 
 const mapStateToProps = (state: RootState) => ({
   word: state.word,
-  wordDefinitions: state.wordDefinitions
 });
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
       setWord: actions.setWord,
-      setWordDefinitions: actions.setWordDefinitions,
-      setFindInputBoxVisible: actions.setFindInputBoxVisible,
-      setFindWordIndex: actions.setFindWordIndex,
-      setFindWord: actions.setFindWord
     },
     dispatch
   );
 
 type AutoSuggestInputProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps> & {
-    onSearchCompleted: () => void;
+    onSearchCompleted: (html: string) => void;
     style?: CSSProperties;
   };
 
@@ -98,10 +92,8 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
     );
   }
   private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    this.props.setFindInputBoxVisible(false);
     if (event.key === "Enter") {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
-      this.props.setWordDefinitions(List());
       await this.search(currentActiveSuggestion === undefined ? this.props.word : currentActiveSuggestion.innerHTML);
     } else if (["ArrowUp", "ArrowDown"].indexOf(event.key) > -1 && !this.suggestionsComponent) {
       event.preventDefault();
@@ -144,8 +136,8 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
       suggestions: []
     });
     const wordDefinitions = await Parser.getDictParser().getWordDefinitions(word);
-    this.props.setWordDefinitions(List(wordDefinitions));
-    this.props.onSearchCompleted();
+    const html = this.getDefinitionHTML(wordDefinitions);
+    this.props.onSearchCompleted(html);
   };
   private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
     const input = (event.target as HTMLInputElement).value;
@@ -154,6 +146,9 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
     this.setState({
       suggestions
     });
+  };
+  private getDefinitionHTML = (wordDefinitions: WordDefinition[]): string => {
+    return wordDefinitions.reduce((r, wordDefinition) => r + wordDefinition.html, "");
   };
 }
 export const AutoSuggestInput = connect(

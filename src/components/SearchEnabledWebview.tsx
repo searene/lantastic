@@ -13,6 +13,7 @@ import FoundInPageEvent = Electron.FoundInPageEvent;
 import { Keyboard } from "../services/Keyboard";
 
 interface SearchEnabledWebviewProps {
+  definition: string;
   webviewRef: (webviewTag: WebviewTag) => void;
 }
 
@@ -38,11 +39,16 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
   componentDidMount() {
     this.registerShowFindInputBoxShortcut();
     this.registerWebviewEventListeners();
+    this.showDefinition();
   }
 
   public componentDidUpdate(prevProps: SearchEnabledWebviewProps, prevStates: SearchEnabledWebviewStates) {
     if (!prevStates.showSearchInputBox && this.state.showSearchInputBox) {
+      this.resetSearchCounts();
       this.registerInputEventListeners();
+    }
+    if (this.props.definition !== prevProps.definition) {
+      this.showDefinition();
     }
   }
 
@@ -112,6 +118,12 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     );
   }
 
+  private resetSearchCounts = () => {
+    this.setState({
+      activeMatchOrdinal: 0,
+      totalMatches: 0,
+    });
+  };
   private inputIcon = (iconName: SemanticICONS, handler: MouseEventHandler<HTMLDivElement>): React.ReactNode => {
     return (
       <div
@@ -198,7 +210,11 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
         this.webview.stopFindInPage("clearSelection");
       }
     });
-  }
+  };
+  private showDefinition = () => {
+    this.webview.scrollTop = 0;
+    this.webview.src = `data:text/html;charset=UTF-8,${this.props.definition}`;
+  };
   private closeSearchInputBox = () => {
     this.setState({ showSearchInputBox: false });
     this.webview.stopFindInPage("clearSelection");
