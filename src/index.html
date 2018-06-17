@@ -9,7 +9,7 @@
     <script defer src="resources/font-awesome/all.js"></script>
     <script>
       function playAudio(audioType, base64) {
-        var audio = new Audio("data:audio/" + audioType + ";base64," + base64);
+        var audio = new Audio(`data:audio/${audioType};base64,${resourceAsBase64}`);
         audio.play();
       }
     </script>

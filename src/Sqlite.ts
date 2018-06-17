@@ -18,20 +18,6 @@ export class Sqlite {
     const db = await Sqlite.getDb();
     await Promise.all([
       db.run(`
-          CREATE TABLE IF NOT EXISTS zip_entry (
-            resource_holder TEXT,
-            flags INTEGER,
-            method INTEGER,
-            compressed_size INTEGER,
-            size INTEGER,
-            fname_len INTEGER,
-            extra_len INTEGER,
-            com_len INTEGER,
-            offset INTEGER,
-            name TEXT,
-            is_directory INTEGER
-          )`),
-      db.run(`
           CREATE TABLE IF NOT EXISTS ${CARD_TABLE} (
             ${CARD_COLUMN_ID} INTEGER PRIMARY KEY,
             ${CARD_COLUMN_DECK} TEXT,
