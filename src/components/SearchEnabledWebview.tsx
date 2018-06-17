@@ -1,12 +1,7 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
-import { RootState } from "../reducers";
 import { Icon, Input, Ref, SemanticICONS } from "semantic-ui-react";
 import "../stylesheets/components/FindInputBox.scss";
-import { actions } from "../actions";
 import { MouseEventHandler } from "react";
-import electron = require("electron");
 import WebviewTag = Electron.WebviewTag;
 import { InternalApp } from "../App";
 import FoundInPageEvent = Electron.FoundInPageEvent;
@@ -14,7 +9,6 @@ import { Keyboard } from "../services/Keyboard";
 
 interface SearchEnabledWebviewProps {
   definition: string;
-  webviewRef: (webviewTag: WebviewTag) => void;
 }
 
 interface SearchEnabledWebviewStates {
@@ -104,10 +98,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
         )}
         <webview
           src="data:text/html;charset=UTF-8,"
-          ref={ref => {
-            this.webview = ref as WebviewTag;
-            this.props.webviewRef(ref as WebviewTag);
-          }}
+          ref={ref => (this.webview = ref as WebviewTag)}
           style={{
             height: "100%",
             padding: "10px",
@@ -121,7 +112,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
   private resetSearchCounts = () => {
     this.setState({
       activeMatchOrdinal: 0,
-      totalMatches: 0,
+      totalMatches: 0
     });
   };
   private inputIcon = (iconName: SemanticICONS, handler: MouseEventHandler<HTMLDivElement>): React.ReactNode => {
@@ -142,7 +133,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     if (searchText) {
       this.webview.findInPage(searchText, {
         forward: false,
-        findNext: true,
+        findNext: true
       });
     }
   };
@@ -150,7 +141,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     const searchText = this.input.value;
     if (searchText) {
       this.webview.findInPage(searchText, {
-        findNext: true,
+        findNext: true
       });
     }
   };
@@ -192,12 +183,12 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
         this.closeSearchInputBox();
       }
     });
-  }
+  };
   private registerFoundInPage = () => {
     this.webview.addEventListener("found-in-page", (event: FoundInPageEvent) => {
       this.setState({
         activeMatchOrdinal: event.result.activeMatchOrdinal,
-        totalMatches: event.result.matches,
+        totalMatches: event.result.matches
       });
     });
   };

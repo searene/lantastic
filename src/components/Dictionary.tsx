@@ -1,6 +1,5 @@
 import * as React from "react";
 import { AutoSuggestInput } from "./AutoSuggestInput";
-import WebviewTag = Electron.WebviewTag;
 import { SearchEnabledWebview } from "./SearchEnabledWebview";
 
 interface DictionaryStates {
@@ -21,8 +20,6 @@ export class Dictionary extends React.Component<DictionaryProps, DictionaryState
     };
   }
 
-  private webview: WebviewTag;
-
   public render() {
     return (
       <div
@@ -39,7 +36,7 @@ export class Dictionary extends React.Component<DictionaryProps, DictionaryState
             Dictionary.previousDefinition = html;
           }}
         />
-        <SearchEnabledWebview definition={this.state.definition} webviewRef={ref => (this.webview = ref)} />
+        <SearchEnabledWebview definition={this.state.definition} />
       </div>
     );
   }
