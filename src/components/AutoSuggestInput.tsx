@@ -30,12 +30,6 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
   public render() {
     return (
       <div {...this.props.style}>
-        <button
-          id={"refer-word-search-button"}
-          onClick={(event: React.SyntheticEvent<HTMLButtonElement>) =>
-            this.search((event.target as HTMLButtonElement).innerHTML)
-          }
-        />
         <div className={"input-with-suggestions"}>
           <Ref innerRef={this.handleInputRef}>
             <Input

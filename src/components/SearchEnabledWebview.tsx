@@ -8,36 +8,36 @@ import { KeyboardManager } from "../services/KeyboardManager";
 import * as fse from "fs-extra";
 import * as path from "path";
 
-interface SearchEnabledWebviewProps {
+interface ISearchEnabledWebviewProps {
   definition: string;
 }
 
-interface SearchEnabledWebviewStates {
+interface ISearchEnabledWebviewStates {
   showSearchInputBox: boolean;
   activeMatchOrdinal: number;
   totalMatches: number;
 }
 
-export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewProps, SearchEnabledWebviewStates> {
+export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewProps, ISearchEnabledWebviewStates> {
   private input: HTMLInputElement;
   private webview: WebviewTag;
 
-  constructor(props: SearchEnabledWebviewProps) {
+  constructor(props: ISearchEnabledWebviewProps) {
     super(props);
     this.state = {
-      showSearchInputBox: false,
       activeMatchOrdinal: 0,
+      showSearchInputBox: false,
       totalMatches: 0
     };
   }
 
-  async componentDidMount() {
+  public async componentDidMount() {
     this.registerShowFindInputBoxShortcut();
     await this.registerWebviewEventListeners();
     this.showDefinition();
   }
 
-  public componentDidUpdate(prevProps: SearchEnabledWebviewProps, prevStates: SearchEnabledWebviewStates) {
+  public componentDidUpdate(prevProps: ISearchEnabledWebviewProps, prevStates: ISearchEnabledWebviewStates) {
     if (!prevStates.showSearchInputBox && this.state.showSearchInputBox) {
       this.resetSearchCounts();
       this.registerInputEventListeners();
@@ -51,30 +51,30 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     return (
       <div
         style={{
-          marginTop: "5px",
-          position: "relative",
-          flexGrow: 1,
-          flexDirection: "column",
-          display: "flex",
-          overflow: "auto",
           border: "1px solid rgba(34,36,38,.15)",
-          boxShadow: "0 1px 2px 0 rgba(34,36,38,.15)"
+          boxShadow: "0 1px 2px 0 rgba(34,36,38,.15)",
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          marginTop: "5px",
+          overflow: "auto",
+          position: "relative"
         }}
       >
         {this.state.showSearchInputBox && (
           <div
             style={{
-              position: "absolute",
-              zIndex: 999,
+              backgroundColor: "white",
+              border: "1px solid rgba(34,36,38,.15)",
               display: "flex",
+              position: "absolute",
               top: 0,
               width: "100%",
-              border: "1px solid rgba(34,36,38,.15)",
               padding: "9.5px 0 9.5px 14px",
-              backgroundColor: "white"
+              zIndex: 999
             }}
           >
-            <Ref innerRef={ref => (this.input = ref.childNodes[0] as HTMLInputElement)}>
+            <Ref innerRef={this.handleInputRef}>
               <Input
                 className={"find-input"}
                 style={{
@@ -158,7 +158,9 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
   };
   private registerConsoleMessage = () => {
     this.webview.addEventListener("console-message", event => {
+      // tslint:disable:no-console
       console.log("webview message: " + event.message);
+      // tslint:enable:no-console
     });
   };
   private insertCSS = async () => {
@@ -210,5 +212,8 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
   private closeSearchInputBox = () => {
     this.setState({ showSearchInputBox: false });
     this.webview.stopFindInPage("clearSelection");
+  };
+  private handleInputRef = (ref: HTMLElement) => {
+    this.input = ref.childNodes[0] as HTMLInputElement;
   };
 }

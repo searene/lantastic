@@ -1,4 +1,4 @@
-import { List, Set, Stack } from "immutable";
+import { Set } from "immutable";
 import { getOS, OS } from "../Utils/CommonUtils";
 
 export class KeyboardManager {
@@ -6,9 +6,6 @@ export class KeyboardManager {
   public static KEY_ALT = "Alt";
   public static KEY_META = "Meta";
   public static KEY_SHIFT = "Shift";
-
-  private static pressedKeyStack: string[] = [];
-  private static isKeyboardEventListenerRegistered = false;
 
   public static isModifierKeyPressed = (modifierKeys: string[]): boolean => {
     const modifierKeyStack = KeyboardManager.pressedKeyStack.filter(
@@ -34,7 +31,7 @@ export class KeyboardManager {
     const isMacShortcut =
       getOS() === OS.MacOS && KeyboardManager.isKeyPressed([KeyboardManager.KEY_META, ...otherModifierKeys], normalKey);
     const isWinOrLinuxShortcut =
-      [OS.MacOS, OS.Linux].indexOf(getOS()) &&
+      [OS.MacOS, OS.Linux].indexOf(getOS()) > -1 &&
       KeyboardManager.isKeyPressed([KeyboardManager.KEY_CONTROL, ...otherModifierKeys], normalKey);
     return isMacShortcut || isWinOrLinuxShortcut;
   };
@@ -49,4 +46,6 @@ export class KeyboardManager {
       KeyboardManager.isKeyboardEventListenerRegistered = true;
     }
   };
+  private static pressedKeyStack: string[] = [];
+  private static isKeyboardEventListenerRegistered = false;
 }
