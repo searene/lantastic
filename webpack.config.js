@@ -123,7 +123,7 @@ const electronConfig = {
 };
 
 const imageSearchInjectionConfig = {
-  entry: ["./src/services/ImageSearchInjection.ts"],
+  entry: "./src/services/ImageSearchInjection.ts",
   output: {
     path: __dirname + "/dist",
     filename: "ImageSearchInjection.js",
@@ -199,4 +199,53 @@ const dictionaryStyleConfig = {
   plugins: [extractDictionaryScss]
 };
 
-module.exports = [appConfig, electronConfig, imageSearchInjectionConfig, dictionaryStyleConfig];
+const definitionWebviewPreloadConfig = {
+  entry: "./src/services/DefinitionWebviewPreload.ts",
+  output: {
+    path: __dirname + "/dist",
+    filename: "DefinitionWebviewPreload.js",
+    devtoolModuleFilenameTemplate: "../[resource-path]",
+    pathinfo: false
+  },
+  target: "web",
+  mode: "development",
+  node: {
+    __dirname: false,
+    __filename: false
+  },
+
+  // Enable sourcemaps for debugging webpack's output.
+  devtool: "source-map",
+
+  resolve: {
+    extensions: [".js", ".ts", ".css"]
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true,
+              experimentalWatchApi: true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  externals: {
+    electron: "commonjs electron"
+  }
+};
+
+module.exports = [
+  appConfig,
+  electronConfig,
+  imageSearchInjectionConfig,
+  dictionaryStyleConfig,
+  definitionWebviewPreloadConfig
+];

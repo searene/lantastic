@@ -99,6 +99,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
           </div>
         )}
         <webview
+          preload="./DefinitionWebviewPreload.js"
           src="data:text/html;charset=UTF-8,"
           ref={ref => (this.webview = ref as WebviewTag)}
           style={{
@@ -205,8 +206,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
     });
   };
   private showDefinition = () => {
-    this.webview.scrollTop = 0;
-    this.webview.src = `data:text/html;charset=UTF-8,${this.props.definition}`;
+    this.webview.send("load-html", this.props.definition);
   };
   private closeSearchInputBox = () => {
     this.setState({ showSearchInputBox: false });

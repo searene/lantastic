@@ -4,6 +4,7 @@ import { Parser } from "../Parser";
 import "../stylesheets/components/AutoSuggestInput.scss";
 import { CSSProperties } from "react";
 import { WordDefinition } from "dict-parser";
+import * as fse from "fs-extra";
 
 interface AutoSuggestInputStates {
   word: string;

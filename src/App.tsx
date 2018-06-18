@@ -168,24 +168,6 @@ export const App = connect(
   mapDispatchToProps
 )(InternalApp);
 
-// class TestComponent extends React.Component<{}, {}> {
-//   private rootComponent: HTMLElement;
-//   public componentDidMount() {
-//     console.log(this.rootComponent);
-//   }
-//   public render() {
-//     return (
-//       <Ref innerRef={(ref) => this.rootComponent = ref}>
-//         <Modal open={true}>
-//           <Modal.Content>
-//             <div>test</div>
-//           </Modal.Content>
-//         </Modal>
-//       </Ref>
-//     );
-//   }
-// }
-
 ReactDOM.render(
   <Provider store={store}>
     <App />
