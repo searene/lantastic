@@ -6,7 +6,6 @@ import { List } from "immutable";
 
 export interface RootState {
   [index: string]: any;
-  readonly word: string;
   readonly activeTab: Tab;
   readonly chosenDeckName: string;
   readonly decks: any[];
@@ -23,16 +22,11 @@ const initialState: RootState = {
   defaultDeckName: "",
   isLoading: true,
   moreDeckName: "",
-  word: "",
-  wordDefinitions: List(),
   showGoogleImageModal: false,
 };
 
 export const rootReducer = (state: RootState = initialState, action: RootAction): RootState => {
   switch (action.type) {
-    case getType(actions.setWord):
-      return { ...state, word: action.payload };
-
     case getType(actions.setActiveTab):
       return { ...state, activeTab: action.payload };
 

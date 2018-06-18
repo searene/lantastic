@@ -1,42 +1,27 @@
 import * as React from "react";
-import { connect, Dispatch } from "react-redux";
-import { bindActionCreators } from "redux";
 import { Icon, Input, Ref } from "semantic-ui-react";
-import { actions } from "../actions";
 import { Parser } from "../Parser";
-import { RootState } from "../reducers";
 import "../stylesheets/components/AutoSuggestInput.scss";
-import { List } from "immutable";
 import { CSSProperties } from "react";
 import { WordDefinition } from "dict-parser";
 
-interface IAutoSuggestInputStates {
+interface AutoSuggestInputStates {
+  word: string;
   suggestions: string[];
 }
 
-const mapStateToProps = (state: RootState) => ({
-  word: state.word,
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      setWord: actions.setWord,
-    },
-    dispatch
-  );
+interface AutoSuggestInputProps {
+  onSearchCompleted: (html: string) => void;
+  style?: CSSProperties;
+}
 
-type AutoSuggestInputProps = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps> & {
-    onSearchCompleted: (html: string) => void;
-    style?: CSSProperties;
-  };
-
-class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, IAutoSuggestInputStates> {
+export class AutoSuggestInput extends React.Component<AutoSuggestInputProps, AutoSuggestInputStates> {
   private inputComponent: HTMLElement;
   private suggestionsComponent: HTMLDivElement;
   constructor(props: AutoSuggestInputProps) {
     super(props);
     this.state = {
+      word: "",
       suggestions: []
     };
   }
@@ -59,11 +44,11 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
                   circular
                   link
                   id={"search-word-icon"}
-                  onClick={() => this.search(this.props.word)}
+                  onClick={() => this.search(this.state.word)}
                 />
               }
               placeholder="Search in dictionaries..."
-              value={this.props.word}
+              value={this.state.word}
               className="search-input"
               onKeyDown={this.handleOnKeyDown}
               onChange={this.handleChangeOnInput}
@@ -74,9 +59,9 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
               {this.state.suggestions.map(suggestion => (
                 <div
                   key={suggestion}
-                  onClick={(evt: React.SyntheticEvent<HTMLDivElement>) => {
+                  onClick={async (evt: React.SyntheticEvent<HTMLDivElement>) => {
                     this.setState({ suggestions: [] });
-                    this.search((evt.target as HTMLDivElement).innerHTML);
+                    await this.search((evt.target as HTMLDivElement).innerHTML);
                   }}
                   className={"suggestion-item"}
                 >
@@ -94,7 +79,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
   private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
-      await this.search(currentActiveSuggestion === undefined ? this.props.word : currentActiveSuggestion.innerHTML);
+      await this.search(currentActiveSuggestion === undefined ? this.state.word : currentActiveSuggestion.innerHTML);
     } else if (["ArrowUp", "ArrowDown"].indexOf(event.key) > -1 && !this.suggestionsComponent) {
       event.preventDefault();
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
@@ -141,7 +126,7 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
   };
   private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
     const input = (event.target as HTMLInputElement).value;
-    this.props.setWord(input);
+    this.setState({ word: input });
     const suggestions = await Parser.getDictParser().getWordCandidates(input);
     this.setState({
       suggestions
@@ -151,7 +136,3 @@ class ConnectedAutoSuggestInput extends React.Component<AutoSuggestInputProps, I
     return wordDefinitions.reduce((r, wordDefinition) => r + wordDefinition.html, "");
   };
 }
-export const AutoSuggestInput = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedAutoSuggestInput);

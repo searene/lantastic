@@ -8,7 +8,6 @@ export const actions = {
   setDefaultDeckName: createStandardAction("SET_DEFAULT_DECK_NAME")<string>(),
   setLoading: createStandardAction("SET_LOADING")<boolean>(),
   setMoreDeckName: createStandardAction("SET_MORE_DECK_NAME")<string>(),
-  setWord: createStandardAction("SET_WORD")<string>(),
   setShowGoogleImageModal: createStandardAction("SET_SHOW_GOOGLE_IMAGE_MODAL")<boolean>(),
 };
 
