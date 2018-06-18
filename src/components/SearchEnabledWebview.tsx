@@ -3,9 +3,8 @@ import { Icon, Input, Ref, SemanticICONS } from "semantic-ui-react";
 import "../stylesheets/components/FindInputBox.scss";
 import { MouseEventHandler } from "react";
 import WebviewTag = Electron.WebviewTag;
-import { InternalApp } from "../App";
 import FoundInPageEvent = Electron.FoundInPageEvent;
-import { Keyboard } from "../services/Keyboard";
+import { KeyboardManager } from "../services/KeyboardManager";
 import * as fse from "fs-extra";
 import * as path from "path";
 
@@ -170,7 +169,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
   };
   private registerShowFindInputBoxShortcut = () => {
     document.addEventListener("keydown", event => {
-      if (InternalApp.isKeyWithCtrlOrCmdPressed([], "f")) {
+      if (KeyboardManager.isKeyWithCtrlOrCmdPressed([], "f")) {
         this.setState({ showSearchInputBox: true });
         this.input.focus();
       }
@@ -178,7 +177,7 @@ export class SearchEnabledWebview extends React.Component<SearchEnabledWebviewPr
   };
   private registerInputKeyboardShortcuts = () => {
     this.input.addEventListener("keyup", event => {
-      if (InternalApp.isKeyPressed([Keyboard.KEY_SHIFT], "Enter")) {
+      if (KeyboardManager.isKeyPressed([KeyboardManager.KEY_SHIFT], "Enter")) {
         this.findPrev();
       } else if (event.key === "Enter") {
         this.findNext();

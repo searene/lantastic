@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/searene/lantastic#readme",
   "dependencies": {
+    "dict-parser": "file:../DictParser",
     "fs-extra": "^6.0.1",
     "google-images": "2.1.0",
     "immutable": "3.8.2",
@@ -33,8 +34,7 @@
     "redux": "4.0.0",
     "semantic-ui-css": "2.3.1",
     "semantic-ui-react": "0.81.1",
-    "sqlite": "2.9.2",
-    "tslint": "5.10.0"
+    "sqlite": "2.9.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^5.0.3",
@@ -50,7 +50,6 @@
     "copy-webpack-plugin": "4.5.1",
     "css-loader": "0.28.11",
     "cssnano": "3.10.0",
-    "dict-parser": "file:../DictParser",
     "electron": "2.0.2",
     "electron-builder": "20.15.1",
     "electron-rebuild": "1.7.3",
@@ -69,6 +68,9 @@
     "style-loader": "0.21.0",
     "sugarss": "1.0.1",
     "ts-loader": "4.4.1",
+    "tslint": "5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-react": "^3.6.0",
     "typesafe-actions": "2.0.4",
     "typescript": "2.9.1",
     "utility-types": "2.0.0",

@@ -1,8 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Set, Stack } from "immutable";
 import { connect, Dispatch, Provider } from "react-redux";
-import { Modal, Ref } from "semantic-ui-react";
 import { actions } from "./actions";
 import { CardBrowser } from "./components/CardBrowser";
 import { Deck } from "./components/Deck";
@@ -14,16 +12,16 @@ import { SearchAndAdd } from "./components/SearchAndAdd";
 import { Configuration } from "./Configuration";
 import { DECK_COLUMN_NAME, DECK_TABLE } from "./Constants";
 import { Parser } from "./Parser";
-import { Keyboard } from "./services/Keyboard";
 import { Sqlite } from "./Sqlite";
 import { store } from "./store";
-import { getOS, isCtrlOrCommand, OS } from "./Utils/CommonUtils";
 import "./stylesheets/App.scss";
+import { KeyboardManager } from "./services/KeyboardManager";
 
-export interface IAppProps {
+export interface IAppStates {
   activeTab: Tab;
-  isLoading: boolean;
-  setLoading: (isLoading: boolean) => any;
+  loading: boolean;
+}
+export interface IAppProps {
   decks: any[];
   setDecks: (decks: any[]) => any;
   setChosenDeckName: (deckName: string) => any;
@@ -31,42 +29,23 @@ export interface IAppProps {
 }
 
 const mapStateToProps = (state: IAppProps) => ({
-  activeTab: state.activeTab,
-  decks: state.decks,
-  isLoading: state.isLoading
+  decks: state.decks
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
   setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
   setDefaultDeckName: (deckName: string) => dispatch(actions.setDefaultDeckName(deckName)),
-  setLoading: (isLoading: boolean) => dispatch(actions.setLoading(isLoading))
 });
 
-export class InternalApp extends React.Component<IAppProps> {
-  public static isModifierKeyPressed = (modifierKeys: string[]) => {
-    return Keyboard.isModifierKeyPressed(InternalApp.pressedKeyStack, modifierKeys);
-  };
-
-  public static isKeyPressed = (modifierKeys: string[], normalKey: string): boolean => {
-    return (
-      InternalApp.isModifierKeyPressed(modifierKeys) &&
-      InternalApp.pressedKeyStack[InternalApp.pressedKeyStack.length - 1] === normalKey
-    );
-  };
-
-  public static isKeyWithCtrlOrCmdPressed = (otherModifierKeys: string[], normalKey: string): boolean => {
-    const isMacShortcut =
-      getOS() === OS.MacOS && InternalApp.isKeyPressed([Keyboard.KEY_META, ...otherModifierKeys], normalKey);
-    const isWinOrLinuxShortcut =
-      [OS.MacOS, OS.Linux].indexOf(getOS()) &&
-      InternalApp.isKeyPressed([Keyboard.KEY_CONTROL, ...otherModifierKeys], normalKey);
-    return isMacShortcut || isWinOrLinuxShortcut;
-  };
-
-  private static pressedKeyStack: string[] = [];
-  private static isKeyboardEventListenerRegistered = false;
-
+export class InternalApp extends React.Component<IAppProps, IAppStates> {
+  constructor(props: IAppProps) {
+    super(props);
+    this.state = {
+      activeTab: Tab.SEARCH_AND_ADD,
+      loading: true
+    };
+  }
   public init = async (): Promise<void> => {
     await Sqlite.init();
     await Configuration.init();
@@ -74,33 +53,31 @@ export class InternalApp extends React.Component<IAppProps> {
     await this.setUpDecks();
     await this.setUpChosenDeckName();
     await this.setUpDefaultDeck();
-    this.props.setLoading(false);
+    this.stopLoading();
   };
 
-  public async componentWillMount() {
-    this.registerShortcuts();
+  public async componentDidMount() {
+    KeyboardManager.registerEventListeners();
     await this.init();
   }
 
   public render() {
     let tabContents: React.ReactNode;
 
-    if (this.props.activeTab === Tab.SEARCH_AND_ADD) {
+    if (this.state.activeTab === Tab.SEARCH_AND_ADD) {
       tabContents = <SearchAndAdd />;
-    } else if (this.props.activeTab === Tab.REVIEW) {
+    } else if (this.state.activeTab === Tab.REVIEW) {
       tabContents = <Review />;
-    } else if (this.props.activeTab === Tab.PREFERENCES) {
+    } else if (this.state.activeTab === Tab.PREFERENCES) {
       tabContents = <Preferences />;
-    } else if (this.props.activeTab === Tab.DECK) {
+    } else if (this.state.activeTab === Tab.DECK) {
       tabContents = <Deck />;
-    } else if (this.props.activeTab === Tab.CARD_BROWSER) {
+    } else if (this.state.activeTab === Tab.CARD_BROWSER) {
       tabContents = <CardBrowser />;
     }
     return (
       <div className="app-container">
-        {this.props.isLoading ? (
-          <div />
-        ) : (
+        {!this.state.loading && (
           <div
             style={{
               display: "flex",
@@ -118,7 +95,7 @@ export class InternalApp extends React.Component<IAppProps> {
                 width: "100%"
               }}
             >
-              <NavBar />
+              <NavBar activeTab={this.state.activeTab} onActiveTabChange={this.activateTab}/>
               {tabContents}
             </div>
 
@@ -150,16 +127,20 @@ export class InternalApp extends React.Component<IAppProps> {
     const defaultDeckName = await Configuration.get(Configuration.DEFAULT_DECK_NAME_KEY);
     this.props.setDefaultDeckName(defaultDeckName);
   };
-  private registerShortcuts = () => {
-    if (!InternalApp.isKeyboardEventListenerRegistered) {
-      document.addEventListener("keydown", event => {
-        InternalApp.pressedKeyStack.push(event.key);
-      });
-      document.addEventListener("keyup", event => {
-        InternalApp.pressedKeyStack.pop();
-      });
-      InternalApp.isKeyboardEventListenerRegistered = true;
-    }
+  private activateTab = (tab: Tab) => {
+    this.setState({
+      activeTab: tab
+    });
+  };
+  private stopLoading = () => {
+    this.setState({
+      loading: false
+    });
+  };
+  private startLoading = () => {
+    this.setState({
+      loading: true
+    });
   };
 }
 

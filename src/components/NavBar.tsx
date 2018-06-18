@@ -15,34 +15,29 @@ export enum Tab {
   PREFERENCES
 }
 
-const mapStateToProps = (state: RootState) => ({
-  activeTab: state.activeTab
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      setActiveTab: actions.setActiveTab
-    },
-    dispatch
-  );
+interface INavBarProps {
+  activeTab: Tab,
+  onActiveTabChange: (tab: Tab) => void;
+}
 
-export type NavBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
+// export type NavBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
 
-export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
+export class NavBar extends React.Component<INavBarProps> {
   public render() {
     return (
       <Menu icon="labeled" vertical className="navbar">
-        <Menu.Item active={this.props.activeTab === Tab.DECK} onClick={() => this.props.setActiveTab(Tab.DECK)}>
+        <Menu.Item active={this.props.activeTab === Tab.DECK} onClick={() => this.props.onActiveTabChange(Tab.DECK)}>
           <Icon name="book" />
         </Menu.Item>
         <Menu.Item
           active={this.props.activeTab === Tab.SEARCH_AND_ADD}
-          onClick={() => this.props.setActiveTab(Tab.SEARCH_AND_ADD)}
+          onClick={() => this.props.onActiveTabChange(Tab.SEARCH_AND_ADD)}
         >
           <Icon name="add" />
         </Menu.Item>
 
-        <Menu.Item active={this.props.activeTab === Tab.REVIEW} onClick={() => this.props.setActiveTab(Tab.REVIEW)}>
+        <Menu.Item active={this.props.activeTab === Tab.REVIEW}
+                   onClick={() => this.props.onActiveTabChange(Tab.REVIEW)}>
           <Icon name="newspaper" />
         </Menu.Item>
 
@@ -52,7 +47,7 @@ export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
 
         <Menu.Item
           active={this.props.activeTab === Tab.PREFERENCES}
-          onClick={() => this.props.setActiveTab(Tab.PREFERENCES)}
+          onClick={() => this.props.onActiveTabChange(Tab.PREFERENCES)}
         >
           <Icon name="setting" />
         </Menu.Item>
@@ -60,11 +55,6 @@ export class ConnectedNavBar extends React.Component<NavBarProps, {}> {
     );
   }
   private handleClickOnCardBrowserTab = () => {
-    this.props.setActiveTab(Tab.CARD_BROWSER);
+    this.props.onActiveTabChange(Tab.CARD_BROWSER);
   };
 }
-
-export const NavBar = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedNavBar);

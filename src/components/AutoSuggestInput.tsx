@@ -6,24 +6,25 @@ import { CSSProperties } from "react";
 import { WordDefinition } from "dict-parser";
 import * as fse from "fs-extra";
 
-interface AutoSuggestInputStates {
+interface IAutoSuggestInputStates {
   word: string;
   suggestions: string[];
 }
 
-interface AutoSuggestInputProps {
+interface IAutoSuggestInputProps {
   onSearchCompleted: (html: string) => void;
   style?: CSSProperties;
 }
 
-export class AutoSuggestInput extends React.Component<AutoSuggestInputProps, AutoSuggestInputStates> {
-  private inputComponent: HTMLElement;
+export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IAutoSuggestInputStates> {
+  private input: HTMLInputElement;
   private suggestionsComponent: HTMLDivElement;
-  constructor(props: AutoSuggestInputProps) {
+
+  constructor(props: IAutoSuggestInputProps) {
     super(props);
     this.state = {
-      word: "",
-      suggestions: []
+      suggestions: [],
+      word: ""
     };
   }
   public render() {
@@ -36,16 +37,16 @@ export class AutoSuggestInput extends React.Component<AutoSuggestInputProps, Aut
           }
         />
         <div className={"input-with-suggestions"}>
-          <Ref innerRef={ref => (this.inputComponent = ref)}>
+          <Ref innerRef={this.handleInputRef}>
             <Input
               icon={
                 <Icon
-                  name={"search"}
-                  inverted
-                  circular
-                  link
+                  circular={true}
                   id={"search-word-icon"}
-                  onClick={() => this.search(this.state.word)}
+                  inverted={true}
+                  link={true}
+                  name={"search"}
+                  onClick={this.handleClickOnSearchIcon}
                 />
               }
               placeholder="Search in dictionaries..."
@@ -58,14 +59,7 @@ export class AutoSuggestInput extends React.Component<AutoSuggestInputProps, Aut
           {this.state.suggestions.length !== 0 ? (
             <div className={"suggestions"} ref={ref => (this.suggestionsComponent = ref)}>
               {this.state.suggestions.map(suggestion => (
-                <div
-                  key={suggestion}
-                  onClick={async (evt: React.SyntheticEvent<HTMLDivElement>) => {
-                    this.setState({ suggestions: [] });
-                    await this.search((evt.target as HTMLDivElement).innerHTML);
-                  }}
-                  className={"suggestion-item"}
-                >
+                <div key={suggestion} onClick={this.handleClickOnSuggestion} className={"suggestion-item"}>
                   {suggestion}
                 </div>
               ))}
@@ -135,5 +129,13 @@ export class AutoSuggestInput extends React.Component<AutoSuggestInputProps, Aut
   };
   private getDefinitionHTML = (wordDefinitions: WordDefinition[]): string => {
     return wordDefinitions.reduce((r, wordDefinition) => r + wordDefinition.html, "");
+  };
+  private handleInputRef = (ref: HTMLElement) => (this.input = ref.childNodes[0] as HTMLInputElement);
+  private handleClickOnSearchIcon = async () => {
+    await this.search(this.state.word);
+  };
+  private handleClickOnSuggestion = async (evt: React.SyntheticEvent<HTMLDivElement>) => {
+    this.setState({ suggestions: [] });
+    await this.search((evt.target as HTMLDivElement).innerHTML);
   };
 }
