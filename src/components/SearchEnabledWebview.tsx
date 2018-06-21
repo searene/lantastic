@@ -7,6 +7,7 @@ import FoundInPageEvent = Electron.FoundInPageEvent;
 import * as fse from "fs-extra";
 import * as path from "path";
 import { Shortcuts } from "react-shortcuts";
+import { AppCache } from "../services/AppCache";
 
 interface ISearchEnabledWebviewProps {
   onSearchInputBoxVisibilityChange: (show: boolean) => void;
@@ -158,9 +159,8 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
     });
   };
   private insertCSS = async () => {
-    const css = await fse.readFile(path.resolve(__dirname, "css/dictionary.css"), "UTF-8");
     this.webview.addEventListener("dom-ready", event => {
-      this.webview.insertCSS(css);
+      this.webview.insertCSS(AppCache.webviewCSS);
     });
   };
   private registerFoundInPage = () => {

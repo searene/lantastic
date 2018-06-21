@@ -14,6 +14,8 @@ import moment = require("moment");
 import { Card } from "../models/Card";
 import { List } from "immutable";
 import { BaseButton } from "./BaseButton";
+import WebviewTag = Electron.WebviewTag;
+import { AppCache } from "../services/AppCache";
 
 interface ICardTableStates {
   activeCard: Card;
@@ -53,7 +55,7 @@ export class CardTable extends React.Component<ICardTableProps, ICardTableStates
           open={this.state.showModal}
           onClose={this.closeModal}
         />
-        <Table celled={true} selectable={true} striped={true} sortable={true} fixed={true}>
+        <Table celled={true} selectable={true} striped={true} sortable={true} fixed={true} singleLine={true}>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Deck</Table.HeaderCell>
@@ -72,14 +74,10 @@ export class CardTable extends React.Component<ICardTableProps, ICardTableStates
               >
                 <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
                 <Table.Cell>
-                  <webview
-                    src={"data:text/html;charset=utf-8," + card[CARD_COLUMN_FRONT]}
-                  />
+                  <div dangerouslySetInnerHTML={{__html: card[CARD_COLUMN_FRONT]}}/>
                 </Table.Cell>
                 <Table.Cell>
-                  <webview
-                    src={"data:text/html;charset=utf-8," + card[CARD_COLUMN_BACK]}
-                  />
+                  <div dangerouslySetInnerHTML={{__html: card[CARD_COLUMN_BACK]}}/>
                 </Table.Cell>
                 <Table.Cell>
                   {moment(card[CARD_COLUMN_CREATION_TIME], DATE_FORMAT).format(this.TABLE_DATE_FORMAT)}
@@ -108,5 +106,13 @@ export class CardTable extends React.Component<ICardTableProps, ICardTableStates
   };
   private deleteActiveCard = (callback: (success: boolean) => void) => {
     this.props.onDeleteCard(this.state.activeCard.id, callback);
+  };
+  private handleWebviewRef = (webview: WebviewTag) => {
+    if (webview === null) {
+      return;
+    }
+    webview.addEventListener("dom-ready", event => {
+      webview.insertCSS(AppCache.webviewCSS);
+    });
   };
 }

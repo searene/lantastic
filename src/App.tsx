@@ -18,6 +18,7 @@ import "./stylesheets/App.scss";
 import * as PropTypes from "prop-types";
 import keymap from "./configs/Keymap";
 import { ShortcutManager, Shortcuts } from "react-shortcuts";
+import { AppCache } from "./services/AppCache";
 
 export interface IAppStates {
   activeTab: Tab;
@@ -57,6 +58,7 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
     await Sqlite.init();
     await Configuration.init();
     await Parser.init();
+    await AppCache.init();
     await this.setUpDecks();
     await this.setUpChosenDeckName();
     await this.setUpDefaultDeck();
