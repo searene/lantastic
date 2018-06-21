@@ -1,6 +1,6 @@
 import * as React from "react";
 import { CardModal } from "./CardModal";
-import { Table } from "semantic-ui-react";
+import { Button, Table } from "semantic-ui-react";
 import {
   CARD_COLUMN_BACK,
   CARD_COLUMN_CREATION_TIME,
@@ -13,25 +13,30 @@ import {
 import moment = require("moment");
 import { Card } from "../models/Card";
 import { List } from "immutable";
+import { BaseButton } from "./BaseButton";
 
-interface CardTableStates {
+interface ICardTableStates {
   activeCard: Card;
   showModal: boolean;
 }
-interface CardTableProps {
+
+interface ICardTableProps {
   cards: List<Card>;
   onDeleteCard: (cardId: number, callback: (success: boolean) => void) => void;
 }
-export class CardTable extends React.Component<CardTableProps, CardTableStates> {
+
+export class CardTable extends React.Component<ICardTableProps, ICardTableStates> {
   private readonly TABLE_DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
-  constructor(props: CardTableProps) {
+
+  constructor(props: ICardTableProps) {
     super(props);
     this.state = {
       activeCard: undefined,
       showModal: false
     };
   }
-  render() {
+
+  public render() {
     return (
       <div
         style={{
@@ -48,7 +53,7 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
           open={this.state.showModal}
           onClose={this.closeModal}
         />
-        <Table celled selectable striped sortable fixed>
+        <Table celled={true} selectable={true} striped={true} sortable={true} fixed={true}>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Deck</Table.HeaderCell>
@@ -56,6 +61,7 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
               <Table.HeaderCell>Back</Table.HeaderCell>
               <Table.HeaderCell>Creation Time</Table.HeaderCell>
               <Table.HeaderCell>Next Review Time</Table.HeaderCell>
+              <Table.HeaderCell textAlign="center">Details</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -63,8 +69,6 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
             {this.props.cards.map(card => (
               <Table.Row
                 key={card[CARD_COLUMN_ID]}
-                className={"search-table-row"}
-                onClick={() => this.handleClickOnTableRow(card)}
               >
                 <Table.Cell>{card[CARD_COLUMN_DECK]}</Table.Cell>
                 <Table.Cell>
@@ -83,6 +87,9 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
                 <Table.Cell>
                   {moment(card[CARD_COLUMN_NEXT_REVIEW_TIME], DATE_FORMAT).format(this.TABLE_DATE_FORMAT)}
                 </Table.Cell>
+                <Table.Cell textAlign="center">
+                  <BaseButton onClick={this.showModal.bind(this, card)}>Details</BaseButton>
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
@@ -93,7 +100,7 @@ export class CardTable extends React.Component<CardTableProps, CardTableStates> 
   private closeModal = () => {
     this.setState({ showModal: false });
   };
-  private handleClickOnTableRow = (card: Card) => {
+  private showModal = (card: Card) => {
     this.setState({
       activeCard: card,
       showModal: true
