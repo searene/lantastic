@@ -15,11 +15,14 @@ import { Parser } from "./Parser";
 import { Sqlite } from "./Sqlite";
 import { store } from "./store";
 import "./stylesheets/App.scss";
-import { KeyboardManager } from "./services/KeyboardManager";
+import * as PropTypes from "prop-types";
+import keymap from "./configs/Keymap";
+import { ShortcutManager, Shortcuts } from "react-shortcuts";
 
 export interface IAppStates {
   activeTab: Tab;
   loading: boolean;
+  showSearchInputBox: boolean;
 }
 export interface IAppProps {
   decks: any[];
@@ -35,13 +38,17 @@ const mapStateToProps = (state: IAppProps) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   setChosenDeckName: (deckName: string) => dispatch(actions.setChosenDeckName(deckName)),
   setDecks: (decks: any[]) => dispatch(actions.setDecks(decks)),
-  setDefaultDeckName: (deckName: string) => dispatch(actions.setDefaultDeckName(deckName)),
+  setDefaultDeckName: (deckName: string) => dispatch(actions.setDefaultDeckName(deckName))
 });
 
 export class InternalApp extends React.Component<IAppProps, IAppStates> {
+  public static childContextTypes = {
+    shortcuts: PropTypes.object.isRequired
+  };
   constructor(props: IAppProps) {
     super(props);
     this.state = {
+      showSearchInputBox: false,
       activeTab: Tab.SEARCH_AND_ADD,
       loading: true
     };
@@ -56,16 +63,25 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
     this.stopLoading();
   };
 
-  public async componentDidMount() {
-    KeyboardManager.registerEventListeners();
-    await this.init();
+  public getChildContext() {
+    return {
+      shortcuts: new ShortcutManager(keymap)
+    };
   }
 
+  public async componentDidMount() {
+    await this.init();
+  }
   public render() {
     let tabContents: React.ReactNode;
 
     if (this.state.activeTab === Tab.SEARCH_AND_ADD) {
-      tabContents = <SearchAndAdd />;
+      tabContents = (
+        <SearchAndAdd
+          showSearchInputBox={this.state.showSearchInputBox}
+          onSearchInputBoxVisibilityChange={this.handleSearchInputBoxVisibilityChange}
+        />
+      );
     } else if (this.state.activeTab === Tab.REVIEW) {
       tabContents = <Review />;
     } else if (this.state.activeTab === Tab.PREFERENCES) {
@@ -76,7 +92,7 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
       tabContents = <CardBrowser />;
     }
     return (
-      <div className="app-container">
+      <Shortcuts name="App" handler={this.handleShortcuts} targetNodeSelector="body" className="app-container">
         {!this.state.loading && (
           <div
             style={{
@@ -104,7 +120,7 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
             </div>
           </div>
         )}
-      </div>
+      </Shortcuts>
     );
   }
 
@@ -140,6 +156,22 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
   private startLoading = () => {
     this.setState({
       loading: true
+    });
+  };
+  private handleShortcuts = (action: string, event: KeyboardEvent) => {
+    if (
+      action === "searchInDictionary" &&
+      this.state.activeTab === Tab.SEARCH_AND_ADD &&
+      this.state.showSearchInputBox === false
+    ) {
+      this.setState({
+        showSearchInputBox: true
+      });
+    }
+  };
+  private handleSearchInputBoxVisibilityChange = (show: boolean) => {
+    this.setState({
+      showSearchInputBox: show
     });
   };
 }

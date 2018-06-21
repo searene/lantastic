@@ -4,7 +4,7 @@ import { Parser } from "../Parser";
 import "../stylesheets/components/AutoSuggestInput.scss";
 import { CSSProperties } from "react";
 import { WordDefinition } from "dict-parser";
-import * as fse from "fs-extra";
+import { Shortcuts } from "react-shortcuts";
 
 interface IAutoSuggestInputStates {
   word: string;
@@ -30,7 +30,7 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
   public render() {
     return (
       <div {...this.props.style}>
-        <div className={"input-with-suggestions"}>
+        <Shortcuts name="AutoSuggestInput" handler={this.handleShortcuts} className={"input-with-suggestions"}>
           <Ref innerRef={this.handleInputRef}>
             <Input
               icon={
@@ -46,11 +46,10 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
               placeholder="Search in dictionaries..."
               value={this.state.word}
               className="search-input"
-              onKeyDown={this.handleOnKeyDown}
               onChange={this.handleChangeOnInput}
             />
           </Ref>
-          {this.state.suggestions.length !== 0 ? (
+          {this.state.suggestions.length !== 0 && (
             <div className={"suggestions"} ref={ref => (this.suggestionsComponent = ref)}>
               {this.state.suggestions.map(suggestion => (
                 <div key={suggestion} onClick={this.handleClickOnSuggestion} className={"suggestion-item"}>
@@ -58,55 +57,36 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
                 </div>
               ))}
             </div>
-          ) : (
-            <div />
           )}
-        </div>
+        </Shortcuts>
       </div>
     );
   }
-  private handleOnKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      const currentActiveSuggestion = this.getCurrentActiveSuggestion();
-      await this.search(currentActiveSuggestion === undefined ? this.state.word : currentActiveSuggestion.innerHTML);
-    } else if (["ArrowUp", "ArrowDown"].indexOf(event.key) > -1 && !this.suggestionsComponent) {
-      event.preventDefault();
-      const currentActiveSuggestion = this.getCurrentActiveSuggestion();
-      const nextActiveSuggestion = this.getNextActiveSuggestion(event.key as "ArrowUp" | "ArrowDown");
-      if (currentActiveSuggestion !== undefined) {
-        currentActiveSuggestion.classList.remove("active");
-      }
-      if (nextActiveSuggestion !== undefined) {
-        nextActiveSuggestion.classList.add("active");
-      }
-      this.suggestionsComponent.scrollTop =
-        nextActiveSuggestion.offsetTop + nextActiveSuggestion.clientHeight - this.suggestionsComponent.clientHeight;
-    }
-  };
   private getCurrentActiveSuggestion = (): HTMLDivElement => {
     const activeSuggestionElement = document.querySelector(".suggestion-item.active");
     return activeSuggestionElement === null ? undefined : (activeSuggestionElement as HTMLDivElement);
   };
-  private getNextActiveSuggestion = (eventKey: "ArrowUp" | "ArrowDown"): HTMLDivElement => {
+  private getNextActiveSuggestion = (action: string): HTMLDivElement => {
     const currentActiveSuggestion = this.getCurrentActiveSuggestion();
     if (currentActiveSuggestion === undefined && this.suggestionsComponent.firstChild === null) {
       return undefined;
-    } else if (currentActiveSuggestion === undefined && eventKey === "ArrowUp") {
+    } else if (currentActiveSuggestion === undefined && action === "prevPromptWord") {
       return this.suggestionsComponent.lastChild as HTMLDivElement;
-    } else if (currentActiveSuggestion === undefined && eventKey === "ArrowDown") {
+    } else if (currentActiveSuggestion === undefined && action === "nextPromptWord") {
       return this.suggestionsComponent.firstChild as HTMLDivElement;
-    } else if (currentActiveSuggestion.previousSibling === null && eventKey === "ArrowUp") {
+    } else if (currentActiveSuggestion.previousSibling === null && action === "prevPromptWord") {
       return this.suggestionsComponent.lastChild as HTMLDivElement;
-    } else if (currentActiveSuggestion.nextSibling === null && eventKey === "ArrowDown") {
+    } else if (currentActiveSuggestion.nextSibling === null && action === "nextPromptWord") {
       return this.suggestionsComponent.firstChild as HTMLDivElement;
-    } else if (eventKey === "ArrowUp") {
+    } else if (action === "prevPromptWord") {
       return currentActiveSuggestion.previousSibling as HTMLDivElement;
-    } else if (eventKey === "ArrowDown") {
+    } else if (action === "nextPromptWord") {
       return currentActiveSuggestion.nextSibling as HTMLDivElement;
     }
   };
   private search = async (word: string) => {
     this.setState({
+      word: word,
       suggestions: []
     });
     const wordDefinitions = await Parser.getDictParser().getWordDefinitions(word);
@@ -131,5 +111,22 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
   private handleClickOnSuggestion = async (evt: React.SyntheticEvent<HTMLDivElement>) => {
     this.setState({ suggestions: [] });
     await this.search((evt.target as HTMLDivElement).innerHTML);
+  };
+  private handleShortcuts = async (action: string) => {
+    if (action === "search") {
+      const currentActiveSuggestion = this.getCurrentActiveSuggestion();
+      await this.search(currentActiveSuggestion === undefined ? this.state.word : currentActiveSuggestion.innerHTML);
+    } else if (["prevPromptWord", "nextPromptWord"].indexOf(action) > -1 && this.state.suggestions.length !== 0) {
+      const currentActiveSuggestion = this.getCurrentActiveSuggestion();
+      const nextActiveSuggestion = this.getNextActiveSuggestion(action);
+      if (currentActiveSuggestion !== undefined) {
+        currentActiveSuggestion.classList.remove("active");
+      }
+      if (nextActiveSuggestion !== undefined) {
+        nextActiveSuggestion.classList.add("active");
+      }
+      this.suggestionsComponent.scrollTop =
+        nextActiveSuggestion.offsetTop + nextActiveSuggestion.clientHeight - this.suggestionsComponent.clientHeight;
+    }
   };
 }

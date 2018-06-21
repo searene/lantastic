@@ -2,15 +2,20 @@ import * as React from "react";
 import { AutoSuggestInput } from "./AutoSuggestInput";
 import { SearchEnabledWebview } from "./SearchEnabledWebview";
 
+interface IDictionaryProps {
+  onSearchInputBoxVisibilityChange: (show: boolean) => void;
+  showSearchInputBox: boolean;
+}
+
 interface IDictionaryStates {
   definition: string;
 }
 
-export class Dictionary extends React.Component<{}, IDictionaryStates> {
+export class Dictionary extends React.Component<IDictionaryProps, IDictionaryStates> {
   // for recovering previous states when remounting
   public static previousDefinition = "";
 
-  constructor(props: {}) {
+  constructor(props: IDictionaryProps) {
     super(props);
     this.state = {
       definition: Dictionary.previousDefinition
@@ -28,7 +33,10 @@ export class Dictionary extends React.Component<{}, IDictionaryStates> {
         }}
       >
         <AutoSuggestInput onSearchCompleted={this.handleSearchCompleted}/>
-        <SearchEnabledWebview definition={this.state.definition} />
+        <SearchEnabledWebview
+          onSearchInputBoxVisibilityChange={this.props.onSearchInputBoxVisibilityChange}
+          showSearchInputBox={this.props.showSearchInputBox}
+          definition={this.state.definition}/>
       </div>
     );
   }

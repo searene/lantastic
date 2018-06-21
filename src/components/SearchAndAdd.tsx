@@ -5,12 +5,23 @@ import { Dictionary } from "./Dictionary";
 
 import "../stylesheets/components/SearchAndAdd.scss";
 
-export class SearchAndAdd extends React.Component {
+interface ISearchAndAddProps {
+  onSearchInputBoxVisibilityChange: (show: boolean) => void;
+  showSearchInputBox: boolean;
+}
+
+export class SearchAndAdd extends React.Component<ISearchAndAddProps> {
+  constructor(props: ISearchAndAddProps) {
+    super(props);
+  }
   public render() {
     return (
       <div style={{ position: "relative", flex: "1" }}>
         <SplitPane split="vertical" primary={"second"} minSize={200} maxSize={-100} defaultSize="60%">
-          <Dictionary />
+          <Dictionary
+            onSearchInputBoxVisibilityChange={this.props.onSearchInputBoxVisibilityChange}
+            showSearchInputBox={this.props.showSearchInputBox}
+          />
           <AddCard />
         </SplitPane>
       </div>

@@ -1,0 +1,25 @@
+.find-input.ui.input input {
+  border: none;
+  padding: 0;
+}
+.find-input.ui.input {
+  width: auto;
+}
+.find-input-icon-container {
+  color: #9F9F9F;
+  &:hover {
+    cursor: pointer;
+    color: black;
+  }
+}
+
+.find-input-container {
+  background-color: white;
+  border: 1px solid rgba(34, 36, 38, .15);
+  display: flex;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 9.5px 0 9.5px 14px;
+  z-index: 99;
+}

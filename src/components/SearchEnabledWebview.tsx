@@ -1,19 +1,20 @@
 import * as React from "react";
 import { Icon, Input, Ref, SemanticICONS } from "semantic-ui-react";
-import "../stylesheets/components/FindInputBox.scss";
+import "../stylesheets/components/SearchEnabledWebview.scss";
 import { MouseEventHandler } from "react";
 import WebviewTag = Electron.WebviewTag;
 import FoundInPageEvent = Electron.FoundInPageEvent;
-import { KeyboardManager } from "../services/KeyboardManager";
 import * as fse from "fs-extra";
 import * as path from "path";
+import { Shortcuts } from "react-shortcuts";
 
 interface ISearchEnabledWebviewProps {
+  onSearchInputBoxVisibilityChange: (show: boolean) => void;
+  showSearchInputBox: boolean;
   definition: string;
 }
 
 interface ISearchEnabledWebviewStates {
-  showSearchInputBox: boolean;
   activeMatchOrdinal: number;
   totalMatches: number;
 }
@@ -26,21 +27,20 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
     super(props);
     this.state = {
       activeMatchOrdinal: 0,
-      showSearchInputBox: false,
       totalMatches: 0
     };
   }
 
   public async componentDidMount() {
-    this.registerShowFindInputBoxShortcut();
     await this.registerWebviewEventListeners();
     this.showDefinition();
   }
 
   public componentDidUpdate(prevProps: ISearchEnabledWebviewProps, prevStates: ISearchEnabledWebviewStates) {
-    if (!prevStates.showSearchInputBox && this.state.showSearchInputBox) {
+    if (!prevProps.showSearchInputBox && this.props.showSearchInputBox) {
       this.resetSearchCounts();
       this.registerInputEventListeners();
+      this.focusSearchInputBox();
     }
     if (this.props.definition !== prevProps.definition) {
       this.showDefinition();
@@ -61,17 +61,12 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
           position: "relative"
         }}
       >
-        {this.state.showSearchInputBox && (
-          <div
+        {this.props.showSearchInputBox && (
+          <Shortcuts
+            className="find-input-container"
+            name="SearchEnabledWebview"
+            handler={this.handleShortcuts}
             style={{
-              backgroundColor: "white",
-              border: "1px solid rgba(34,36,38,.15)",
-              display: "flex",
-              position: "absolute",
-              top: 0,
-              width: "100%",
-              padding: "9.5px 0 9.5px 14px",
-              zIndex: 999
             }}
           >
             <Ref innerRef={this.handleInputRef}>
@@ -95,7 +90,7 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
             {this.inputIcon("chevron up", this.findPrev)}
             {this.inputIcon("chevron down", this.findNext)}
             {this.inputIcon("close", () => this.closeSearchInputBox())}
-          </div>
+          </Shortcuts>
         )}
         <webview
           preload="./DefinitionWebviewPreload.js"
@@ -148,7 +143,6 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
     }
   };
   private registerInputEventListeners = () => {
-    this.registerInputKeyboardShortcuts();
     this.registerInputChangeEvents();
   };
   private registerWebviewEventListeners = async () => {
@@ -167,25 +161,6 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
     const css = await fse.readFile(path.resolve(__dirname, "css/dictionary.css"), "UTF-8");
     this.webview.addEventListener("dom-ready", event => {
       this.webview.insertCSS(css);
-    });
-  };
-  private registerShowFindInputBoxShortcut = () => {
-    document.addEventListener("keydown", event => {
-      if (KeyboardManager.isKeyWithCtrlOrCmdPressed([], "f")) {
-        this.setState({ showSearchInputBox: true });
-        this.input.focus();
-      }
-    });
-  };
-  private registerInputKeyboardShortcuts = () => {
-    this.input.addEventListener("keyup", event => {
-      if (KeyboardManager.isKeyPressed([KeyboardManager.KEY_SHIFT], "Enter")) {
-        this.findPrev();
-      } else if (event.key === "Enter") {
-        this.findNext();
-      } else if (event.key === "Escape") {
-        this.closeSearchInputBox();
-      }
     });
   };
   private registerFoundInPage = () => {
@@ -210,10 +185,22 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
     this.webview.send("load-html", this.props.definition);
   };
   private closeSearchInputBox = () => {
-    this.setState({ showSearchInputBox: false });
+    this.props.onSearchInputBoxVisibilityChange(false);
     this.webview.stopFindInPage("clearSelection");
   };
   private handleInputRef = (ref: HTMLElement) => {
     this.input = ref.childNodes[0] as HTMLInputElement;
+  };
+  private handleShortcuts = (action: string) => {
+    if (action === "closeSearchInputBox") {
+      this.closeSearchInputBox();
+    } else if (action === "findNext") {
+      this.findNext();
+    } else if (action === "findPrev") {
+      this.findPrev();
+    }
+  };
+  private focusSearchInputBox = () => {
+    this.input.focus();
   };
 }
