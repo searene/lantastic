@@ -7,11 +7,12 @@ import { WordDefinition } from "dict-parser";
 import { Shortcuts } from "react-shortcuts";
 
 interface IAutoSuggestInputStates {
-  word: string;
   suggestions: string[];
 }
 
 interface IAutoSuggestInputProps {
+  word: string;
+  onWordChange: (word: string) => void;
   onSearchCompleted: (html: string) => void;
   style?: CSSProperties;
 }
@@ -24,7 +25,6 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
     super(props);
     this.state = {
       suggestions: [],
-      word: ""
     };
   }
   public render() {
@@ -44,7 +44,7 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
                 />
               }
               placeholder="Search in dictionaries..."
-              value={this.state.word}
+              value={this.props.word}
               className="search-input"
               onChange={this.handleChangeOnInput}
             />
@@ -85,8 +85,8 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
     }
   };
   private search = async (word: string) => {
+    this.props.onWordChange(word);
     this.setState({
-      word: word,
       suggestions: []
     });
     const wordDefinitions = await Parser.getDictParser().getWordDefinitions(word);
@@ -95,7 +95,7 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
   };
   private handleChangeOnInput = async (event: React.SyntheticEvent<HTMLInputElement>): Promise<void> => {
     const input = (event.target as HTMLInputElement).value;
-    this.setState({ word: input });
+    this.props.onWordChange(input);
     const suggestions = await Parser.getDictParser().getWordCandidates(input);
     this.setState({
       suggestions
@@ -106,7 +106,7 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
   };
   private handleInputRef = (ref: HTMLElement) => (this.input = ref.childNodes[0] as HTMLInputElement);
   private handleClickOnSearchIcon = async () => {
-    await this.search(this.state.word);
+    await this.search(this.props.word);
   };
   private handleClickOnSuggestion = async (evt: React.SyntheticEvent<HTMLDivElement>) => {
     this.setState({ suggestions: [] });
@@ -115,7 +115,7 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
   private handleShortcuts = async (action: string) => {
     if (action === "search") {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
-      await this.search(currentActiveSuggestion === undefined ? this.state.word : currentActiveSuggestion.innerHTML);
+      await this.search(currentActiveSuggestion === undefined ? this.props.word : currentActiveSuggestion.innerHTML);
     } else if (["prevPromptWord", "nextPromptWord"].indexOf(action) > -1 && this.state.suggestions.length !== 0) {
       const currentActiveSuggestion = this.getCurrentActiveSuggestion();
       const nextActiveSuggestion = this.getNextActiveSuggestion(action);

@@ -17,7 +17,8 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
   constructor(props: ImageSearchModalProps) {
     super(props);
   }
-  render() {
+
+  public render() {
     return (
       <Modal
         className="search-image-modal"
@@ -59,7 +60,9 @@ export class ImageSearchModal extends React.Component<ImageSearchModalProps> {
       webview.executeJavaScript(jsCode);
     });
     webview.addEventListener('console-message', (e) => {
-      console.log('Guest page logged a message:', e.message)
-    })
+      // tslint:disable:no-console
+      console.log("ImageSearch page logged a message:", e.message);
+      // tslint:enable:no-console
+    });
   };
 }

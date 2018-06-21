@@ -29,7 +29,9 @@ const mapStateToProps = (state: RootState) => ({
 });
 const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
 
-export type AddCardProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
+export type AddCardProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps> & {
+  searchWord: string;
+}
 
 const editorList = [
   {
@@ -63,7 +65,7 @@ class ConnectedAddCard extends React.Component<AddCardProps> {
             overflow: "auto"
           }}
         >
-          <ToolBar />
+          <ToolBar searchWord={this.props.searchWord}/>
           {editorList.map((e, i) => (
             <ContentEditableEditor
               key={e.key}

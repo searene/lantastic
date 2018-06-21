@@ -12,21 +12,12 @@ interface IToolBarStates {
   openImageSearchModal: boolean;
 }
 
-const mapStateToProps = (state: RootState) => ({
-  word: state.word
-});
-const mapDispatchToProps = (dispatch: Dispatch) =>
-  bindActionCreators(
-    {
-      setShowGoogleImageModal: actions.setShowGoogleImageModal
-    },
-    dispatch
-  );
+interface IToolBarProps {
+  searchWord: string;
+}
 
-type ToolBarProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
-
-export class InternalToolBar extends React.Component<ToolBarProps, IToolBarStates> {
-  constructor(props: ToolBarProps) {
+export class ToolBar extends React.Component<IToolBarProps, IToolBarStates> {
+  constructor(props: IToolBarProps) {
     super(props);
     this.state = {
       openImageSearchModal: false
@@ -34,7 +25,7 @@ export class InternalToolBar extends React.Component<ToolBarProps, IToolBarState
   }
   public render() {
     return (
-      <Menu icon style={{ marginRight: 0 }}>
+      <Menu icon={true} style={{ marginRight: 0 }}>
         <Menu.Item name="google" onClick={this.openImageSearchModal} target={"_blank"}>
           <Icon name="google" />
           <ImageSearchModal
@@ -52,7 +43,7 @@ export class InternalToolBar extends React.Component<ToolBarProps, IToolBarState
     });
   };
   private getImageSearchURL = () => {
-    return `https://www.google.com/search?q=${encodeURIComponent(this.props.word)}&tbm=isch`;
+    return `https://www.google.com/search?q=${encodeURIComponent(this.props.searchWord)}&tbm=isch`;
   };
   private closeImageSearchModal = () => {
     this.setState({
@@ -60,8 +51,3 @@ export class InternalToolBar extends React.Component<ToolBarProps, IToolBarState
     });
   };
 }
-
-export const ToolBar = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(InternalToolBar);

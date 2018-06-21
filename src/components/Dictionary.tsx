@@ -5,6 +5,8 @@ import { SearchEnabledWebview } from "./SearchEnabledWebview";
 interface IDictionaryProps {
   onSearchInputBoxVisibilityChange: (show: boolean) => void;
   showSearchInputBox: boolean;
+  searchWord: string;
+  onSearchWordChange: (searchWord: string) => void;
 }
 
 interface IDictionaryStates {
@@ -32,7 +34,10 @@ export class Dictionary extends React.Component<IDictionaryProps, IDictionarySta
           height: "100%"
         }}
       >
-        <AutoSuggestInput onSearchCompleted={this.handleSearchCompleted}/>
+        <AutoSuggestInput
+          word={this.props.searchWord}
+          onWordChange={this.props.onSearchWordChange}
+          onSearchCompleted={this.handleSearchCompleted}/>
         <SearchEnabledWebview
           onSearchInputBoxVisibilityChange={this.props.onSearchInputBoxVisibilityChange}
           showSearchInputBox={this.props.showSearchInputBox}
