@@ -92,7 +92,14 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
       tabContents = <CardBrowser />;
     }
     return (
-      <Shortcuts name="App" handler={this.handleShortcuts} targetNodeSelector="body" className="app-container">
+      <Shortcuts
+        name="App"
+        handler={this.handleShortcuts}
+        targetNodeSelector="body"
+        className="app-container"
+        alwaysFireHandler={true}
+        isolate={true}
+      >
         {!this.state.loading && (
           <div
             style={{
