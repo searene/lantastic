@@ -50,16 +50,16 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
     super(props);
     this.state = {
       showSearchInputBox: false,
-      activeTab: Tab.SEARCH_AND_ADD,
+      activeTab: Tab.DECK,
       loading: true
     };
   }
   public init = async (): Promise<void> => {
     await Sqlite.init();
+    await this.setUpDecks();
     await Configuration.init();
     await Parser.init();
     await AppCache.init();
-    await this.setUpDecks();
     await this.setUpChosenDeckName();
     await this.setUpDefaultDeck();
     this.stopLoading();

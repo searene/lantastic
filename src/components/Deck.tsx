@@ -34,18 +34,18 @@ export class ConnectedDeck extends React.Component<DeckProps> {
           [
             <div className="decks" key="decks">
               {this.props.decks.map(deck => (
-                <Segment stacked className="single-deck" key={deck.name}>
+                <Segment stacked={true} className="single-deck" key={deck.name}>
                   <b>{deck.name}</b>
                   <div className="single-deck-bottom">
                     <BaseButton
                       size="mini"
-                      primary
+                      primary={true}
                       disabled={deck.name === this.props.chosenDeckName}
-                      onClick={() => this.props.setChosenDeckName(deck.name)}
+                      onClick={this.props.setChosenDeckName.bind(this, deck.name)}
                     >
                       {deck.name === this.props.chosenDeckName ? "In use" : "Switch"}
                     </BaseButton>
-                    <BaseButton size="mini" onClick={() => this.props.setMoreDeckName(deck.name)}>
+                    <BaseButton size="mini" onClick={this.props.setMoreDeckName.bind(this, deck.name)}>
                       More...
                     </BaseButton>
                   </div>

@@ -8,20 +8,20 @@ import {
 } from "./Utils/CommonUtils";
 
 export class Parser {
-  private static _dictParser: DictParser;
   public static init = async () => {
-    Parser._dictParser = new DictParser(
+    Parser.dictParser = new DictParser(
       getPathToDictParserDbFile(),
       getPathToDictParserSqliteDbFile(),
       getPathToWordFormsFolder(),
       getPathToDictionaryResources()
     );
-    await Parser._dictParser.init();
+    await Parser.dictParser.init();
   };
   public static getDictParser = (): DictParser => {
-    if (Parser._dictParser === undefined) {
+    if (Parser.dictParser === undefined) {
       throw new Error("await Parser.init() should be executed first");
     }
-    return Parser._dictParser;
+    return Parser.dictParser;
   };
+  private static dictParser: DictParser;
 }

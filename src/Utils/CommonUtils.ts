@@ -12,8 +12,8 @@ export function getPathToDocuments() {
   return path.join(getPathToUserHome(), "Documents");
 }
 export function getPathToLantastic() {
-  // return path.join(getPathToDocuments(), 'lantastic');
-  return "/mnt/HDD/lantastic-config-dir";
+  return path.join(getPathToDocuments(), 'lantastic');
+  // return "/mnt/HDD/lantastic-config-dir";
 }
 export function getPathToDictParserDbFile() {
   return path.join(getPathToLantastic(), "dict-parser.db");

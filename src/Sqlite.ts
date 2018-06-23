@@ -1,4 +1,5 @@
 import * as sqlite from "sqlite";
+import * as sqlite3 from "sqlite3"
 import {
   CARD_COLUMN_BACK,
   CARD_COLUMN_CREATION_TIME,
@@ -12,6 +13,7 @@ import {
   DECK_TABLE
 } from "./Constants";
 import { getPathToSqliteDbFile } from "./Utils/CommonUtils";
+import * as fse from "fs-extra";
 
 export class Sqlite {
   public static init = async () => {
@@ -56,6 +58,9 @@ export class Sqlite {
 
   public static getDb = async (): Promise<sqlite.Database> => {
     if (Sqlite.db === undefined) {
+      if (!await fse.pathExists(getPathToSqliteDbFile())) {
+        await fse.createFile(getPathToSqliteDbFile());
+      }
       Sqlite.db = await sqlite.open(getPathToSqliteDbFile());
     }
     return Sqlite.db;

@@ -125,13 +125,13 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
     const dictMapList = await Parser.getDictParser().scan(this.state.scanPaths);
 
     // build zip entries for each zip file
-    const resourceHolderList = await this.getZippedResourceHolders(dictMapList);
-    for (const resourceHolder of resourceHolderList) {
-      this.setState({
-        scanMessage: `Building entries for ${path.basename(resourceHolder)}...`
-      });
-      await this.buildZipEntries(resourceHolder);
-    }
+    // const resourceHolderList = await this.getZippedResourceHolders(dictMapList);
+    // for (const resourceHolder of resourceHolderList) {
+    //   this.setState({
+    //     scanMessage: `Building entries for ${path.basename(resourceHolder)}...`
+    //   });
+    //   await this.buildZipEntries(resourceHolder);
+    // }
 
     this.setState({
       scanMessage: `Scan is completed`
