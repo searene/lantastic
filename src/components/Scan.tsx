@@ -1,32 +1,23 @@
-import { DictMap } from "dict-parser/lib/DictionaryFinder";
 import * as electron from "electron";
 import * as fse from "fs-extra";
 import * as path from "path";
 import * as React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
 import { Button, Icon, Table } from "semantic-ui-react";
 import { Configuration } from "../Configuration";
 import { Parser } from "../Parser";
-import { RootState } from "../reducers";
 import "../stylesheets/components/Scan.scss";
 import { createDirIfNotExists, getPathToLantastic } from "../Utils/CommonUtils";
 import { ZipReader } from "../ZipReader";
 import { BaseButton } from "./BaseButton";
 import { Title } from "./Title";
 
-interface ScanStates {
+interface IScanStates {
   scanPaths: string[];
   scanMessage: string;
 }
 
-const mapStateToProps = (state: RootState) => ({});
-const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({}, dispatch);
-
-export type ScanProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
-
-class ConnectedScan extends React.Component<ScanProps, ScanStates> {
-  constructor(props: ScanProps) {
+export class Scan extends React.Component<{}, IScanStates> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       scanPaths: Configuration.get(Configuration.SCAN_PATHS_KEY),
@@ -43,14 +34,14 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
           </div>
           <div style={{ marginTop: "20px", paddingTop: "10px", width: "100%" }}>
             <div style={{ display: "inline-block" }}>
-              <Button icon labelPosition="left" onClick={this.handleClickOnAdd}>
+              <Button icon={true} labelPosition="left" onClick={this.handleClickOnAdd}>
                 <Icon name="add" />
                 Add
               </Button>
             </div>
             <div style={{ float: "right" }}>
               <span style={{ marginRight: "10px" }}>{this.state.scanMessage}</span>
-              <Button icon labelPosition="left" color="teal" onClick={this.handleClickOnScan.bind(this)}>
+              <Button icon={true} labelPosition="left" color="teal" onClick={this.handleClickOnScan.bind(this)}>
                 <Icon name="search" />
                 Scan
               </Button>
@@ -62,7 +53,7 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
   }
 
   private getTable = () => (
-    <Table celled>
+    <Table celled={true}>
       <Table.Header>
         <Table.Row>
           <Table.HeaderCell>Path</Table.HeaderCell>
@@ -74,7 +65,7 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
         {this.state.scanPaths.map(scanPath => (
           <Table.Row key={scanPath}>
             <Table.Cell>{scanPath}</Table.Cell>
-            <Table.Cell collapsing>
+            <Table.Cell collapsing={true}>
               <BaseButton color={"red"} size={"tiny"} onClick={this.handleClickOnRemove}>
                 Remove
               </BaseButton>
@@ -142,19 +133,15 @@ class ConnectedScan extends React.Component<ScanProps, ScanStates> {
     const entries = await ZipReader.getZipEntries(resourceHolder);
     await ZipReader.saveEntriesToDb(resourceHolder, entries);
   };
-  private getZippedResourceHolders = async (dictMapList: DictMap[]): Promise<string[]> => {
-    const resourceHolderList = [];
-    for (const dictMap of dictMapList) {
-      const resourceHolder = dictMap.dict.resourceHolder;
-      if ((await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith(".zip")) {
-        resourceHolderList.push(resourceHolder);
-      }
-    }
-    return resourceHolderList;
-  };
+  // private getZippedResourceHolders = async (dictMapList: DictMap[]): Promise<string[]> => {
+  //   const resourceHolderList = [];
+  //   for (const dictMap of dictMapList) {
+  //     const resourceHolder = dictMap.dict.resourceHolder;
+  //     if ((await fse.stat(resourceHolder)).isFile() && resourceHolder.endsWith(".zip")) {
+  //       resourceHolderList.push(resourceHolder);
+  //     }
+  //   }
+  //   return resourceHolderList;
+  // };
 }
 
-export const Scan = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectedScan);

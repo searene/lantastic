@@ -1,5 +1,4 @@
 import { DictParser } from "dict-parser";
-import { DictMap } from "dict-parser/lib/DictionaryFinder";
 import {
   getPathToDictionaryResources,
   getPathToDictParserDbFile,
@@ -10,7 +9,6 @@ import {
 export class Parser {
   public static init = async () => {
     Parser.dictParser = new DictParser(
-      getPathToDictParserDbFile(),
       getPathToDictParserSqliteDbFile(),
       getPathToWordFormsFolder(),
       getPathToDictionaryResources()

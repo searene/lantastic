@@ -50,7 +50,7 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
     super(props);
     this.state = {
       showSearchInputBox: false,
-      activeTab: Tab.DECK,
+      activeTab: Tab.SEARCH_AND_ADD,
       loading: true
     };
   }

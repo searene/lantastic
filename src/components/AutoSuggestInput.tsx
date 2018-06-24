@@ -3,7 +3,6 @@ import { Icon, Input, Ref } from "semantic-ui-react";
 import { Parser } from "../Parser";
 import "../stylesheets/components/AutoSuggestInput.scss";
 import { CSSProperties } from "react";
-import { WordDefinition } from "dict-parser";
 import { Shortcuts } from "react-shortcuts";
 
 interface IAutoSuggestInputStates {
@@ -101,7 +100,7 @@ export class AutoSuggestInput extends React.Component<IAutoSuggestInputProps, IA
       suggestions
     });
   };
-  private getDefinitionHTML = (wordDefinitions: WordDefinition[]): string => {
+  private getDefinitionHTML = (wordDefinitions: IWordDefinition[]): string => {
     return wordDefinitions.reduce((r, wordDefinition) => r + wordDefinition.html, "");
   };
   private handleInputRef = (ref: HTMLElement) => (this.input = ref.childNodes[0] as HTMLInputElement);
