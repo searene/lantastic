@@ -100,7 +100,7 @@ export class InternalApp extends React.Component<IAppProps, IAppStates> {
         targetNodeSelector="body"
         className="app-container"
         alwaysFireHandler={true}
-        isolate={true}
+        global={true}
       >
         {!this.state.loading && (
           <div

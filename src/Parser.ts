@@ -1,7 +1,6 @@
 import { DictParser } from "dict-parser";
 import {
   getPathToDictionaryResources,
-  getPathToDictParserDbFile,
   getPathToDictParserSqliteDbFile,
   getPathToWordFormsFolder
 } from "./Utils/CommonUtils";

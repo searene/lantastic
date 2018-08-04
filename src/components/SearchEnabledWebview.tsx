@@ -4,8 +4,6 @@ import "../stylesheets/components/SearchEnabledWebview.scss";
 import { MouseEventHandler } from "react";
 import WebviewTag = Electron.WebviewTag;
 import FoundInPageEvent = Electron.FoundInPageEvent;
-import * as fse from "fs-extra";
-import * as path from "path";
 import { Shortcuts } from "react-shortcuts";
 import { AppCache } from "../services/AppCache";
 
@@ -67,8 +65,6 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
             className="find-input-container"
             name="SearchEnabledWebview"
             handler={this.handleShortcuts}
-            style={{
-            }}
           >
             <Ref innerRef={this.handleInputRef}>
               <Input
@@ -192,6 +188,7 @@ export class SearchEnabledWebview extends React.Component<ISearchEnabledWebviewP
     this.input = ref.childNodes[0] as HTMLInputElement;
   };
   private handleShortcuts = (action: string) => {
+    console.log("searchEnabledWebview");
     if (action === "closeSearchInputBox") {
       this.closeSearchInputBox();
     } else if (action === "findNext") {

@@ -15,14 +15,8 @@ export function getPathToLantastic() {
   return path.join(getPathToDocuments(), 'lantastic');
   // return "/mnt/HDD/lantastic-config-dir";
 }
-export function getPathToDictParserDbFile() {
-  return path.join(getPathToLantastic(), "dict-parser.db");
-}
 export function getPathToDictParserSqliteDbFile() {
   return path.join(getPathToLantastic(), "dict-parser-sqlite.db");
-}
-export function getPathToCardDbFile() {
-  return path.join(getPathToLantastic(), "card.db");
 }
 export function getPathToWordFormsFolder() {
   return path.join(__dirname, "../node_modules/dict-parser/lib/resources/wordforms");

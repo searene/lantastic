@@ -4,6 +4,7 @@ import { Parser } from "../Parser";
 import "../stylesheets/components/AutoSuggestInput.scss";
 import { CSSProperties } from "react";
 import { Shortcuts } from "react-shortcuts";
+import { IWordDefinition } from "dict-parser";
 
 interface IAutoSuggestInputStates {
   suggestions: string[];
