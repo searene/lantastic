@@ -1,17 +1,23 @@
-import { DictParser } from "dict-parser";
+import { DictParser, OS } from "dict-parser";
 import {
   getPathToDictionaryResources,
   getPathToDictParserSqliteDbFile,
-  getPathToWordFormsFolder
 } from "./Utils/CommonUtils";
+import { SqlitePC } from "./os-specific/SqlitePC";
+import { FileSystemPC } from "./os-specific/FileSystemPC";
+import { PathPC } from "./os-specific/PathPC";
 
 export class Parser {
   public static init = async () => {
-    Parser.dictParser = new DictParser(
-      getPathToDictParserSqliteDbFile(),
-      getPathToWordFormsFolder(),
-      getPathToDictionaryResources()
-    );
+    Parser.dictParser = new DictParser({
+      sqliteDbPath: getPathToDictParserSqliteDbFile(),
+      commonResourceDirectory: getPathToDictionaryResources(),
+      wordFormsFolder: "",
+      fsImplementation: new FileSystemPC(),
+      pathImplementation: new PathPC(),
+      sqliteImplementation: new SqlitePC(),
+      os: OS.PC
+    });
     await Parser.dictParser.init();
   };
   public static getDictParser = (): DictParser => {
